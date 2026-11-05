@@ -24,7 +24,8 @@
 .scrim{display:none}
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter);align-items:start}
 .span-8{grid-column:span 8}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-3{grid-column:span 3}
-.stack{display:grid;gap:var(--gutter);min-width:0}
+.stack{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--gutter);min-width:0}
+.stack>*{min-width:0}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gutter)}
 .hero-art{left:0;right:auto;width:72%}
 .hero.open-top{--ot-bg:linear-gradient(to right,var(--stage) 45%,#DCDFE7 100%)}
@@ -51,6 +52,36 @@
 .ch-row .bar{grid-area:bar}
 .cell-ch{display:inline-flex;align-items:center;gap:8px;color:var(--ink-500)}
 .brand.sm{--sz:24px}
+.m-only{display:none}
+/* כניסה מדורגת */
+.reveal{animation:rise 620ms var(--ease) both;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes rise{from{transform:translateY(14px);opacity:.25}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.reveal{animation:none}}
+/* פעולות מהירות */
+.quick{gap:6px;justify-content:space-between}
+.qa{flex:1;min-width:0;display:grid;justify-items:center;gap:6px;border:0;background:none;padding:0;font:inherit;font-size:11px;color:var(--ink-700);cursor:pointer}
+.qa .qi{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:var(--royal);
+  background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),var(--hl-top),0 10px 20px -12px rgba(20,26,51,.35);transition:transform var(--t-fast) var(--ease)}
+.qa:active .qi{transform:scale(.92)}
+.qa .qi .ico{width:22px;height:22px}
+.qa.ai .qi{position:relative;color:#fff;background:linear-gradient(180deg,#2C3142,#1B1E2A);box-shadow:0 10px 22px -10px rgba(10,12,30,.7)}
+.qa.ai .qi::before{content:"";position:absolute;inset:-2px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,#F2911C,#C2477C,#7A5BB8,#4A86E8,#6FD6E6,#F2911C);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion:reduce){.qa.ai .qi::before{animation:none}}
+/* סטוריז של ספרים חדשים */
+.st-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 6px}
+.st-row::-webkit-scrollbar{display:none}
+.st{flex:none;width:72px;display:grid;justify-items:center;gap:6px;scroll-snap-align:start;border:0;background:none;padding:0;cursor:pointer;font:inherit}
+.st .ring{width:68px;height:68px;border-radius:50%;padding:2.5px;background:conic-gradient(from 210deg,#4A8BAA,#6A55A8,#3F5499,#F2911C,#4A8BAA)}
+.st.seen .ring{background:rgba(20,26,51,.14)}
+.st .ring span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:#F4F5F9;box-shadow:inset 0 0 0 2.5px #fff;overflow:hidden}
+.st .ring img{width:70%;height:auto;filter:drop-shadow(0 3px 4px rgba(20,26,51,.3));transform:translateY(4px)}
+.st b{font-size:10.5px;font-weight:500;color:var(--ink-700);width:100%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-dots{justify-content:center;gap:6px;margin-top:-4px}
+.kpi-dots i{width:6px;height:6px;border-radius:3px;background:rgba(20,26,51,.18);transition:all var(--t-base) var(--ease)}
+.kpi-dots i.on{width:18px;background:var(--royal)}
 .demo-note{font-size:var(--fs-micro);color:var(--ink-400);text-align:center;padding:8px 0 4px}
 
 @media (max-width:1280px){
@@ -69,7 +100,23 @@
   .app.nav-open .scrim{opacity:1;pointer-events:auto}
 }
 @media (max-width:760px){
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .m-only{display:block}
+  .quick.m-only{display:flex}
+  .kpi-dots.m-only{display:flex}
+  .kpis{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 8px;gap:12px}
+  .kpis::-webkit-scrollbar{display:none}
+  .kpis>.kpi{flex:none;width:74%;scroll-snap-align:center}
+  /* טבלת הזמנות → כרטיסים */
+  [data-tour=orders] .table-wrap{overflow:visible;margin:0;padding:0}
+  [data-tour=orders] .table{min-width:0;border-spacing:0}
+  [data-tour=orders] thead{display:none}
+  [data-tour=orders] tbody{display:grid;gap:8px}
+  [data-tour=orders] tr{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"book sum" "cust status" "ch date";gap:8px 10px;padding:12px;
+    background:var(--tile);border-radius:var(--r-tile);box-shadow:var(--tile-shadow);filter:none!important}
+  [data-tour=orders] td{display:block;padding:0;background:none!important;border:0;box-shadow:none!important;border-radius:0!important;min-width:0}
+  [data-tour=orders] td:nth-child(1){grid-area:book}[data-tour=orders] td:nth-child(2){grid-area:cust}[data-tour=orders] td:nth-child(3){grid-area:ch}
+  [data-tour=orders] td:nth-child(4){grid-area:date;justify-self:end;align-self:center;font-size:var(--fs-caption)}[data-tour=orders] td:nth-child(5){grid-area:status;justify-self:end;align-self:center}
+  [data-tour=orders] td:nth-child(6){grid-area:sum;justify-self:end;font-size:var(--fs-lead)}[data-tour=orders] td:nth-child(7){display:none}
   .side-col,.right-col{grid-template-columns:minmax(0,1fr)!important}
   .ch-grid{grid-template-columns:repeat(5,128px);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -20px;padding:4px 20px 10px}
   .ch-grid::-webkit-scrollbar{display:none}
@@ -155,8 +202,20 @@
         </div>
       </section>
 
+      <!-- מובייל: פעולות מהירות + החדשים (סטוריז) -->
+      <section class="m-only quick" data-tour="quick" aria-label="פעולות מהירות">
+        <button class="qa" type="button"><span class="qi" data-icon="bag"></span>הזמנה חדשה</button>
+        <button class="qa" type="button"><span class="qi" data-icon="book"></span>ספר חדש</button>
+        <button class="qa" type="button"><span class="qi" data-icon="truck"></span>משלוח</button>
+        <button class="qa" type="button" id="qaCal"><span class="qi" data-icon="calendar"></span>לוח שנה</button>
+        <button class="qa ai" type="button" id="qaAi"><span class="qi" data-icon="sparkle"></span>שאל את מעיין</button>
+      </section>
+      <section class="m-only stories" data-tour="stories" aria-labelledby="st-h">
+        <div class="card-head" style="margin:0 0 10px"><h3 id="st-h">החדשים של מעיינותיך</h3><a class="link-sm" href="#">הכל</a></div>
+        <div class="st-row" id="stories"></div>
+      </section>
       <!-- KPI -->
-      <div class="kpis" data-tour="kpis">
+      <div class="kpis" data-tour="kpis" id="kpis">
         <article class="card kpi"><div class="kpi-top">הזמנות היום<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
           <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +12%</span><span class="t-kpi num">47</span></div><svg class="spark" data-spark="18,22,20,26,24,31,29,38,47" data-c="#3F5499"></svg></div></article>
         <article class="card kpi"><div class="kpi-top">הכנסות החודש<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
@@ -166,6 +225,7 @@
         <article class="card kpi"><div class="kpi-top">מנויי ניוזלטר<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
           <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +4%</span><span class="t-kpi num">9,214</span></div><svg class="spark" data-spark="8600,8640,8700,8760,8820,8900,9010,9120,9214" data-c="#F2911C"></svg></div></article>
       </div>
+      <div class="m-only kpi-dots" id="kpiDots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
 
       <!-- טבלת הזמנות -->
       <section class="card" data-tour="orders" aria-labelledby="o-h">
@@ -286,6 +346,16 @@
   menuBtn.addEventListener("click",()=>setOpen(true));
   document.getElementById("scrim").addEventListener("click",()=>setOpen(false));
 
+  // מובייל: סטוריז, נקודות לקרוסלת המספרים, קיצורים
+  const NEW=[["nishmata-deoraita","נשמתא דאורייתא"],["tzaddik-yesod-olam","צדיק יסוד עולם"],["likutei-torah-vayikra","לקוטי תורה ויקרא"],["maggid-devarav-leyaakov-2","מגיד דבריו ליעקב"],["otzar-sefer-haarachim","אוצר ספר הערכים"],["tanya-befikha-uvilvavkha","תניא בפיך ובלבבך"],["or-vechayut-nafshenu-2","אור וחיות נפשנו"],["chazon-lamoed","חזון למועד"],["letaken-olam","לתקן עולם"],["lev-chadash","לב חדש"],["maase-bepardes","מעשה בפרד״ס"],["shaarei-levi-yitzchak-1","שערי לוי יצחק"]];
+  document.getElementById("stories").innerHTML=NEW.map(([c,n],k)=>`<button class="st ${k>7?"seen":""}" type="button"><span class="ring"><span><img src="assets/covers/${c}.webp" alt=""></span></span><b>${n}</b></button>`).join("");
+  const kp=document.getElementById("kpis"),dots=[...document.querySelectorAll("#kpiDots i")];
+  kp.addEventListener("scroll",()=>{const cards=[...kp.children],c=kp.getBoundingClientRect().left+kp.clientWidth/2;let best=0,bd=1e9;cards.forEach((el,n)=>{const r=el.getBoundingClientRect(),d=Math.abs(r.left+r.width/2-c);if(d<bd){bd=d;best=n}});dots.forEach((d,n)=>d.classList.toggle("on",n===best))},{passive:true});
+  document.getElementById("qaAi").addEventListener("click",()=>{setOpen(true);sb.classList.remove("is-collapsed");setTimeout(()=>document.getElementById("sb-q").focus(),350)});
+  document.getElementById("qaCal").addEventListener("click",()=>document.querySelector("[data-tour=calendar]").scrollIntoView({behavior:"smooth",block:"start"}));
+  // כניסה מדורגת
+  document.querySelectorAll(".main .hero,.main .quick,.main .stories,.main .kpi,.main .card,.main .assist").forEach((el,n)=>{el.classList.add("reveal");el.style.setProperty("--i",Math.min(n,10))});
+
   // מדריך מודרך: נפתח לבד בכניסה הראשונה, ואפשר להפעיל שוב מ"מדריך למערכת" בסרגל
   const mobile=()=>matchMedia("(max-width:1100px)").matches;
   const showSidebar=()=>{if(mobile())setOpen(true);sb.classList.remove("is-collapsed")};
@@ -300,12 +370,14 @@
     {target:"[data-tour=profile]",title:"החשבון שלך",text:"השם והחשבון שמחובר עכשיו. לחיצה כאן מחליפה חשבון.",tap:true,before:showSidebar},
     {target:"[data-tour=bell]",title:"התראות",text:"המספר האדום מראה כמה התראות חדשות מחכות. לחיצה פותחת אותן.",tap:true,before:showSidebar},
     {target:"[data-tour=cta]",tapTarget:"[data-tour=cta] .btn-primary",title:"הפעולות של היום",text:"הכפתור הכהה הוא הפעולה הראשית במסך. לידו פעולה משנית, כמו הוספת ספר חדש.",tap:true,before:hideDrawer},
-    {target:"[data-tour=kpis]",title:"המספרים של היום",text:"הזמנות, הכנסות, מלאי ומנויים, עם השינוי מהתקופה הקודמת. החץ בפינת כל כרטיס פותח פירוט.",before:hideDrawer},
+    {target:"[data-tour=quick]",only:mobile,title:"פעולות מהירות",text:"הדברים שעושים הכי הרבה, בלחיצה אחת. ׳שאל את מעיין׳ פותח ישר את שדה השאלה ל־AI.",tap:true,tapTarget:"#qaAi",before:hideDrawer},
+    {target:"[data-tour=stories]",only:mobile,title:"החדשים של מעיינותיך",text:"הספרים החדשים בקטלוג. גוללים הצידה, וטבעת צבעונית מסמנת ספר שעוד לא ראיתם.",before:hideDrawer},
+    {target:"[data-tour=kpis]",title:"המספרים של היום",text:"הזמנות, הכנסות, מלאי ומנויים, עם השינוי מהתקופה הקודמת. החץ בפינת כל כרטיס פותח פירוט. בטלפון גוללים ביניהם הצידה.",before:hideDrawer},
     {target:"[data-tour=calendar]",title:"לוח השנה העברי",text:"בוחרים יום כדי לראות את האירועים שלו. ׳הוסף אירוע׳ מוסיף חדש, והחצים למטה עוברים חודש.",before:hideDrawer},
     {target:"[data-tour=orders]",title:"הזמנות אחרונות",text:"כל הזמנה עם הספר, הלקוח והסטטוס. שלוש הנקודות בסוף השורה פותחות פעולות.",before:hideDrawer},
     {target:"[data-tour=assistant]",title:"מעיין, העוזר החכם",text:"כותבים שאלה על הקטלוג, המלאי או ההזמנות, או בוחרים אחת מההצעות המוכנות.",before:hideDrawer},
     {target:"[data-tour=guide]",title:"המדריך תמיד כאן",text:"אפשר לחזור לסיור הזה מתי שרוצים, מ׳מדריך למערכת׳ בסרגל.",tap:true,before:showSidebar}
-  ],{key:"mt-staff-tour-v1",onEnd:hideDrawer});
+  ],{key:"mt-staff-tour-v2",onEnd:hideDrawer});
   document.getElementById("tourBtn").addEventListener("click",()=>tour.start());
   tour.autostart();
 })();
