@@ -37,7 +37,8 @@
     check: '<path d="m5.5 12.5 4 4 9-9"/>',
     mail: '<rect x="4" y="5.5" width="16" height="13" rx="3"/><path d="m4.5 7.5 7.5 5.5 7.5-5.5"/>',
     flame: '<path d="M12 20.5c3.6 0 6-2.4 6-5.8 0-3.5-2.6-5.6-3.6-8.7-.4 2-1.4 3.2-2.6 3.8C12 7.3 10.6 5 8.8 3.5 9 7.6 6 10 6 14.7c0 3.4 2.4 5.8 6 5.8z"/>',
-    menu: '<path d="M4 7h16M4 12h16M4 17h10"/>'
+    menu: '<path d="M4 7h16M4 12h16M4 17h10"/>',
+    help: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6"/><circle cx="12" cy="16.9" r=".9" fill="currentColor" stroke="none"/>'
   };
   const sprite = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">' +
     Object.entries(P).map(([k, v]) => `<symbol id="i-${k}" viewBox="0 0 24 24">${v}</symbol>`).join("") + "</svg>";
@@ -186,6 +187,101 @@
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`); svg.setAttribute("preserveAspectRatio", "none");
     svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".38"/><stop offset="1" stop-color="${color}" stop-opacity=".02"/></linearGradient></defs>
       <path d="${d}" fill="url(#${id})"/><path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`;
+  };
+
+
+  /* ---------------- מדריך מודרך (Tour) ----------------
+     DS.tour(steps, { key, onEnd }) → { start(), stop() }
+     צעד: { target: "[data-tour=x]" | null, title, text, tap: true, action: "click",
+            place: "auto|left|right|top|bottom", before(), only: () => bool }
+     tap   – נקודה מהבהבת שמראה איפה ללחוץ (tapTarget – אלמנט אחר לנקודה בתוך האזור המודגש).
+     action:"click" – המדריך מחכה שהמשתמש ילחץ על האלמנט בעצמו, ואז ממשיך.  */
+  window.DS.tour = function (steps, opts = {}) {
+    const key = opts.key || "mt-tour-done";
+    let i = 0, live = [], els = null, raf = 0, cleanup = [];
+    const store = { get() { try { return localStorage.getItem(key) === "1"; } catch (e) { return false; } },
+                    set() { try { localStorage.setItem(key, "1"); } catch (e) {} } };
+    const q = s => (typeof s === "string" ? document.querySelector(s) : s);
+    function build() {
+      document.body.insertAdjacentHTML("beforeend", `
+        <div class="tour" role="dialog" aria-modal="true" aria-labelledby="tour-t">
+          <div class="tour-dim"></div><div class="tour-spot"></div><div class="tour-tap"><i></i></div>
+          <div class="tour-card">
+            <div class="tour-meta"><span class="tour-count"></span><button class="tour-skip" type="button">דילוג</button></div>
+            <h3 id="tour-t"></h3><p class="tour-text"></p>
+            <p class="tour-hint">${icon("arrowUpLeft", "ico-sm")}<span></span></p>
+            <div class="tour-progress"><i></i></div>
+            <div class="tour-actions"><button class="btn btn-ghost btn-sm tour-prev" type="button">הקודם</button><button class="btn btn-primary btn-sm tour-next" type="button">הבא</button></div>
+          </div>
+        </div>`);
+      const r = document.body.lastElementChild;
+      els = { r, spot: r.querySelector(".tour-spot"), dim: r.querySelector(".tour-dim"), tap: r.querySelector(".tour-tap"), card: r.querySelector(".tour-card"),
+        count: r.querySelector(".tour-count"), t: r.querySelector("h3"), x: r.querySelector(".tour-text"), hint: r.querySelector(".tour-hint"),
+        bar: r.querySelector(".tour-progress i"), prev: r.querySelector(".tour-prev"), next: r.querySelector(".tour-next") };
+      els.next.onclick = () => go(i + 1); els.prev.onclick = () => go(i - 1);
+      r.querySelector(".tour-skip").onclick = () => stop(true);
+      const key_ = e => { if (e.key === "Escape") stop(true); else if (e.key === "ArrowLeft") go(i + 1); else if (e.key === "ArrowRight") go(i - 1); };
+      const re = () => place();
+      document.addEventListener("keydown", key_); addEventListener("resize", re); addEventListener("scroll", re, true);
+      cleanup.push(() => { document.removeEventListener("keydown", key_); removeEventListener("resize", re); removeEventListener("scroll", re, true); });
+    }
+    function place() {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const st = live[i]; if (!st || !els) return;
+        const el = q(st.target), vw = innerWidth, vh = innerHeight, m = 12, card = els.card;
+        if (!el) { // צעד מרכזי בלי יעד
+          els.r.classList.add("is-center"); els.spot.style.cssText = ""; els.tap.hidden = true;
+          card.style.left = Math.max(m, (vw - card.offsetWidth) / 2) + "px"; card.style.top = Math.max(m, (vh - card.offsetHeight) / 2) + "px"; return;
+        }
+        els.r.classList.remove("is-center");
+        const b = el.getBoundingClientRect(), pad = st.pad ?? 6, rad = getComputedStyle(el).borderRadius;
+        Object.assign(els.spot.style, { left: b.left - pad + "px", top: b.top - pad + "px", width: b.width + pad * 2 + "px", height: b.height + pad * 2 + "px",
+          borderRadius: (parseFloat(rad) || 12) + pad + "px" });
+        els.tap.hidden = !st.tap && st.action !== "click";
+        const tb = (q(st.tapTarget) || el).getBoundingClientRect(), rtl = getComputedStyle(el).direction === "rtl";
+        const tx = tb.width > 70 ? (rtl ? tb.right - 20 : tb.left + 20) : tb.left + tb.width / 2; // באלמנט רחב: בצד ההתחלה, לא על הטקסט
+        Object.assign(els.tap.style, { left: tx + "px", top: tb.top + tb.height / 2 + "px" });
+        const cw = card.offsetWidth, ch = card.offsetHeight, g = 14;
+        const opt = { bottom: [b.left + b.width / 2 - cw / 2, b.bottom + g], top: [b.left + b.width / 2 - cw / 2, b.top - g - ch],
+          left: [b.left - g - cw, b.top + b.height / 2 - ch / 2], right: [b.right + g, b.top + b.height / 2 - ch / 2] };
+        const fits = { bottom: b.bottom + g + ch < vh - m, top: b.top - g - ch > m, left: b.left - g - cw > m, right: b.right + g + cw < vw - m };
+        let side = st.place && st.place !== "auto" && fits[st.place] ? st.place : ["left", "bottom", "top", "right"].find(s => fits[s]);
+        let [x, y] = side ? opt[side] : [(vw - cw) / 2, vh - ch - m];
+        card.style.left = Math.min(Math.max(m, x), vw - cw - m) + "px"; card.style.top = Math.min(Math.max(m, y), vh - ch - m) + "px";
+      });
+    }
+    function go(n) {
+      if (n < 0) return; if (n >= live.length) return stop(true);
+      cleanup.filter(f => f.step).forEach(f => f()); cleanup = cleanup.filter(f => !f.step);
+      i = n; const st = live[i];
+      if (st.before) st.before();
+      els.count.textContent = `שלב ${i + 1} מתוך ${live.length}`;
+      els.t.textContent = st.title; els.x.textContent = st.text;
+      els.hint.hidden = !st.action && !st.tap; els.hint.querySelector("span").textContent = st.action === "click" ? (st.hint || "לחצו על המקום המסומן כדי להמשיך") : (st.hint || "כאן לוחצים");
+      els.bar.style.width = ((i + 1) / live.length) * 100 + "%";
+      els.prev.hidden = i === 0; els.next.textContent = i === live.length - 1 ? "סיום" : st.action === "click" ? "דלג על השלב" : "הבא";
+      els.next.classList.toggle("btn-primary", st.action !== "click"); els.next.classList.toggle("btn-secondary", st.action === "click");
+      els.r.classList.toggle("is-action", st.action === "click");
+      const el = q(st.target);
+      if (st.action === "click" && el) {
+        const h = e => { if (el.contains(e.target)) setTimeout(() => go(i + 1), st.delay ?? 450); };
+        el.addEventListener("click", h); const off = () => el.removeEventListener("click", h); off.step = true; cleanup.push(off);
+      }
+      if (el) el.scrollIntoView({ block: "center", inline: "nearest", behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth" });
+      setTimeout(place, 60); setTimeout(place, 420);
+      (st.action === "click" ? els.card : els.next).focus?.();
+    }
+    function start() {
+      live = steps.filter(s => !s.only || s.only()); if (!live.length) return;
+      if (!els) build(); els.r.hidden = false; document.documentElement.classList.add("tour-on"); go(0);
+    }
+    function stop(done) {
+      if (!els) return; els.r.hidden = true; document.documentElement.classList.remove("tour-on");
+      cleanup.filter(f => f.step).forEach(f => f()); cleanup = cleanup.filter(f => !f.step);
+      if (done) store.set(); opts.onEnd && opts.onEnd();
+    }
+    return { start, stop, seen: store.get, autostart(delay = 700) { if (!store.get()) setTimeout(start, delay); } };
   };
 
   /* ---------------- גאוג' טבעת עם רווחים ---------------- */

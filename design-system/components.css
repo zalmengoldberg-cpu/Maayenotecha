@@ -400,3 +400,37 @@ p{margin:0}
   -webkit-mask-image:radial-gradient(70% 90% at 32% 50%,#000 55%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 46%);
   -webkit-mask-composite:source-in;
   mask-image:radial-gradient(70% 90% at 32% 50%,#000 55%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 46%);mask-composite:intersect}
+
+/* ==========================================================================
+   מדריך מודרך — עמעום, זרקור על האלמנט, נקודת "כאן לוחצים" וכרטיס הסבר.
+   ========================================================================== */
+.tour{position:fixed;inset:0;z-index:1000;pointer-events:none}
+.tour[hidden]{display:none}
+.tour-dim{position:fixed;inset:0;background:rgba(12,15,32,.5);opacity:0;transition:opacity var(--t-base)}
+.tour.is-center .tour-dim{opacity:1;pointer-events:auto;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.tour-spot{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(12,15,32,.5),0 0 0 2px rgba(255,255,255,.9),0 0 0 6px rgba(100,118,182,.35),0 0 30px 6px rgba(111,214,230,.35);
+  transition:left var(--t-slow) var(--ease),top var(--t-slow) var(--ease),width var(--t-slow) var(--ease),height var(--t-slow) var(--ease),border-radius var(--t-slow) var(--ease)}
+.tour.is-center .tour-spot{display:none}
+.tour-tap{position:fixed;width:0;height:0;transition:left var(--t-slow) var(--ease),top var(--t-slow) var(--ease)}
+.tour-tap[hidden]{display:none}
+.tour-tap i,.tour-tap::before{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;content:""}
+.tour-tap i{background:var(--gold);box-shadow:0 0 0 3px #fff,0 4px 12px rgba(0,0,0,.35)}
+.tour-tap::before{background:rgba(242,145,28,.55);animation:tour-ping 1.4s var(--ease) infinite}
+@keyframes tour-ping{from{transform:scale(1);opacity:.9}to{transform:scale(3.2);opacity:0}}
+@media (prefers-reduced-motion:reduce){.tour-tap::before{animation:none}}
+.tour-card{position:fixed;width:min(320px,calc(100vw - 24px));pointer-events:auto;display:grid;gap:8px;padding:18px 18px 14px;border-radius:var(--r-lg);
+  color:var(--ink-700);background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.8),var(--hl-top),0 30px 60px -20px rgba(12,15,32,.55);
+  transition:left var(--t-slow) var(--ease),top var(--t-slow) var(--ease)}
+.tour-card:focus{outline:none}
+.tour-meta{display:flex;justify-content:space-between;align-items:center;font-size:var(--fs-micro);color:var(--ink-400)}
+.tour-skip{border:0;background:none;padding:2px 4px;color:var(--ink-400);font:inherit;font-size:var(--fs-micro);cursor:pointer;border-radius:6px}
+.tour-skip:hover{color:var(--ink-900)}
+.tour-card h3{font-size:var(--fs-lead);font-weight:var(--fw-bold);color:var(--ink-900);margin:0}
+.tour-text{font-size:var(--fs-small);color:var(--ink-500);line-height:1.6;margin:0}
+.tour-hint{display:flex;align-items:center;gap:6px;margin:0;font-size:var(--fs-caption);font-weight:var(--fw-medium);color:var(--gold-600);background:var(--gold-50);border-radius:var(--r-sm);padding:6px 10px}
+.tour-hint[hidden]{display:none}
+.tour-progress{height:3px;border-radius:3px;background:rgba(20,26,51,.08);overflow:hidden;margin-top:4px}
+.tour-progress i{display:block;height:100%;background:linear-gradient(90deg,#6FD6E6,#4A86E8,#7A5BB8);border-radius:inherit;transition:width var(--t-slow) var(--ease)}
+.tour-actions{display:flex;justify-content:flex-end;gap:6px}
+.tour-actions [hidden]{display:none}

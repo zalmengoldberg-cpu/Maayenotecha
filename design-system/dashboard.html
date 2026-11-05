@@ -77,20 +77,20 @@
 <div class="app" id="app">
 
   <!-- ============ סרגל צד ============ -->
-  <aside class="sidebar" aria-label="ניווט ראשי">
+  <aside class="sidebar" aria-label="ניווט ראשי" data-tour="sidebar">
     <div class="sb-head">
-      <button class="sb-logo" type="button" aria-label="כיווץ הסרגל" aria-expanded="true"><img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.svg" alt="מעיינותיך"></button>
-      <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות, 4 חדשות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
+      <button class="sb-logo" data-tour="logo" type="button" aria-label="כיווץ הסרגל" aria-expanded="true"><img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.svg" alt="מעיינותיך"></button>
+      <button class="sb-icon-btn sb-bell" data-tour="bell" type="button" aria-label="התראות, 4 חדשות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
     </div>
     <div class="sb-rule"></div>
-    <button class="sb-profile" type="button">
+    <button class="sb-profile" data-tour="profile" type="button">
       <span class="mono lg">ZG</span>
       <span class="who"><b dir="ltr">Zalmen Goldberg</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span>
       <svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg>
     </button>
-    <label class="ai-search"><span class="field" data-icon="searchAi" data-icon-class="ico-sm"><span class="sr-only">חיפוש או שאלה ל-AI</span><input id="sb-q" type="search" placeholder="חיפוש או שאלה ל־AI…"></span></label>
+    <label class="ai-search" data-tour="ask"><span class="field" data-icon="searchAi" data-icon-class="ico-sm"><span class="sr-only">חיפוש או שאלה ל-AI</span><input id="sb-q" type="search" placeholder="חיפוש או שאלה ל־AI…"></span></label>
 
-    <nav class="sb-nav">
+    <nav class="sb-nav" data-tour="nav">
       <div class="sb-label">ניהול</div>
       <button class="sb-item" data-nav type="button" aria-current="page"><span class="i" data-icon="home" data-icon-class="ico-sm"></span><span class="lbl">לוח בקרה</span></button>
       <button class="sb-item" data-nav type="button"><span class="i" data-icon="bag" data-icon-class="ico-sm"></span><span class="lbl">הזמנות</span><span class="badge">7</span></button>
@@ -105,6 +105,7 @@
       <button class="sb-item" data-nav type="button"><span class="i" data-icon="image" data-icon-class="ico-sm"></span><span class="lbl">מדיה ופוסטים</span></button>
 
       <div class="sb-label">כללי</div>
+      <button class="sb-item" id="tourBtn" data-tour="guide" type="button"><span class="i" data-icon="help" data-icon-class="ico-sm"></span><span class="lbl">מדריך למערכת</span></button>
       <button class="sb-item" data-nav type="button"><span class="i" data-icon="settings" data-icon-class="ico-sm"></span><span class="lbl">הגדרות</span></button>
       <button class="sb-item" type="button"><span class="i" data-icon="logout" data-icon-class="ico-sm"></span><span class="lbl">יציאה</span></button>
     </nav>
@@ -117,7 +118,7 @@
   <!-- ============ תוכן ============ -->
   <main class="main">
     <header class="topbar">
-      <button class="topbar-logo" id="menuBtn" type="button" aria-label="פתיחת התפריט" aria-expanded="false"><img src="assets/logos/maayanotecha-logo.svg" alt="מעיינותיך"></button>
+      <button class="topbar-logo" id="menuBtn" data-tour="menu" type="button" aria-label="פתיחת התפריט" aria-expanded="false"><img src="assets/logos/maayanotecha-logo.svg" alt="מעיינותיך"></button>
     </header>
 
     <div class="grid">
@@ -131,7 +132,7 @@
           <span class="eyebrow">מעיינותיך · אזור ניהול לצוות</span>
           <h1 class="t-h1"><span data-greeting>שלום</span>,<br> <b>זלמן</b></h1>
           <p class="t-muted">יש לך <b>7 הזמנות חדשות</b> היום, <b>2 ספרים</b> בדפוס ו־12 כותרים שמחכים לקטלוג.</p>
-          <div class="hero-cta">
+          <div class="hero-cta" data-tour="cta">
             <button class="btn btn-primary" type="button" data-icon="bag" data-icon-class="ico-sm">להזמנות היום</button>
             <button class="btn btn-ghost" type="button" data-icon="plus" data-icon-class="ico-sm">ספר חדש</button>
           </div>
@@ -139,7 +140,7 @@
       </section>
 
       <!-- KPI -->
-      <div class="kpis">
+      <div class="kpis" data-tour="kpis">
         <article class="card kpi"><div class="kpi-top">הזמנות היום<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
           <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +12%</span><span class="t-kpi num">47</span></div><svg class="spark" data-spark="18,22,20,26,24,31,29,38,47" data-c="#3F5499"></svg></div></article>
         <article class="card kpi"><div class="kpi-top">הכנסות החודש<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
@@ -151,7 +152,7 @@
       </div>
 
       <!-- טבלת הזמנות -->
-      <section class="card" aria-labelledby="o-h">
+      <section class="card" data-tour="orders" aria-labelledby="o-h">
         <div class="card-head"><h3 id="o-h">הזמנות אחרונות</h3><a class="link-sm" href="#">לכל ההזמנות</a></div>
         <div class="table-wrap">
           <table class="table">
@@ -189,12 +190,12 @@
       </section>
 
       <!-- לוח שנה -->
-      <section class="card" style="background:var(--surface-2);padding:10px" aria-label="לוח שנה עברי">
+      <section class="card" data-tour="calendar" style="background:var(--surface-2);padding:10px" aria-label="לוח שנה עברי">
         <div id="cal" class="hcal"></div>
       </section>
 
       <!-- עוזר -->
-      <section class="assist" aria-labelledby="as-h">
+      <section class="assist" data-tour="assistant" aria-labelledby="as-h">
         <img alt="" src="https://v3b.fal.media/files/b/0ab1458a/v_6peiQ9ZvA9rvQYUAVhY_unFvo78z.jpg" onerror="this.onerror=null;this.src='assets/img/assistant-flame.webp'">
         <div><h3 id="as-h">מעיין</h3><p class="sub">העוזר החכם של ההוצאה</p></div>
         <div style="display:grid;gap:10px">
@@ -256,6 +257,29 @@
   const setOpen=o=>{app.classList.toggle("nav-open",o);menuBtn.setAttribute("aria-expanded",String(o))};
   menuBtn.addEventListener("click",()=>setOpen(true));
   document.getElementById("scrim").addEventListener("click",()=>setOpen(false));
+
+  // מדריך מודרך: נפתח לבד בכניסה הראשונה, ואפשר להפעיל שוב מ"מדריך למערכת" בסרגל
+  const mobile=()=>matchMedia("(max-width:1100px)").matches;
+  const showSidebar=()=>{if(mobile())setOpen(true);sb.classList.remove("is-collapsed")};
+  const hideDrawer=()=>{if(mobile())setOpen(false)};
+  const tour=DS.tour([
+    {target:null,title:"ברוך הבא לאזור הניהול",text:"סיור קצר של דקה: איפה כל דבר נמצא ואיך משתמשים בו. אפשר לדלג בכל שלב ולחזור למדריך מהסרגל.",before:hideDrawer},
+    {target:"[data-tour=menu]",only:mobile,title:"פתיחת התפריט",text:"במסך הטלפון התפריט מוסתר. לחיצה על הלוגו של מעיינותיך פותחת אותו.",action:"click",hint:"לחצו על הלוגו כדי לפתוח את התפריט"},
+    {target:"[data-tour=logo]",title:"הלוגו מכווץ את הסרגל",text:"לחיצה על הלוגו בסרגל מכווצת אותו כך שנשארים רק האייקונים, ומפנה מקום לתוכן.",action:"click",hint:"לחצו על הלוגו",before:showSidebar},
+    {target:"[data-tour=logo]",title:"ולחיצה נוספת פותחת",text:"לחיצה שנייה על הלוגו מחזירה את הסרגל המלא, עם השמות של כל האזורים.",action:"click",hint:"לחצו שוב על הלוגו",before:()=>{if(mobile())setOpen(true)}},
+    {target:"[data-tour=ask]",title:"חיפוש ושאלה ל־AI",text:"שדה אחד לכל דבר: מחפשים ספר, לקוח או הזמנה, שואלים את ה־AI של המערכת או שולחים הודעה ל־Claude.",tap:true,hint:"לוחצים וכותבים",before:showSidebar},
+    {target:"[data-tour=nav]",title:"מעבר בין אזורים",text:"הזמנות, קטלוג, מלאי והפצה, לקוחות ולוח שנה. האזור שאתם נמצאים בו מסומן בכחול.",before:showSidebar,pad:2},
+    {target:"[data-tour=profile]",title:"החשבון שלך",text:"השם והחשבון שמחובר עכשיו. לחיצה כאן מחליפה חשבון.",tap:true,before:showSidebar},
+    {target:"[data-tour=bell]",title:"התראות",text:"המספר האדום מראה כמה התראות חדשות מחכות. לחיצה פותחת אותן.",tap:true,before:showSidebar},
+    {target:"[data-tour=cta]",tapTarget:"[data-tour=cta] .btn-primary",title:"הפעולות של היום",text:"הכפתור הכהה הוא הפעולה הראשית במסך. לידו פעולה משנית, כמו הוספת ספר חדש.",tap:true,before:hideDrawer},
+    {target:"[data-tour=kpis]",title:"המספרים של היום",text:"הזמנות, הכנסות, מלאי ומנויים, עם השינוי מהתקופה הקודמת. החץ בפינת כל כרטיס פותח פירוט.",before:hideDrawer},
+    {target:"[data-tour=calendar]",title:"לוח השנה העברי",text:"בוחרים יום כדי לראות את האירועים שלו. ׳הוסף אירוע׳ מוסיף חדש, והחצים למטה עוברים חודש.",before:hideDrawer},
+    {target:"[data-tour=orders]",title:"הזמנות אחרונות",text:"כל הזמנה עם הספר, הלקוח והסטטוס. שלוש הנקודות בסוף השורה פותחות פעולות.",before:hideDrawer},
+    {target:"[data-tour=assistant]",title:"מעיין, העוזר החכם",text:"כותבים שאלה על הקטלוג, המלאי או ההזמנות, או בוחרים אחת מההצעות המוכנות.",before:hideDrawer},
+    {target:"[data-tour=guide]",title:"המדריך תמיד כאן",text:"אפשר לחזור לסיור הזה מתי שרוצים, מ׳מדריך למערכת׳ בסרגל.",tap:true,before:showSidebar}
+  ],{key:"mt-staff-tour-v1",onEnd:hideDrawer});
+  document.getElementById("tourBtn").addEventListener("click",()=>tour.start());
+  tour.autostart();
 })();
 </script>
 </body>
