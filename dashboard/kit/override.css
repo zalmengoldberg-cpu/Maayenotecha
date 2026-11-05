@@ -1,0 +1,321 @@
+/* =====================================================================
+   v19 · ממשק הצוות של מעיינותיך (maayanotecha-staff-ui)
+   שכבת הלבשה אחרונה: הטוקנים של המערכת מוזנים למשתנים הקיימים,
+   מעטפת חדשה (סרגל, חיפוש AI, שורה עליונה, מובייל) ומסך "תמונת מצב".
+   התוכן, השדות, הנתונים והלוגיקה לא שונו.
+   ===================================================================== */
+
+/* ---------- 1. טוקנים → המשתנים הקיימים (בהיר בלבד) ---------- */
+html:root,html:root[data-skin],html:root[data-skin][data-wp]{
+  color-scheme:light;
+  --ground:var(--canvas);--orb-base:#E3E8EF;
+  --paper:#FFFFFF;--paper-2:var(--surface-2);
+  --line:rgba(20,26,51,.08);--line-2:rgba(20,26,51,.14);
+  --ink:var(--ink-900);--ink-2:var(--ink-500);
+  --ink-3:var(--ink-400);
+  --blue:var(--royal);--blue-l:var(--royal-400);--blue-d:var(--royal-600);--soft:var(--royal-100);--mint:var(--royal-200);
+  --dark:var(--ink-800);--on-dark:#fff;
+  --gold:#F2911C;--plum:#5E1542;--kraft:#D2B899;--kraft-d:#A9865C;--cream:#FAF9D3;
+  --ok:#2E8566;--ok-bg:#E2F2EA;--warn:#B86A0A;--warn-bg:#FCEFD9;--bad:#B93B36;--bad-bg:#F8E4E2;
+  /* שני הגוונים הנוספים לסטטוסים (אושר): לאישור · מתוזמן */
+  --review:#6A55A8;--review-bg:#EEEAF7;--sched:#2B727C;--sched-bg:#E0EFF0;
+  --shadow:var(--elev-1);--shadow-lg:var(--elev-4);
+  --f-body:var(--font);--f-display:var(--font);--f-latin:var(--font);--f-mono:var(--font);
+  --r:var(--r-lg);
+  /* זכוכית */
+  --g-bg:rgba(255,255,255,.42);--g-bg-strong:rgba(255,255,255,.9);--g-blur:24px;
+  --g-border:rgba(255,255,255,.62);--g-bw:1px;--g-sheen:none;--g-hover:rgba(255,255,255,.7);
+  --g-shadow:inset 0 0 0 1px rgba(255,255,255,.62),inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(20,26,51,.04),0 14px 34px -18px rgba(20,26,51,.28);
+  --cell:rgba(255,255,255,.86);--cell-h:#fff;
+  --btn-bg:#fff;--btn-bg-h:#fff;--btn-sh:var(--elev-1);--btn-sh-h:var(--elev-1),0 6px 14px -8px rgba(20,26,51,.25);
+  /* פעולה ראשית: כהה. כחול לפעולות בתוך כרטיס */
+  --acc-grad:linear-gradient(180deg,#2A335A,var(--ink-800));--acc-glow:var(--elev-primary);
+  --hero:linear-gradient(160deg,#27305A 0%,var(--navy-night) 70%);--hero-glow:none;
+  --side-a:var(--ink-800);--side-b:var(--navy-night);--side-ink:#C9CDE0;--side-mute:#8B91A9;
+  --s-ink:var(--ink-900);--s-mute:var(--ink-500);--s-hover:rgba(255,255,255,.6);
+}
+html,body{font-family:var(--font)}
+body.mt-skin{background-color:var(--orb-base)}
+:where([dir="ltr"],kbd,.num,time,.big){font-family:var(--font)}
+
+/* ---------- 2. מעטפת: פריסה ---------- */
+#app.app{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;min-height:100vh;
+  padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+html.sb-mini #app.app{grid-template-columns:auto minmax(0,1fr)}
+#app .mtx-wrap{display:contents}
+#app .sidebar{position:sticky;top:16px;height:calc(100vh - 32px);z-index:30;--silk:url("__SILK__")}
+#app .mainc{padding:0!important;min-width:0}
+#app main{padding-block:0 60px}
+
+/* מצב מכווץ: הקלאס הקיים sb-mini מחזיק את ההעדפה (וקיצור [ ) */
+#app .sidebar .sb-item.sg{width:100%}
+#app .sidebar .sb-item .badge[hidden]{display:none}
+#app .sidebar .sb-item .sg-v{font-style:normal;font-size:var(--fs-micro);color:var(--ink-300);margin-inline-start:auto}
+#app .sidebar.is-collapsed .sb-item .sg-v{display:none}
+#app .sidebar .sb-foot .sync8{margin-top:10px}
+#app .sidebar .sb-foot .sync8:empty{display:none}
+#app .sidebar .sb-profile .av{width:44px;height:44px;font-size:16px;flex:none}
+#app .sidebar .sb-profile .av img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+#app .sidebar .sb-promo .btn[hidden]{display:none}
+#app .sidebar .ai-search input{cursor:pointer}
+
+/* ---------- 3. שורה עליונה: רק מה שאין בסרגל ---------- */
+#app .topb{position:static;background:none!important;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0 0 10px;gap:10px;min-height:0;display:flex;align-items:center}
+#app .topb .search2,#app .topb .ib-btn,#app .topb .askai,#app .topb .sp{display:none!important}
+#app .topb .datec{margin-inline-start:auto;height:var(--h-md);padding:0 6px 0 14px;border-radius:var(--r-pill);background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),var(--hl-top)}
+#app .topb .onl:empty{display:none}
+#app .topbar-logo{display:none;border:0;background:none;padding:4px;margin:0;border-radius:var(--r-sm);cursor:pointer;transition:opacity var(--t-base),transform var(--t-fast) var(--ease)}
+#app .topbar-logo img{height:38px;width:auto;display:block}
+#app .mob-nav{display:none!important}
+.sb-scrim{display:none}
+
+/* ---------- 4. כרטיסים: זכוכית, רדיוס 14, שורות צפות ---------- */
+#app .card{border-radius:var(--r-lg);border:0;background:rgba(255,255,255,.42);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.62),inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(20,26,51,.04),0 14px 34px -18px rgba(20,26,51,.28)}
+#app .card.pane{padding:var(--pad-card)}
+#app .bento{gap:var(--gutter)}
+#app .card h2,#app .sec-h h2{font-size:var(--fs-lead);font-weight:var(--fw-medium);color:var(--ink-900);margin:0}
+#app .ch .ico,#app .card .ico{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.7);color:var(--royal);box-shadow:inset 0 0 0 1px rgba(255,255,255,.8)}
+#app .muted{color:var(--ink-400)}
+#app .chip{height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:var(--fs-micro);font-weight:var(--fw-medium);background:rgba(255,255,255,.7);color:var(--ink-500);box-shadow:none;border:0}
+#app .more{border-radius:var(--r-pill)}
+/* שורות בתוך כרטיס → אריחים צפים */
+#v-today .att .ar,#v-today .plist .pr,#v-today #reps .ldr,#v-today .feed .fi,#v-today #bgList .row,#v-today #tday>div:not(.empty),#v-today .remind .rr{
+  background:var(--cell);border-radius:var(--r-tile);box-shadow:0 1px 2px rgba(20,26,51,.05),0 6px 16px -10px rgba(20,26,51,.22);border:0}
+#v-today .att,#v-today .plist,#v-today #reps,#v-today .feed,#v-today #bgList,#v-today #tday{display:grid;gap:8px}
+#v-today .att .ar:hover,#v-today .plist .pr:hover,#v-today #reps .ldr:hover,#v-today .feed .fi:hover,#v-today #bgList .row:hover,#v-today #tday>div:hover{background:#fff}
+#v-today #bgList .row+.row{box-shadow:0 1px 2px rgba(20,26,51,.05),0 6px 16px -10px rgba(20,26,51,.22)}
+/* כפתורים */
+#app .btn{min-height:var(--h-md);border-radius:var(--r-pill);font-weight:var(--fw-medium)}
+#app .btn.sm,#app .act{min-height:var(--h-sm)}
+#app .btn.pri,#app .btn-primary{background:linear-gradient(180deg,#2A335A,var(--ink-800))!important;color:#fff;box-shadow:var(--elev-primary)!important;border:0}
+#app .act.gold,#app .btn.gold,#app .att .go.pri{background:var(--royal)!important;color:#fff;box-shadow:var(--elev-1);border:0}
+#app .act.gold:hover,#app .btn.gold:hover{background:var(--royal-600)!important;filter:none}
+#app .seg{background:rgba(20,26,51,.06);box-shadow:none;border:0}
+#app .seg button[aria-pressed="true"]{background:#fff;color:var(--ink-900);box-shadow:var(--elev-1)}
+/* סטטוסים: נקודה + טקסט, רכים */
+#app .tag,#app .pill,#app .urg{height:22px;padding:0 9px 0 10px;font-size:var(--fs-micro);font-weight:var(--fw-medium)}
+#app .pill.violet{background:var(--review-bg);color:var(--review)}
+/* אנשים: ראשי תיבות בסגנון mono */
+#app .av{border-radius:50%;font-weight:var(--fw-bold);color:#fff;letter-spacing:.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 2px #fff}
+#app .av img{border-radius:50%}
+/* מצבים ריקים */
+#app .empty{display:grid;justify-items:center;text-align:center;gap:4px;padding:16px 10px;background:transparent;border-radius:var(--r-tile);color:var(--ink-400);font-size:var(--fs-caption)}
+#app .empty .icon-3d{--sz:64px;width:var(--sz);height:var(--sz);object-fit:contain;margin-bottom:4px;filter:drop-shadow(0 10px 14px rgba(20,26,51,.18))}
+#app .empty b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+#app .empty span{font-size:var(--fs-caption);color:var(--ink-400);max-width:34ch}
+/* כיווץ רשימות */
+#app .fold-toggle .n{display:inline-grid;place-items:center;min-width:20px;height:18px;padding:0 6px;border-radius:var(--r-pill);background:var(--royal-100);color:var(--royal);font-size:10.5px;font-variant-numeric:tabular-nums}
+#app .fold-toggle .ico{width:16px;height:16px}
+#attCard .att-more{display:none!important}
+#attCard.open .att .ar{display:flex}
+
+/* ---------- 5. תמונת מצב: הירו + מדד העבודה ---------- */
+#v-today .mtx.hero{margin:0 0 var(--gutter);min-height:300px;--ot-bg:linear-gradient(to right,#CACED9 45%,#DCDFE7 100%)}
+#v-today .hero .hero-art{left:0;right:auto;width:64%}
+#v-today .hero .hero-copy{max-width:52%}
+#v-today .hero .hero-copy h1{font-size:clamp(30px,3.2vw,var(--fs-h1));font-weight:var(--fw-regular);color:var(--ink-900);text-align:right;margin:4px 0 6px}
+#v-today .hero .hero-copy h1 .gw{font-weight:var(--fw-regular)}
+#v-today .hero .hero-copy h1 b{font-weight:var(--fw-medium)}
+#v-today .hero .hero-copy p{color:var(--ink-500);margin:0}
+#v-today .hero .chip-a{left:22%;top:12%}
+#v-today .hero .pulse-pop{left:22%;top:calc(12% + 70px);z-index:5}
+#v-today .hero .hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:flex-start}
+#v-today .hero .hero-chips .chip-float{position:relative;inset:auto;cursor:pointer;border:0;font:inherit;text-align:right}
+#v-today .hero .hero-chips .chip-float .lab b em{font-style:normal;font-size:var(--fs-micro);color:var(--ink-500);font-weight:var(--fw-regular);margin-inline-start:4px}
+#v-today .hero .hero-chips .chip-float.gold .ic{background:var(--gold);color:#fff}
+#v-today .hero .hero-cta{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+#v-today .hero .hero-cta .btn[hidden]{display:none}
+/* הכרטיס הישן "תדריך" נשאר, באותה שפה */
+#v-today .brief8{background:var(--hero)!important;border-radius:var(--r-lg);box-shadow:var(--elev-2)!important;border:0!important}
+
+/* ---------- 6. עיגולים: פעולות מהירות + סטוריז ---------- */
+#v-today .circles{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:28px;padding-top:6px;margin:0 0 var(--gutter)}
+#v-today .circles[hidden]{display:none}
+#v-today .circles-hide,#v-today .circles-show{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border:0;border-radius:var(--r-pill);cursor:pointer;font:inherit;
+  font-size:var(--fs-micro);color:var(--ink-500);background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.75);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+#v-today .circles-hide{position:absolute;top:0;left:0;z-index:2}
+#v-today .circles-show{display:flex;margin:0 0 var(--gutter) auto}
+#v-today .circles-show[hidden]{display:none}
+#v-today .quick{display:flex;gap:10px;padding-top:30px}
+#v-today .stories{min-width:0;border-inline-start:1px solid rgba(20,26,51,.08);padding-inline-start:24px}
+#v-today .st-head{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-left:80px}
+#v-today .st-head h3{font-size:var(--fs-body);font-weight:var(--fw-medium);margin:0;color:var(--ink-900)}
+#v-today .qa{flex:none;width:68px;display:grid;justify-items:center;gap:6px;border:0;background:none;padding:0;font:inherit;font-size:11px;color:var(--ink-700);cursor:pointer;box-shadow:none;min-height:0;text-align:center;line-height:1.25}
+#v-today .qa .qi{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:var(--royal);
+  background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),var(--hl-top),0 10px 20px -12px rgba(20,26,51,.35);transition:transform var(--t-fast) var(--ease)}
+#v-today .qa:active .qi{transform:scale(.92)}
+#v-today .qa .qi .ico{width:22px;height:22px}
+#v-today .qa.ai .qi{position:relative;color:#fff;background:linear-gradient(180deg,#2C3142,#1B1E2A);box-shadow:0 10px 22px -10px rgba(10,12,30,.7)}
+#v-today .qa.ai .qi::before{content:"";position:absolute;inset:-2px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,#F2911C,#C2477C,#7A5BB8,#4A86E8,#6FD6E6,#F2911C);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:mtspin 6s linear infinite}
+@keyframes mtspin{to{transform:rotate(1turn)}}
+#v-today .st-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:2px 2px 6px}
+#v-today .st-row::-webkit-scrollbar{display:none}
+#v-today .st{flex:none;width:72px;display:grid;justify-items:center;gap:6px;scroll-snap-align:start;border:0;background:none;padding:0;cursor:pointer;font:inherit;box-shadow:none;min-height:0}
+#v-today .st .ring{width:64px;height:64px;border-radius:50%;padding:2.5px;background:conic-gradient(from 210deg,#4A8BAA,#6A55A8,#3F5499,#F2911C,#4A8BAA)}
+#v-today .st.seen .ring{background:rgba(20,26,51,.14)}
+#v-today .st .ring>span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:#F4F5F9;box-shadow:inset 0 0 0 2.5px #fff;overflow:hidden}
+#v-today .st .ring .av{width:46px;height:46px;font-size:16px;box-shadow:none}
+#v-today .st b{font-size:10.5px;font-weight:var(--fw-medium);color:var(--ink-700);width:100%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-today .st small{font-size:10px;color:var(--ink-400);margin-top:-5px}
+#v-today .st-empty{font-size:var(--fs-caption);color:var(--ink-400);padding:20px 0}
+
+/* ---------- 7. כרטיסי מספרים ---------- */
+#v-today #kpis .kpi{padding:16px 18px;min-height:132px}
+#v-today #kpis .kpi .v{font-size:34px;font-weight:var(--fw-regular);letter-spacing:-.01em;color:var(--ink-900)}
+#v-today #kpis .kpi.hero{background:var(--hero)!important}
+#v-today #kpis .kpi.hero .v{color:#fff}
+#v-today #kpis .kpi .k2{color:var(--ink-500);font-size:var(--fs-small)}
+#v-today #kpis .kpi .arr{border-radius:50%;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.8)}
+#v-today .kpi-dots{display:none;justify-content:center;gap:6px;margin-top:6px}
+#v-today .kpi-dots i{width:6px;height:6px;border-radius:3px;background:rgba(20,26,51,.18);transition:all var(--t-base) var(--ease)}
+#v-today .kpi-dots i.on{width:18px;background:var(--royal)}
+
+/* ---------- 8. לוח שנה עברי (הלוח הקטן) ---------- */
+#v-today #miniCal{padding:10px}
+#v-today #miniCal .hcal{background:transparent}
+
+/* ---------- 9. סדר יום ---------- */
+#v-today #tday>div:not(.empty){padding:10px 12px}
+
+/* ---------- 10. כרטיס עוזר: "קלוד יכול להכין בינתיים" ---------- */
+#v-today .assist-card{position:relative;overflow:hidden;isolation:isolate;color:#E7E9F3;
+  background:linear-gradient(160deg,#27305A,var(--navy-night) 75%)!important;box-shadow:var(--elev-2)!important}
+#v-today .assist-card::before{content:"";position:absolute;inset:0;z-index:-1;background:url("__FLAME__") left center/auto 140% no-repeat;opacity:.55;
+  -webkit-mask-image:linear-gradient(to right,#000 0%,transparent 55%);mask-image:linear-gradient(to right,#000 0%,transparent 55%)}
+#v-today .assist-card h2{color:#fff}
+#v-today .assist-card .ico{background:rgba(255,255,255,.12)!important;color:#fff!important;box-shadow:none!important}
+#v-today .assist-card #bgList .row{background:rgba(255,255,255,.92)}
+#v-today .assist-card .empty,#v-today .assist-card .empty span{color:#B7BBCB}
+#v-today .assist-card .empty b{color:#fff}
+/* ספירה ליריד: כרטיס כהה */
+#v-today .timer{background:var(--hero)!important;border:0!important}
+
+/* ---------- 11. מובייל ---------- */
+@media (max-width:1100px){
+  #app.app,html.sb-mini #app.app{grid-template-columns:minmax(0,1fr)}
+  #app .sidebar{position:fixed;z-index:60;top:12px;bottom:12px;right:12px;height:auto;max-width:calc(100vw - 24px);opacity:0;visibility:hidden;translate:24px 0;
+    transition:translate var(--t-slow) var(--ease),opacity var(--t-base),visibility var(--t-base)}
+  html.sb-open #app .sidebar{translate:0 0;opacity:1;visibility:visible}
+  #app .topbar-logo{display:block}
+  html.sb-open #app .topbar-logo{opacity:0;pointer-events:none}
+  .sb-scrim{display:block;position:fixed;inset:0;z-index:55;background:rgba(20,26,51,.3);opacity:0;pointer-events:none;transition:opacity var(--t-base)}
+  html.sb-open .sb-scrim{opacity:1;pointer-events:auto}
+}
+@media (max-width:760px){
+  #app.app{padding-block:8px 16px;gap:10px}
+  #app .topb{padding-bottom:6px}
+  #app .topb .datec .dc-txt small{display:none}
+  #v-today .mtx.hero{display:grid;min-height:0}
+  #v-today .hero.open-top .hero-art{position:relative;width:100%;height:150px;inset:auto;
+    -webkit-mask-image:linear-gradient(transparent,#000 35%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 70%,transparent)}
+  #v-today .hero .hero-copy{max-width:none;padding:0 18px 18px;gap:6px}
+  #v-today .hero .hero-copy h1{font-size:26px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #v-today .hero .chip-a{left:auto;right:12px;top:10px;padding:6px 10px 6px 8px}
+  #v-today .hero .pulse-pop{left:12px;right:12px;top:64px}
+  #v-today .hero .hero-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:12px -18px 0;padding:2px 18px 6px}
+  #v-today .hero .hero-chips::-webkit-scrollbar{display:none}
+  #v-today .hero .hero-chips .chip-float{flex:none}
+  #v-today .mtx.hero{min-height:0!important}
+  #v-today .hero .hero-cta .btn{min-height:var(--h-sm)}
+  #v-today .circles{grid-template-columns:minmax(0,1fr);gap:14px;padding-top:0}
+  #v-today .quick{justify-content:space-between}
+  #v-today .qa{flex:1;width:auto}
+  #v-today .stories{border:0;padding-inline-start:0}
+  #v-today .st-head{padding-left:0}
+  #v-today #kpis{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 8px;gap:12px}
+  #v-today #kpis::-webkit-scrollbar{display:none}
+  #v-today #kpis>.kpi{flex:none;width:74%;scroll-snap-align:center}
+  #v-today .kpi-dots{display:flex}
+  #v-today .reveal{animation:mtrise 620ms var(--ease) both;animation-delay:calc(var(--i,0) * 70ms)}
+}
+@keyframes mtrise{from{transform:translateY(14px);opacity:.25}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){#v-today .reveal{animation:none}#v-today .qa.ai .qi::before{animation:none}}
+
+/* ---------- 12. תיקונים אחרי בדיקה: כללים ישנים שנגעו בסרגל ובכפתורי המערכת ---------- */
+#app .sidebar{display:flex;flex-direction:column}
+#app .sidebar .sb-nav{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none}
+#app .sidebar .sb-nav::-webkit-scrollbar{display:none}
+#app .sidebar .sb-foot{flex:none}
+#app .sidebar .sb-profile .who{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;height:auto!important;display:grid;line-height:1.2;text-align:right;color:#fff}
+#app .sidebar .sb-profile .who b{color:#fff;font-weight:var(--fw-medium)}
+#app .sidebar .sb-profile .who>span{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-micro);color:#8B91A9}
+#app .sidebar .sync8{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.08)!important;color:#C9CDE0;border-radius:var(--r-tile)}
+#app .sidebar .sync8 .r1{color:#fff}
+#app .sidebar .sync8 small{color:#8B91A9}
+#app .sidebar .sync8 .av{box-shadow:0 0 0 2px #121733}
+#app .mtx .btn-brand{background:var(--royal)!important;color:#fff!important;box-shadow:var(--elev-1)!important}
+#app .mtx .btn-secondary{background:#fff!important;color:var(--ink-900)!important}
+#app .mtx .btn-ghost{background:rgba(255,255,255,.55)!important;color:var(--ink-700)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)!important}
+#app .mtx .btn-fab{background:rgba(255,255,255,.7)!important}
+#app .sidebar .sb-promo .btn{background:rgba(255,255,255,.12)!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)!important}
+
+#app .sidebar{overflow-y:auto;scrollbar-width:none}
+#app .sidebar::-webkit-scrollbar{display:none}
+#app .sidebar .sb-nav{flex:none;overflow:visible}
+#app .sidebar .sb-foot{margin-top:auto;padding-top:12px}
+#app .sidebar.is-collapsed .sb-profile .who,#app .sidebar.is-collapsed .sb-profile>svg{display:none}
+#app .sidebar.is-collapsed .sb-promo{display:none}
+#v-today .hero .hero-copy{z-index:2}
+#v-today .qa.ai-mode{background:none!important;box-shadow:none!important;color:var(--ink-700)!important;border:0!important;padding:0!important;filter:none!important}
+#v-today .qa.ai-mode::before,#v-today .qa.ai-mode::after{display:none!important}
+@media (max-width:760px){#v-today .hero .hero-copy{padding-bottom:14px}}
+#v-today .bento{align-items:start}
+
+/* =====================================================================
+   מסך משימות (#v-tasks)
+   ===================================================================== */
+#v-tasks .pagehead{align-items:flex-end;margin:4px 0 14px;gap:14px}
+#v-tasks .pagehead h1{font-size:clamp(28px,3vw,var(--fs-h2));font-weight:var(--fw-medium);color:var(--ink-900);letter-spacing:0;margin:0}
+#v-tasks .pagehead p{color:var(--ink-500);font-size:var(--fs-small);margin:4px 0 0}
+#v-tasks .toolbar{gap:8px;align-items:center}
+#v-tasks .toolbar>.muted{font-size:var(--fs-caption);color:var(--ink-400)}
+#v-tasks .seg{height:var(--h-md);padding:3px;border-radius:var(--r-pill);display:inline-flex;align-items:center;background:rgba(20,26,51,.06)}
+#v-tasks .seg button{height:100%;min-height:0;padding:0 12px;border-radius:var(--r-pill);font-size:var(--fs-small);color:var(--ink-500);background:transparent;box-shadow:none;border:0}
+#v-tasks .seg button[aria-pressed="true"]{background:#fff;color:var(--ink-900);box-shadow:var(--elev-1)}
+#v-tasks .toolbar .btn{min-height:var(--h-md);height:var(--h-md);padding:0 16px;font-size:var(--fs-small)}
+#v-tasks .toolbar #estAll{background:#fff!important;color:var(--ink-900);box-shadow:var(--elev-1)!important;border:0}
+#v-tasks .toolbar label.chip{height:var(--h-md);padding:0 14px;gap:8px;background:#fff;color:var(--ink-700);box-shadow:var(--elev-1);font-size:var(--fs-small);cursor:pointer}
+#v-tasks .toolbar label.chip input{accent-color:var(--royal);width:16px;height:16px;margin:0}
+#v-tasks>p.muted{font-size:var(--fs-small);color:var(--ink-500);max-width:80ch}
+/* שלוש העמודות = כרטיסים, כל משימה = row-tile */
+#v-tasks .tlay{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter);align-items:start}
+#v-tasks .lane{border-radius:var(--r-lg);padding:var(--pad-card);border:0;background:rgba(255,255,255,.42);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.62),inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(20,26,51,.04),0 14px 34px -18px rgba(20,26,51,.28)}
+#v-tasks .lane h3{font-size:var(--fs-lead);font-weight:var(--fw-medium);color:var(--ink-900);margin:0 0 2px;gap:8px}
+#v-tasks .lane h3 .dot{width:8px;height:8px;border-radius:50%;flex:none}
+#v-tasks .lane h3 .muted{font-size:var(--fs-caption)!important;color:var(--ink-400)}
+#v-tasks .lane p.muted{font-size:var(--fs-caption);color:var(--ink-400);margin:0 0 12px}
+#v-tasks .lane .list{display:grid;gap:8px}
+#v-tasks .trow{background:var(--cell);border:0!important;border-radius:var(--r-tile);padding:12px;gap:10px 12px;
+  box-shadow:0 1px 2px rgba(20,26,51,.05),0 6px 16px -10px rgba(20,26,51,.22);transition:background var(--t-base) var(--ease)}
+#v-tasks .trow:hover{background:#fff}
+#v-tasks .trow .t b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900);line-height:1.35}
+#v-tasks .trow .t small{font-size:var(--fs-micro);color:var(--ink-400);gap:4px 8px;margin-top:4px}
+#v-tasks .trow .t small .av{width:20px;height:20px;font-size:9px}
+#v-tasks .trow .check{width:20px;height:20px;border-radius:6px;min-height:0;padding:0;background:#fff;box-shadow:inset 0 0 0 1.5px var(--ink-200);border:0}
+#v-tasks .trow .check.on{background:var(--royal);box-shadow:none}
+#v-tasks .trow .side{gap:6px}
+#v-tasks .trow .side .btn{min-height:var(--h-sm);height:var(--h-sm);padding:0 12px;font-size:var(--fs-caption);background:#fff!important;color:var(--ink-900);box-shadow:var(--elev-1)!important;border:0}
+#v-tasks .trow .side .btn[data-send]{background:var(--royal)!important;color:#fff}
+#v-tasks .trow select.mini{height:24px;padding:0 10px;border-radius:var(--r-pill);font:inherit;font-size:var(--fs-micro);color:var(--ink-500);background:rgba(20,26,51,.05);border:0;box-shadow:none;width:auto;min-height:0}
+#v-tasks .urg{height:22px;display:inline-flex;align-items:center;gap:6px;padding:0 9px 0 10px;border-radius:var(--r-pill);font-size:var(--fs-micro);font-weight:var(--fw-medium)}
+#v-tasks .urg::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+#v-tasks .urg.u3{background:var(--bad-bg);color:var(--bad)}
+#v-tasks .urg.u2{background:var(--warn-bg);color:var(--warn)}
+#v-tasks .urg.u1{background:var(--surface-2);color:var(--ink-500)}
+#v-tasks .tag.blk{background:var(--bad-bg);color:var(--bad)}
+@media (max-width:1100px){#v-tasks .tlay{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){
+  #v-tasks .pagehead{flex-direction:column;align-items:stretch}
+  #v-tasks .toolbar{flex-wrap:wrap}
+  #v-tasks .seg{max-width:100%;overflow-x:auto;scrollbar-width:none}
+  #v-tasks .seg::-webkit-scrollbar{display:none}
+  #v-tasks .seg button{flex:none}
+  #v-tasks .trow{grid-template-columns:auto minmax(0,1fr)}
+  #v-tasks .trow .side{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:center}
+}
+#v-tasks .toolbar .btn,#v-tasks .toolbar label.chip{white-space:nowrap}@media (max-width:760px){#v-tasks .toolbar #estAll{flex:1 1 100%;order:3}}
