@@ -253,10 +253,9 @@
   // תפריט במובייל
   const app=document.getElementById("app");
   const menuBtn=document.getElementById("menuBtn"),sb=app.querySelector(".sidebar");
-  const setOpen=o=>{app.classList.toggle("nav-open",o);menuBtn.setAttribute("aria-expanded",String(o));if(o)sb.classList.remove("is-collapsed")};
+  const setOpen=o=>{app.classList.toggle("nav-open",o);menuBtn.setAttribute("aria-expanded",String(o))};
   menuBtn.addEventListener("click",()=>setOpen(true));
   document.getElementById("scrim").addEventListener("click",()=>setOpen(false));
-  sb.addEventListener("ds:logo",e=>{if(app.classList.contains("nav-open")){e.preventDefault();setOpen(false)}});
 })();
 </script>
 </body>
