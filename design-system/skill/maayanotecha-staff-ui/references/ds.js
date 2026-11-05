@@ -342,6 +342,34 @@
     }
   };
 
+
+  /* ---------------- כיווץ רשימות ארוכות ----------------
+     <section class="card" data-fold="3" data-fold-items="tbody tr" data-fold-key="orders">
+     מציג רק N פריטים ראשונים, השורה האחרונה דוהה, וכפתור "הצגת הכל (X)" / "צמצום".
+     המצב נשמר בדפדפן לפי data-fold-key. אם יש N פריטים או פחות – אין כפתור. */
+  window.DS.fold = function (card) {
+    const n = +card.dataset.fold || 3, sel = card.dataset.foldItems || ".row-tile", key = "mt-fold-" + (card.dataset.foldKey || "");
+    const items = [...card.querySelectorAll(sel)];
+    if (items.length <= n) return;
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "fold-toggle";
+    card.append(btn);
+    const store = { get() { try { return localStorage.getItem(key) === "1"; } catch (e) { return false; } },
+                    set(v) { try { localStorage.setItem(key, v ? "1" : "0"); } catch (e) {} } };
+    function set(open, animate) {
+      card.classList.toggle("is-folded", !open);
+      items.forEach((it, k) => {
+        it.classList.toggle("fold-hidden", !open && k >= n);
+        it.classList.toggle("fold-last", !open && k === n - 1);
+        if (open && animate && k >= n) { it.classList.remove("fold-in"); void it.offsetWidth; it.classList.add("fold-in"); it.style.setProperty("--k", k - n); }
+      });
+      btn.setAttribute("aria-expanded", String(open));
+      btn.innerHTML = open ? `צמצום${icon("chevD", "ico-sm")}` : `הצגת הכל <span class="n">${items.length}</span>${icon("chevD", "ico-sm")}`;
+    }
+    btn.addEventListener("click", () => { const open = card.classList.contains("is-folded"); set(open, true); store.set(open); if (!open) card.scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+    set(store.get(), false);
+  };
+
   /* ---------------- גאוג' טבעת עם רווחים ---------------- */
   window.DS.gauge = function (svg, parts) {
     const r = 70, c = 2 * Math.PI * r, gap = 10, total = parts.reduce((a, p) => a + p.v, 0);

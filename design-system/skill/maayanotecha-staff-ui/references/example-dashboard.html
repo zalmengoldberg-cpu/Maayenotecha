@@ -131,6 +131,8 @@
   [data-tour=orders] td:nth-child(1){grid-area:book}[data-tour=orders] td:nth-child(2){grid-area:cust}[data-tour=orders] td:nth-child(3){grid-area:ch}
   [data-tour=orders] td:nth-child(4){grid-area:date;justify-self:end;align-self:center;font-size:var(--fs-caption)}[data-tour=orders] td:nth-child(5){grid-area:status;justify-self:end;align-self:center}
   [data-tour=orders] td:nth-child(6){grid-area:sum;justify-self:end;font-size:var(--fs-lead)}[data-tour=orders] td:nth-child(7){display:none}
+  [data-tour=orders] tr.fold-last{-webkit-mask-image:linear-gradient(to bottom,#000 15%,transparent 100%);mask-image:linear-gradient(to bottom,#000 15%,transparent 100%)}
+  [data-tour=orders] tr.fold-last td{-webkit-mask-image:none;mask-image:none}
   .side-col,.right-col{grid-template-columns:minmax(0,1fr)!important}
   .ch-grid{grid-template-columns:repeat(5,128px);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -20px;padding:4px 20px 10px}
   .ch-grid::-webkit-scrollbar{display:none}
@@ -246,7 +248,7 @@
       <div class="m-only kpi-dots" id="kpiDots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
 
       <!-- טבלת הזמנות -->
-      <section class="card" data-tour="orders" aria-labelledby="o-h">
+      <section class="card" data-tour="orders" data-fold="3" data-fold-items="tbody tr" data-fold-key="orders" aria-labelledby="o-h">
         <div class="card-head"><h3 id="o-h">הזמנות אחרונות</h3><a class="link-sm" href="#">לכל ההזמנות</a></div>
         <div class="table-wrap">
           <table class="table">
@@ -262,11 +264,11 @@
           <div class="card-head"><h3 id="ch-h">הזמנות לפי ערוץ · השבוע</h3><a class="link-sm" href="#">לדוח המלא</a></div>
           <div class="ch-grid" id="channels"></div>
         </section>
-        <section class="card" aria-labelledby="tb-h">
+        <section class="card" data-fold="2" data-fold-items=".tb" data-fold-key="top-books" aria-labelledby="tb-h">
           <div class="card-head"><h3 id="tb-h">הנמכרים החודש</h3><a class="link-sm" href="#">לכל הקטלוג</a></div>
           <div class="top-books" id="topBooks"></div>
         </section>
-        <section class="card" aria-labelledby="ag-h">
+        <section class="card" data-fold="2" data-fold-items=".agenda-item" data-fold-key="agenda" aria-labelledby="ag-h">
           <div class="card-head"><h3 id="ag-h">סדר היום</h3><button class="more" type="button" aria-label="אפשרויות" data-icon="more" data-icon-class="ico-sm"></button></div>
           <div class="sched-progress"><div class="r"><span>התקדמות היום</span><b class="num">4/6</b></div><div class="bar" style="--v:66%;--c:var(--ok)"><i></i></div></div>
           <div class="agenda" id="agenda"></div>
@@ -363,6 +365,9 @@
   const setOpen=o=>{app.classList.toggle("nav-open",o);menuBtn.setAttribute("aria-expanded",String(o))};
   menuBtn.addEventListener("click",()=>setOpen(true));
   document.getElementById("scrim").addEventListener("click",()=>setOpen(false));
+
+  // כיווץ כרטיסים ארוכים: רואים כמה שורות, ו"הצגת הכל" פותח
+  document.querySelectorAll("[data-fold]").forEach(c=>DS.fold(c));
 
   // הסתרה/הצגה של העיגולים (נשמר בדפדפן)
   const circles=document.getElementById("circles"),cShow=document.getElementById("circlesShow"),cHide=document.getElementById("circlesHide");
