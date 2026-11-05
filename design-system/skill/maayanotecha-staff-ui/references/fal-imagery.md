@@ -12,6 +12,7 @@
 | לוגו מעיינותיך | **לא fal.** רק `assets/logos/*.svg` | אסור לצייר את הלוגו |
 | כריכות ספרים | **לא fal.** רק כריכות אמיתיות (`assets/covers` או מה שהמשתמש מצרף) | שם, מחבר וטקסט עברי חייבים להיות אמיתיים |
 | איור במה להירו / מסך פתיחה | **fal** – מתכון A | |
+| איור חי שמשקף מצב (מדד, התקדמות, עומס) | **fal** – מתכון F: סט מצבים מיושר | |
 | אייקון תלת-ממדי מזכוכית (מצב ריק, אריח אזור, אונבורדינג, כרטיס קידום) | **fal** – מתכון B | |
 | תמונת אווירה לכרטיס כהה (עוזר AI, קידום) | **fal** – מתכון C | |
 | טקסטורה/רקע (משי לסרגל, ערפל) | **fal** – מתכון D | |
@@ -89,3 +90,25 @@ looking at camera with a natural smile. Plain soft blue-grey seamless background
 Natural skin texture, editorial quality, no text.
 ```
 1:1, 1K. חותכים ריבוע סביב הפנים (כולל כובע וזקן), 176px. מגוון גילאים ומראות שמתאים לקהל של מעיינותיך, לבוש צנוע ומכובד. **לעולם לא** לפי שם או תמונה של אדם אמיתי, ולא במקום תמונה של משתמש אמיתי – מי שאין לו תמונה מקבל `mono`.
+
+### F · סט מצבים מיושר (איור חי שמשקף מצב – למשל שעון החול של "מדד העבודה")
+אותו אובייקט בכמה מצבים, **מיושרים בדיוק** כדי שאפשר יהיה לעבור ביניהם ב-crossfade.
+1. **מצב בסיס** – `text-to-image` לפי מתכון A, עם האובייקט והמצב הראשון:
+```
+Premium 3D visualization render in the style of a high-end medical x-ray anatomy illustration, but the subject is
+an elegant classic hourglass made of translucent frosted glass with visible inner structure, two slim polished glass
+end plates and three thin glass columns. Inside, the sand is made of fine luminous glowing particles, soft mint-green
+and turquoise light (#4FD1B5, #4A8BAA). The top bulb is about 80% full, a thin delicate stream of glowing grains falls
+through the narrow neck, and a small soft mound sits in the bottom bulb. [...המשך מתכון A: תאורה, מיקום, רקע #ECEEF3, בלי טקסט]
+```
+2. **כל מצב נוסף** – עריכה של תמונת הבסיס (`operation: "image-edit"`, נבחר: `google/nano-banana-2.1/edit`, `image_urls: [<בסיס>]`):
+```
+Edit this image. Keep the exact same hourglass, glass shape, columns, camera angle, framing, position, lighting and
+background completely unchanged, pixel-aligned. Only change the sand inside: [the top bulb is now only HALF full ...],
+and the sand and its soft inner glow are [warm amber gold (#F2911C)] instead of mint green.
+Keep the thin glowing stream of grains falling through the neck. No text, no numbers.
+```
+3. **בדיקה**: `inspect_images` לכל המצבים זה לצד זה. האובייקט חייב לשבת באותו מקום בדיוק, וההבדל בין המצבים חייב להיות ברור גם בלי הצבע (כאן: כמות החול). מצב שלא שונה מספיק – עורכים שוב **מהתוצאה שלו**, עם הוראה חדה יותר ("only HALF full, the upper half of the top bulb is clear empty glass").
+4. **צבעי מצבים**: רגוע `#4FD1B5` (מנטה), עמוס `#F2911C` (זהב), דחוף `#E2574C` (אלמוג). "Elegant and calm, not alarming" גם במצב הדחוף.
+
+אובייקטים אחרים שמתאימים למתכון: נר שדולק עד הסוף, באר שמתמלאת, מעיין שזורם חלש/חזק – תמיד אובייקט אחד מעולם המותג, שמצבו נקרא במבט אחד.

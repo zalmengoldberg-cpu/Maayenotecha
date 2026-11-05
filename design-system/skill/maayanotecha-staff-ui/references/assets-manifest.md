@@ -8,6 +8,9 @@
 | `assets/img/hero-wellspring.webp` | במת `hero` | google/nano-banana-2.1 (16:9, 2K) | A – ספר זכוכית פתוח שממנו עולה מעיין אור | https://v3b.fal.media/files/b/0ab1458a/jNxza-vEAZhBqg-OrivsP_vhVUVod2.png |
 | `assets/img/assistant-flame.webp` | כרטיס `assist` | google/nano-banana-2.1 (4:5, 2K) | C – להבה־טיפה רכה בשזיף וכחול לילה | https://v3b.fal.media/files/b/0ab1458a/v_6peiQ9ZvA9rvQYUAVhY_unFvo78z.jpg |
 | `assets/img/silk-waves.webp` | טקסטורת `sidebar` | google/nano-banana-2.1 (16:9, 2K) | D – קפלי משי בגרפיט וכחול לילה | https://v3b.fal.media/files/b/0ab1458a/7jmsUyv_AapEMrkcB1eyn_pnVueL9i.jpg |
+| `assets/img/pulse-calm.webp` | הירו `hero-pulse`, מצב רגוע | google/nano-banana-2.1 (16:9, 2K) | F – שעון חול, 80% חול למעלה, מנטה | https://v3b.fal.media/files/b/0ab14b93/Mb1MOiPlrGho4kCAf_Iph_qmBZYUm8.png |
+| `assets/img/pulse-busy.webp` | הירו `hero-pulse`, מצב עמוס | google/nano-banana-2.1/edit (שתי עריכות) | F – חצי חול למעלה, זהב | https://v3b.fal.media/files/b/0ab14b9d/GYRIPkF2oik_sAdHQjrvO_l95cqOMX.png |
+| `assets/img/pulse-urgent.webp` | הירו `hero-pulse`, מצב דחוף | google/nano-banana-2.1/edit | F – כמעט ריק למעלה, אלמוג | https://v3b.fal.media/files/b/0ab14b98/iDtXhKg2TgMbuBI-LhhvU_JPy87e1g.png |
 | `assets/icons-3d/orders.webp` | אזור הזמנות, מצב ריק | nano-banana-2.1 (1:1, 1K) + fal-ai/birefnet/v2 (General Use Heavy) | B – קופסת משלוח עם סרט | https://v3b.fal.media/files/b/0ab14b3d/HpTEx1Cz0CQbR9fsnEusE_chK101RV.png |
 | `assets/icons-3d/catalog.webp` | קטלוג ספרים | כנ"ל | B – ערימת שלושה ספרים | https://v3b.fal.media/files/b/0ab14b3d/fCPeJtZE5RjPwixc9lmt4_vWMWetwH.png |
 | `assets/icons-3d/calendar.webp` | לוח שנה, יום פנוי | כנ"ל | B – לוח שנה שולחני עם דפים ריקים | https://v3b.fal.media/files/b/0ab14b3d/yFIXogu2SsJxiP7DN6f_s_BHMVBl4M.png |

@@ -295,53 +295,114 @@
 
 
   /* ---------------- הירו חי ----------------
-     ניצוצות אור שעולים מהספר כמו מעיין, ליבה שפועמת, ועומק שמגיב לעכבר.
-     נקודת המוצא נקבעת ב-CSS: --spring-x / --spring-y (אחוזים מההירו). */
+     data-alive          → מעיין: ניצוצות עולים מנקודה (--spring-x/--spring-y באחוזים).
+     data-alive="sand"   → שעון חול: גרגירי אור נופלים מהצוואר עד ערימת החול.
+       נקודות על התמונה (שבר 0–1 של התמונה עצמה): data-neck="0.345,0.478", data-floor="0.76"
+       צבע ומהירות מ-CSS: --pulse-rgb, --pulse-speed (DS.pulse מעדכן אותם). */
   window.DS.heroLife = function (hero) {
     if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    const sand = hero.dataset.alive === "sand";
     const cv = document.createElement("canvas"); cv.className = "hero-sparks"; cv.setAttribute("aria-hidden", "true");
     const glow = document.createElement("div"); glow.className = "hero-glow";
-    hero.prepend(glow); hero.prepend(cv); // מתחת לטקסט ולצ'יפים
+    hero.prepend(glow); hero.prepend(cv);
     const art = hero.querySelector(".hero-art");
     const ctx = cv.getContext("2d"); let W = 0, H = 0, dpr = 1, P = [], run = false, raf = 0, last = 0;
     const COLS = ["255,214,150", "255,190,110", "170,236,244", "255,255,255", "200,190,255"];
-    function size() { const r = hero.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-    function origin() { const cs = getComputedStyle(hero); return [parseFloat(cs.getPropertyValue("--spring-x")) / 100 * W || W * .28, parseFloat(cs.getPropertyValue("--spring-y")) / 100 * H || H * .6]; }
+    const hb = () => hero.getBoundingClientRect();
+    function size() { const r = hb(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    // ממפה נקודה על התמונה (שבר) לנקודה בהירו, כולל object-fit:cover ו-object-position
+    function imgPoint(fx, fy) {
+      const img = art && (art.tagName === "IMG" ? art : art.querySelector("img")); if (!img || !img.naturalWidth) return null;
+      const r = img.getBoundingClientRect(), h = hb(), cs = getComputedStyle(img), [px, py] = cs.objectPosition.split(" ").map(v => parseFloat(v) / 100);
+      const s = Math.max(r.width / img.naturalWidth, r.height / img.naturalHeight), dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+      return [r.left - h.left + (r.width - dw) * (isNaN(px) ? .5 : px) + fx * dw, r.top - h.top + (r.height - dh) * (isNaN(py) ? .5 : py) + fy * dh, dh];
+    }
+    function origin() {
+      if (sand) { const [fx, fy] = (hero.dataset.neck || ".35,.48").split(",").map(Number), p = imgPoint(fx, fy); if (p) return p; }
+      const cs = getComputedStyle(hero); return [parseFloat(cs.getPropertyValue("--spring-x")) / 100 * W || W * .28, parseFloat(cs.getPropertyValue("--spring-y")) / 100 * H || H * .6, H];
+    }
+    function rgb() { return (getComputedStyle(hero).getPropertyValue("--pulse-rgb") || "242,145,28").trim(); }
     function spawn() {
-      const [ox, oy] = origin(), a = -Math.PI / 2 + (Math.random() - .5) * 1.1, sp = .9 + Math.random() * 1.5;
-      P.push({ x: ox + (Math.random() - .5) * 10, y: oy, vx: Math.cos(a) * sp * .55, vy: Math.sin(a) * sp, life: 0, max: 90 + Math.random() * 90,
-        r: .6 + Math.random() * 1.6, c: COLS[(Math.random() * COLS.length) | 0] });
+      const [ox, oy, dh] = origin();
+      if (sand) {
+        P.push({ x: ox + (Math.random() - .5) * 2.4, y: oy + Math.random() * 4, vx: (Math.random() - .5) * .06, vy: .6 + Math.random() * .9, g: .045,
+          life: 0, max: 400, r: .5 + Math.random() * 1.1, c: Math.random() < .25 ? "255,255,255" : rgb(), floor: (+hero.dataset.floor || .76) });
+      } else {
+        const a = -Math.PI / 2 + (Math.random() - .5) * 1.1, sp = .9 + Math.random() * 1.5;
+        P.push({ x: ox + (Math.random() - .5) * 10, y: oy, vx: Math.cos(a) * sp * .55, vy: Math.sin(a) * sp, g: .018, life: 0, max: 90 + Math.random() * 90,
+          r: .6 + Math.random() * 1.6, c: COLS[(Math.random() * COLS.length) | 0] });
+      }
     }
     function tick(t) {
       raf = requestAnimationFrame(tick); if (t - last < 15) return; last = t;
       ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = "lighter";
-      for (let k = 0; k < 2; k++) if (P.length < 70) spawn();
+      const speed = parseFloat(getComputedStyle(hero).getPropertyValue("--pulse-speed")) || 1;
+      const floorY = sand ? (() => { const p = imgPoint(0, +hero.dataset.floor || .76); return p ? p[1] : H * .8; })() : 0;
+      for (let k = 0; k < (sand ? Math.round(1 + speed) : 2); k++) if (P.length < (sand ? 60 : 70)) spawn();
       P = P.filter(p => {
-        p.life++; p.vy += .018; p.x += p.vx; p.y += p.vy; const f = 1 - p.life / p.max;
+        p.life++; p.vy += p.g; p.x += p.vx; p.y += p.vy;
+        let f = 1 - p.life / p.max;
+        if (sand) { if (p.y >= floorY) return false; f = Math.min(1, (floorY - p.y) / 18); }
         if (f <= 0) return false;
         const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        g.addColorStop(0, `rgba(${p.c},${.85 * f})`); g.addColorStop(1, `rgba(${p.c},0)`);
+        g.addColorStop(0, `rgba(${p.c},${.9 * f})`); g.addColorStop(1, `rgba(${p.c},0)`);
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 7); ctx.fill(); return true;
       });
     }
     const go = on => { if (on && !run) { run = true; raf = requestAnimationFrame(tick); } else if (!on && run) { run = false; cancelAnimationFrame(raf); } };
-    size(); addEventListener("resize", size);
+    const place = () => { const [x, y] = origin(); glow.style.left = x + "px"; glow.style.top = y + "px"; };
+    size(); place(); addEventListener("resize", () => { size(); place(); });
+    hero.querySelectorAll(".hero-art img, img.hero-art").forEach(i => i.complete ? place() : i.addEventListener("load", place));
     new IntersectionObserver(e => go(e[0].isIntersecting && !document.hidden)).observe(hero);
     document.addEventListener("visibilitychange", () => go(!document.hidden));
-    const place = () => { const [x, y] = origin(); glow.style.left = x + "px"; glow.style.top = y + "px"; };
-    place(); addEventListener("resize", place);
     if (matchMedia("(pointer:fine)").matches) {
       const chips = hero.querySelectorAll(".chip-float");
       hero.addEventListener("pointermove", e => {
-        const r = hero.getBoundingClientRect(), dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5;
-        if (art) art.style.transform = `translate(${dx * -14}px,${dy * -10}px) scale(1.03)`;
-        cv.style.transform = `translate(${dx * -14}px,${dy * -10}px)`; glow.style.translate = `${dx * -14}px ${dy * -10}px`;
+        const r = hb(), dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5;
+        const tr = `translate(${dx * -14}px,${dy * -10}px)`;
+        if (art) art.style.transform = tr + " scale(1.03)";
+        cv.style.transform = tr; glow.style.translate = `${dx * -14}px ${dy * -10}px`;
         chips.forEach((c, n) => c.style.translate = `${dx * (14 + n * 8)}px ${dy * (10 + n * 6)}px`);
       });
       hero.addEventListener("pointerleave", () => { if (art) art.style.transform = ""; cv.style.transform = ""; glow.style.translate = ""; chips.forEach(c => c.style.translate = ""); });
     }
   };
 
+  /* ---------------- מדד העבודה (שעון החול) ----------------
+     DS.pulse(hero, { factors:[{label, value, weight}], onLevel }) → { set(score|level), score, level }
+     ציון 0–100 מחושב מסכום (value × weight), מוגבל ל-100.
+     0–39 רגוע (מנטה) · 40–69 עמוס (זהב) · 70–100 דחוף (אלמוג).
+     בהירו: img[data-level="calm|busy|urgent"] בתוך .hero-art (מתחלפים ב-crossfade), .pulse-chip, [data-pulse-text]. */
+  const LEVELS = {
+    calm:   { he: "רגוע", rgb: "79,209,181", speed: .6, floor: .76, text: "הכל רגוע. זה זמן טוב לסדר את הקטלוג או לתכנן קדימה." },
+    busy:   { he: "עמוס", rgb: "242,145,28", speed: 1.2, floor: .68, text: "יום עמוס. כדאי להתחיל מהדברים שמחכים לטיפול." },
+    urgent: { he: "דחוף", rgb: "226,87,76", speed: 2, floor: .64, text: "יש דברים דחופים. כדאי לטפל בהם עכשיו." }
+  };
+  window.DS.pulse = function (hero, opts = {}) {
+    const factors = opts.factors || [];
+    const calc = () => Math.min(100, Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0)));
+    const lvl = s => s >= 70 ? "urgent" : s >= 40 ? "busy" : "calm";
+    let score = calc(), level = lvl(score);
+    function apply() {
+      const L = LEVELS[level];
+      hero.dataset.level = level; hero.dataset.floor = L.floor;
+      hero.style.setProperty("--pulse-rgb", L.rgb); hero.style.setProperty("--pulse-speed", L.speed);
+      hero.querySelectorAll(".hero-art img[data-level]").forEach(i => i.classList.toggle("on", i.dataset.level === level));
+      hero.querySelectorAll(".pulse-chip").forEach(c => {
+        c.querySelector(".ps-score").textContent = score;
+        c.querySelector(".ps-level").textContent = L.he;
+      });
+      hero.querySelectorAll("[data-pulse-text]").forEach(t => t.textContent = L.text);
+      opts.onLevel && opts.onLevel(level, score);
+    }
+    apply();
+    return {
+      get score() { return score; }, get level() { return level; }, factors,
+      demo: false,
+      set(v) { this.demo = true; if (typeof v === "string") { level = v; score = { calm: 22, busy: 55, urgent: 84 }[v]; } else { score = v; level = lvl(v); } apply(); },
+      recalc() { this.demo = false; score = calc(); level = lvl(score); apply(); }
+    };
+  };
 
   /* ---------------- כיווץ רשימות ארוכות ----------------
      <section class="card" data-fold="3" data-fold-items="tbody tr" data-fold-key="orders">
