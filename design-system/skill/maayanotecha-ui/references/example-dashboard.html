@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מעיינותיך · לוח ניהול</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+/* פריסת האפליקציה: סרגל צף מימין · עמודת תוכן עם 12 עמודות */
+.app{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;min-height:100vh;
+  padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app>.sidebar{position:sticky;top:16px;height:calc(100vh - 32px);--silk:url("assets/img/silk-waves.webp")}
+.main{min-width:0;max-width:var(--content-max);width:100%;margin-inline:auto;display:grid;gap:var(--gutter);align-content:start}
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.topbar .seg{margin-inline-end:auto}
+.topbar .search{width:min(280px,100%)}
+.menu-btn{display:none}
+.scrim{display:none}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter);align-items:start}
+.span-8{grid-column:span 8}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-3{grid-column:span 3}
+.stack{display:grid;gap:var(--gutter);min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gutter)}
+.hero-art{left:0;right:auto;width:72%}
+.hero{background:linear-gradient(to right,var(--stage) 45%,#DCDFE7 100%)}
+.chip-a{left:5%;top:16%}
+.chip-b{left:34%;bottom:12%}
+.top-books{display:grid;gap:14px}
+.top-books .tb{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center}
+.top-books .tb img{grid-row:span 2;width:30px;height:36px;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(20,26,51,.22))}
+.top-books .tb b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-books .tb .n{font-size:var(--fs-caption);color:var(--ink-500)}
+.top-books .tb .bar{grid-column:2/span 2}
+.sched-progress{display:grid;gap:8px;padding:12px;border-radius:var(--r-sm);background:var(--surface-2);margin-bottom:6px}
+.sched-progress .r{display:flex;justify-content:space-between;font-size:var(--fs-micro);color:var(--ink-500)}
+.sched-progress .r b{font-size:var(--fs-small);color:var(--ink-900);font-weight:var(--fw-medium)}
+.demo-note{font-size:var(--fs-micro);color:var(--ink-400);text-align:center;padding:8px 0 4px}
+
+@media (max-width:1280px){
+  .span-8,.span-4{grid-column:span 12}
+  .right-col{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .right-col>section:first-child{grid-column:span 2}
+}
+@media (max-width:1100px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .app>.sidebar{position:fixed;z-index:50;top:12px;bottom:12px;right:12px;height:auto;max-width:calc(100vw - 24px);opacity:0;visibility:hidden;translate:24px 0;transition:translate var(--t-slow) var(--ease),opacity var(--t-base),visibility var(--t-base)}
+  .app.nav-open>.sidebar{translate:0 0;opacity:1;visibility:visible}
+  .menu-btn{display:inline-flex}
+  .scrim{display:block;position:fixed;inset:0;z-index:40;background:rgba(20,26,51,.3);opacity:0;pointer-events:none;transition:opacity var(--t-base)}
+  .app.nav-open .scrim{opacity:1;pointer-events:auto}
+}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .side-col,.right-col{grid-template-columns:minmax(0,1fr)!important}
+  .right-col>section:first-child{grid-column:auto}
+  .topbar .seg{order:3;width:100%;overflow-x:auto;scrollbar-width:none;margin:0}
+  .topbar .search{flex:1;width:auto}
+  .user-chip .who{display:none}
+  .hero{display:grid;min-height:0}
+  .hero-art{position:relative;width:100%;height:230px;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+  .hero-copy{padding:0 20px 24px;max-width:none}
+  .chip-a{left:12px;top:12px}.chip-b{display:none}
+}
+</style>
+</head>
+<body class="bg-mist">
+<div class="app" id="app">
+
+  <!-- ============ סרגל צד ============ -->
+  <aside class="sidebar" aria-label="ניווט ראשי">
+    <div class="sb-head">
+      <div class="sb-logo">
+        <img src="assets/logos/maayanotecha-wordmark.webp" alt="מעיינותיך">
+      </div>
+      <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות, 4 חדשות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
+      <button class="sb-icon-btn sb-collapse" type="button" aria-label="כיווץ הסרגל" aria-expanded="true" data-icon="chevR" data-icon-class="ico-sm"></button>
+    </div>
+    <div class="sb-rule"></div>
+    <button class="sb-profile" type="button">
+      <span class="mono lg">זג</span>
+      <span class="who"><b>זלמן גולדברג</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span>
+      <svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg>
+    </button>
+    <label class="sb-search" data-icon="search" data-icon-class="ico-sm"><span class="sr-only">חיפוש בתפריט</span><input id="sb-q" type="search" placeholder="חיפוש…"></label>
+
+    <nav class="sb-nav">
+      <div class="sb-label">ניהול</div>
+      <button class="sb-item" data-nav type="button" aria-current="page"><span class="i" data-icon="home" data-icon-class="ico-sm"></span><span class="lbl">לוח בקרה</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="bag" data-icon-class="ico-sm"></span><span class="lbl">הזמנות</span><span class="badge">7</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="book" data-icon-class="ico-sm"></span><span class="lbl">קטלוג ספרים</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="truck" data-icon-class="ico-sm"></span><span class="lbl">מלאי והפצה</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="users" data-icon-class="ico-sm"></span><span class="lbl">לקוחות וחנויות</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="calendar" data-icon-class="ico-sm"></span><span class="lbl">לוח שנה</span></button>
+
+      <div class="sb-label">תוכן</div>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="sparkle" data-icon-class="ico-sm"></span><span class="lbl">החדשים של מעיינותיך</span><span class="badge gold">12</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="quote" data-icon-class="ico-sm"></span><span class="lbl">ציטוטים ותובנות</span></button>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="image" data-icon-class="ico-sm"></span><span class="lbl">מדיה ופוסטים</span></button>
+
+      <div class="sb-label">כללי</div>
+      <button class="sb-item" data-nav type="button"><span class="i" data-icon="settings" data-icon-class="ico-sm"></span><span class="lbl">הגדרות</span></button>
+      <button class="sb-item" type="button"><span class="i" data-icon="logout" data-icon-class="ico-sm"></span><span class="lbl">יציאה</span></button>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-promo"><b>12 כותרים חדשים</b>ממתינים לשיוך קטגוריה ולתמונת כריכה בקטלוג.<button class="btn btn-sm btn-secondary" type="button">לסידור הקטלוג</button></div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <!-- ============ תוכן ============ -->
+  <main class="main">
+    <header class="topbar">
+      <button class="btn btn-secondary btn-icon menu-btn" id="menuBtn" type="button" aria-label="פתיחת תפריט" data-icon="menu"></button>
+      <div class="seg seg-brand" role="tablist" aria-label="תצוגה">
+        <button role="tab" aria-selected="true">סקירה</button>
+        <button role="tab" aria-selected="false">מכירות</button>
+        <button role="tab" aria-selected="false">מלאי</button>
+        <button role="tab" aria-selected="false">הפצה</button>
+        <button role="tab" aria-selected="false">דוחות</button>
+      </div>
+      <label class="search" data-icon="search" data-icon-class="ico-sm"><span class="sr-only">חיפוש</span><input id="q" type="search" placeholder="חיפוש ספר, לקוח, הזמנה…"><kbd>⌘K</kbd></label>
+      <button class="btn btn-secondary btn-icon" type="button" aria-label="התראות" data-icon="bell"></button>
+      <button class="user-chip" type="button"><span class="who"><b>זלמן גולדברג</b><span>הוצאת מעיינותיך</span></span><span class="mono sm kraft">זג</span></button>
+    </header>
+
+    <div class="grid">
+     <div class="stack span-8">
+      <!-- הירו -->
+      <section class="hero" aria-label="פתיחה">
+        <img class="hero-art" alt="" src="https://v3b.fal.media/files/b/0ab1458a/jNxza-vEAZhBqg-OrivsP_vhVUVod2.png" onerror="this.onerror=null;this.src='assets/img/hero-wellspring.webp'">
+        <div class="chip-float chip-a"><span class="ic" data-icon="flame" data-icon-class="ico-sm"></span><span class="lab"><span>מכירות היום</span><b class="num">₪4,280 <span class="trend up">+12%</span></b></span></div>
+        <div class="chip-float chip-b"><img src="assets/covers/maggid-devarav-leyaakov-2.webp" alt=""><span class="lab"><span>נשלח לדפוס</span><b style="font-size:13px;font-weight:500">מגיד דבריו ליעקב ח״ב</b></span></div>
+        <div class="hero-copy">
+          <span class="eyebrow">הוצאת מעיינותיך · לוח ניהול</span>
+          <h1 class="t-h1"><span data-greeting>שלום</span>,<br><b>זלמן</b></h1>
+          <p class="t-muted">יש לך <b>7 הזמנות חדשות</b> היום, <b>2 ספרים</b> בדפוס ו־12 כותרים שמחכים לקטלוג.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" type="button" data-icon="bag" data-icon-class="ico-sm">להזמנות היום</button>
+            <button class="btn btn-ghost" type="button" data-icon="plus" data-icon-class="ico-sm">ספר חדש</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI -->
+      <div class="kpis">
+        <article class="card kpi"><div class="kpi-top">הזמנות היום<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
+          <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +12%</span><span class="t-kpi num">47</span></div><svg class="spark" data-spark="18,22,20,26,24,31,29,38,47" data-c="#3F5499"></svg></div></article>
+        <article class="card kpi"><div class="kpi-top">הכנסות החודש<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
+          <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +8%</span><span class="t-kpi num">₪86.4K</span></div><svg class="spark" data-spark="52,58,55,61,66,64,72,79,86" data-c="#3F5499"></svg></div></article>
+        <article class="card kpi"><div class="kpi-top">ספרים במלאי<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
+          <div class="kpi-body"><div class="kpi-val"><span class="trend down">▼ −3%</span><span class="t-kpi num">1,046</span></div><svg class="spark" data-spark="1120,1112,1100,1104,1090,1076,1070,1058,1046" data-c="#F2911C"></svg></div></article>
+        <article class="card kpi"><div class="kpi-top">מנויי ניוזלטר<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
+          <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +4%</span><span class="t-kpi num">9,214</span></div><svg class="spark" data-spark="8600,8640,8700,8760,8820,8900,9010,9120,9214" data-c="#F2911C"></svg></div></article>
+      </div>
+
+      <!-- טבלת הזמנות -->
+      <section class="card" aria-labelledby="o-h">
+        <div class="card-head"><h3 id="o-h">הזמנות אחרונות</h3><a class="link-sm" href="#">לכל ההזמנות</a></div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>ספר</th><th>לקוח</th><th>תאריך</th><th>סטטוס</th><th>סכום</th><th><span class="sr-only">פעולות</span></th></tr></thead>
+            <tbody id="orders"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- עמודה תחתונה -->
+      <div class="grid side-col" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <section class="card" aria-labelledby="tb-h">
+          <div class="card-head"><h3 id="tb-h">הנמכרים החודש</h3><a class="link-sm" href="#">לכל הקטלוג</a></div>
+          <div class="top-books" id="topBooks"></div>
+        </section>
+        <section class="card" aria-labelledby="ag-h">
+          <div class="card-head"><h3 id="ag-h">סדר היום</h3><button class="more" type="button" aria-label="אפשרויות" data-icon="more" data-icon-class="ico-sm"></button></div>
+          <div class="sched-progress"><div class="r"><span>התקדמות היום</span><b class="num">4/6</b></div><div class="bar" style="--v:66%;--c:var(--ok)"><i></i></div></div>
+          <div class="agenda" id="agenda"></div>
+        </section>
+      </div>
+
+     </div>
+     <div class="stack span-4 right-col">
+      <!-- גאוג' -->
+      <section class="card" aria-labelledby="g-h">
+        <div class="card-head"><h3 id="g-h">מכירות לפי תחום · החודש</h3><button class="more" type="button" aria-label="אפשרויות" data-icon="more" data-icon-class="ico-sm"></button></div>
+        <div class="gauge"><svg id="gauge" role="img" aria-label="חסידות 46%, תפילה ומועדים 31%, הגות וסיפור 23%"></svg>
+          <div class="center"><b>1,284</b><span>ספרים נמכרו</span></div></div>
+        <div class="legend">
+          <div style="--c:var(--royal)"><b class="num">46%</b>חסידות</div>
+          <div style="--c:var(--gold)"><b class="num">31%</b>תפילה ומועדים</div>
+          <div style="--c:var(--kraft-600)"><b class="num">23%</b>הגות וסיפור</div>
+        </div>
+      </section>
+
+      <!-- לוח שנה -->
+      <section class="card" style="background:var(--surface-2);padding:10px" aria-label="לוח שנה עברי">
+        <div id="cal" class="hcal"></div>
+      </section>
+
+      <!-- עוזר -->
+      <section class="assist" aria-labelledby="as-h">
+        <img alt="" src="https://v3b.fal.media/files/b/0ab1458a/v_6peiQ9ZvA9rvQYUAVhY_unFvo78z.jpg" onerror="this.onerror=null;this.src='assets/img/assistant-flame.webp'">
+        <div><h3 id="as-h">מעיין</h3><p class="sub">העוזר החכם של ההוצאה</p></div>
+        <div style="display:grid;gap:10px">
+          <div class="sugg"><button type="button">מה נמכר הכי טוב השבוע?</button><button type="button">נסח פוסט לספר חדש</button></div>
+          <div class="ask">
+            <div class="ask-top"><span>שאלות על הקטלוג, המלאי וההזמנות</span><span class="up">חדש</span></div>
+            <label class="sr-only" for="ask">שאלה לעוזר</label><input id="ask" placeholder="שאל כל דבר…">
+            <div class="ask-row"><span class="tools"><button class="kebab" type="button" aria-label="צירוף קובץ" data-icon="attach" data-icon-class="ico-sm"></button><button class="kebab" type="button" aria-label="הקלטה" data-icon="mic" data-icon-class="ico-sm"></button></span><button class="send" type="button" aria-label="שליחה" data-icon="send" data-icon-class="ico-sm"></button></div>
+          </div>
+        </div>
+      </section>
+     </div>
+    </div>
+    <p class="demo-note">כל המספרים, ההזמנות והאירועים במסך הזה הם נתוני הדגמה.</p>
+  </main>
+</div>
+
+<script src="ds.js"></script>
+<script>
+(function(){
+  const {icon,iso,addDays}=DS;
+  // גרפים
+  document.querySelectorAll("svg[data-spark]").forEach(s=>DS.spark(s,s.dataset.spark.split(",").map(Number),s.dataset.c));
+  DS.gauge(document.getElementById("gauge"),[{v:46,c:"#3F5499"},{v:31,c:"#F2911C"},{v:23,c:"#A9865C"}]);
+
+  // לוח שנה (אירועי הדגמה יחסית להיום)
+  const t=new Date();t.setHours(12,0,0,0);const E={};
+  const add=(n,e)=>{const k=iso(addDays(t,n));(E[k]=E[k]||[]).push(e)};
+  add(0,{t:"סגירת קבצים לדפוס",s:"מגיד דבריו ליעקב המבואר · חלק ב׳",time:"10:00",gold:true});
+  add(0,{t:"שיחה עם המפיץ",s:"עדכון מלאי לקראת החורף",time:"14:30"});
+  add(2,{t:"משלוח לחנויות",s:"42 קרטונים · מרכז",time:"09:00"});
+  add(-3,{t:"פגישת עריכה",s:"שערי לוי יצחק · חלק א׳",time:"11:00"});
+  add(6,{t:"צילום כריכות",s:"4 כותרים חדשים",time:"13:00"});
+  add(-9,{t:"סגירת חודש",s:"דוח מכירות והפצה",time:"16:00"});
+  add(12,{t:"השקת ספר",s:"תניא בפיך ובלבבך",time:"19:30",gold:true});
+  DS.calendar(document.getElementById("cal"),{events:E});
+
+  // הזמנות
+  const B={nm:["נשמתא דאורייתא","ביאורי חסידות לש״ס","nishmata-deoraita"],tz:["צדיק יסוד עולם","תולדות הריי״צ","tzaddik-yesod-olam"],tn:["תניא בפיך ובלבבך","ביאור חדש לתניא","tanya-befikha-uvilvavkha"],lt:["לתקן עולם","מסע ל־50 בתי חב״ד","letaken-olam"],lc:["לב חדש","שיחות עם אישים","lev-chadash"],cl:["חזון למועד","הרב יחזקאל סופר","chazon-lamoed"]};
+  const O=[["tn","מנחם כהן","",0,"ok","שולם","₪138"],["nm","רבקה שוורץ","plum",0,"info","בהכנה","₪96"],["lt","שמואל לוי","sage",-1,"warn","ממתין לתשלום","₪74"],["tz","חיה מושקא פרידמן","gold",-1,"ok","נשלח","₪212"],["lc","לוי יצחק גרין","",-2,"bad","הוחזר","₪58"],["cl","יוסף רוזנברג","kraft",-2,"ok","נשלח","₪64"]];
+  const dfmt=new Intl.DateTimeFormat("he-IL",{day:"numeric",month:"short"});
+  document.getElementById("orders").innerHTML=O.map(([b,n,c,d,s,st,p])=>`<tr>
+    <td><div class="cell-book"><img src="assets/covers/${B[b][2]}.webp" alt=""><div><b>${B[b][0]}</b><span>${B[b][1]}</span></div></div></td>
+    <td><div class="cell-book" style="gap:10px"><span class="mono sm ${c}">${n.split(" ").map(x=>x[0]).slice(0,2).join("")}</span>${n}</div></td>
+    <td class="num">${dfmt.format(addDays(t,d))}</td><td><span class="status ${s}">${st}</span></td>
+    <td class="num" style="color:var(--ink-900)">${p}</td><td><button class="kebab" type="button" aria-label="פעולות להזמנה">${icon("more","ico-sm")}</button></td></tr>`).join("");
+
+  // הנמכרים
+  const TB=[["tn",184,92,"var(--royal)"],["nm",151,76,"var(--royal-400)"],["lt",122,61,"var(--gold)"],["tz",97,49,"var(--kraft-600)"]];
+  document.getElementById("topBooks").innerHTML=TB.map(([b,n,v,c])=>`<div class="tb"><img src="assets/covers/${B[b][2]}.webp" alt=""><b>${B[b][0]}</b><span class="n num">${n} עותקים</span><div class="bar" style="--v:${v}%;--c:${c}"><i></i></div></div>`).join("");
+
+  // סדר יום
+  const A=[["09:00","09:30","ישיבת צוות בוקר","תכנון שבועי","",'ok',"הושלם"],["10:00","11:00","סגירת קבצים לדפוס","מגיד דבריו ליעקב ח״ב","gold",'info',"עכשיו"],["14:30","15:00","שיחה עם המפיץ","עדכון מלאי","sage","",'מתוכנן'],["17:00","17:30","אישור פוסט שבועי","תובנה בהשראת הפרשה","plum","",'מתוכנן']];
+  document.getElementById("agenda").innerHTML=A.map(([a,b,ti,su,c,s,st])=>`<div class="agenda-item"><span class="tm">${a}<span>${b}</span></span><span class="mono sm ${c}">${ti[0]}</span><span class="meta"><b>${ti}</b><span>${su}</span></span><span class="status ${s}">${st}</span></div>`).join("");
+
+  // תפריט במובייל
+  const app=document.getElementById("app");
+  document.getElementById("menuBtn").addEventListener("click",()=>app.classList.add("nav-open"));
+  document.getElementById("scrim").addEventListener("click",()=>app.classList.remove("nav-open"));
+})();
+</script>
+</body>
+</html>

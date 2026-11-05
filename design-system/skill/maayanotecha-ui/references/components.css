@@ -1,0 +1,345 @@
+/* ==========================================================================
+   מעיינותיך · רכיבים  (תלוי ב-tokens.css)
+   ========================================================================== */
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-body);color:var(--ink-700);
+  background:var(--canvas);direction:rtl;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{display:block;max-width:100%}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{margin:0;color:var(--ink-900);font-weight:var(--fw-medium);line-height:var(--lh-snug);text-wrap:balance}
+p{margin:0}
+.num,.tnum{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+:focus-visible{outline:2px solid var(--royal-400);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ico{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ico-sm{width:15px;height:15px}
+.ico-lg{width:22px;height:22px}
+
+/* ---------- רקע ערפל (CareNest) ---------- */
+.bg-mist{
+  background:
+    radial-gradient(60% 50% at 85% 0%,rgba(100,118,182,.16),transparent 70%),
+    radial-gradient(50% 45% at 10% 100%,rgba(242,145,28,.08),transparent 70%),
+    linear-gradient(180deg,var(--canvas) 0%,var(--canvas-2) 100%);
+  background-attachment:fixed;
+}
+
+/* ---------- טיפוגרפיה ---------- */
+.eyebrow{font-size:var(--fs-micro);font-weight:var(--fw-medium);letter-spacing:var(--track-label);color:var(--ink-400)}
+.t-display{font-size:var(--fs-display);font-weight:var(--fw-black);line-height:1;color:var(--ink-900);letter-spacing:-.01em}
+.t-h1{font-size:clamp(30px,3.4vw,var(--fs-h1));font-weight:var(--fw-regular);line-height:1.15;color:var(--ink-900)}
+.t-h1 b{font-weight:var(--fw-medium)}
+.t-h2{font-size:var(--fs-h2);font-weight:var(--fw-medium)}
+.t-h3{font-size:var(--fs-h3);font-weight:var(--fw-medium)}
+.t-h4{font-size:var(--fs-h4);font-weight:var(--fw-medium)}
+.t-title{font-size:var(--fs-body);font-weight:var(--fw-medium);color:var(--ink-900)}
+.t-muted{color:var(--ink-500)}
+.t-faint{color:var(--ink-400)}
+.t-caption{font-size:var(--fs-caption);color:var(--ink-500)}
+.t-kpi{font-size:clamp(24px,2.1vw,32px);font-weight:var(--fw-regular);color:var(--ink-900);line-height:1;letter-spacing:-.01em}
+
+/* ==========================================================================
+   פקדים — "אותה צורה ואותו עומק": כל הפקדים בשורה העליונה חולקים
+   גובה (--h-md), רדיוס (pill) ושכבת עומק (--elev-1).
+   ========================================================================== */
+.btn{--h:var(--h-md);display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--h);
+  padding:0 16px;border-radius:var(--r-pill);border:0;font-size:var(--fs-small);font-weight:var(--fw-medium);
+  white-space:nowrap;transition:transform var(--t-fast) var(--ease),box-shadow var(--t-base) var(--ease),background var(--t-base) var(--ease)}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-sm{--h:var(--h-sm);padding:0 12px;font-size:var(--fs-caption)}
+.btn-lg{--h:var(--h-lg);padding:0 22px;font-size:var(--fs-body)}
+/* ראשי כהה – דיו, לא שחור; שפת אור פנימית למעלה */
+.btn-primary{background:linear-gradient(180deg,#2A335A,var(--ink-800));color:#fff;box-shadow:var(--elev-primary)}
+.btn-primary:hover{background:linear-gradient(180deg,#323C68,#232B4E)}
+/* מותג – לרגעי פעולה ראשיים בתוך כרטיס (הוסף אירוע) */
+.btn-brand{background:linear-gradient(180deg,#5266AC,var(--royal));color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 6px 16px -6px rgba(63,84,153,.6)}
+.btn-brand:hover{background:linear-gradient(180deg,#5A6FB6,#45599F)}
+/* משני – משטח לבן עם שפת אור */
+.btn-secondary{background:var(--surface);color:var(--ink-900);box-shadow:var(--elev-1)}
+.btn-secondary:hover{background:#FBFBFD}
+/* רפאים – שקוף, רק טקסט */
+.btn-ghost{background:transparent;color:var(--ink-700)}
+.btn-ghost:hover{background:rgba(20,26,51,.05)}
+/* זהב רך – "זמני היום" */
+.btn-gold{background:var(--gold-100);color:var(--gold-600);box-shadow:inset 0 0 0 1px rgba(242,145,28,.18)}
+.btn-gold:hover{background:#FBE2C1}
+/* כפתור עגול – אותו גובה בדיוק */
+.btn-icon{width:var(--h);padding:0}
+.btn-icon.btn-lg{width:var(--h-lg)}
+/* כפתור עגול גדול (ניווט לוח שנה) */
+.btn-fab{--h:52px;width:52px;padding:0;background:var(--royal);color:#fff;box-shadow:0 10px 24px -8px rgba(63,84,153,.65),inset 0 1px 0 rgba(255,255,255,.2)}
+
+/* ---------- טאבים מפולחים (Dashboard/Patients/...) ---------- */
+.seg{display:inline-flex;align-items:center;gap:2px;height:var(--h-md);padding:3px;border-radius:var(--r-pill);
+  background:rgba(20,26,51,.045);box-shadow:inset 0 1px 2px rgba(20,26,51,.06)}
+.seg button{height:100%;padding:0 16px;border:0;border-radius:var(--r-pill);background:transparent;color:var(--ink-500);
+  font-size:var(--fs-small);font-weight:var(--fw-medium);transition:all var(--t-base) var(--ease);white-space:nowrap}
+.seg button:hover{color:var(--ink-900)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink-900);box-shadow:var(--elev-1)}
+.seg.seg-brand button[aria-selected="true"]{background:linear-gradient(180deg,#5A6EB2,var(--royal));color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 10px -4px rgba(63,84,153,.6)}
+
+/* ---------- חיפוש ---------- */
+.search{display:flex;align-items:center;gap:8px;height:var(--h-md);padding:0 14px;border-radius:var(--r-pill);
+  background:var(--surface);box-shadow:var(--elev-1);color:var(--ink-400);min-width:0}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--ink-900);font-size:var(--fs-small)}
+.search input::placeholder{color:var(--ink-300)}
+.search kbd{font:inherit;font-size:var(--fs-micro);color:var(--ink-400);border-radius:6px;padding:1px 6px;box-shadow:inset 0 0 0 1px var(--line-strong)}
+.search:focus-within{box-shadow:var(--hl-top),0 0 0 1px var(--royal-200),0 0 0 4px var(--royal-50)}
+
+/* ---------- צ'יפ משתמש ---------- */
+.user-chip{display:inline-flex;align-items:center;gap:10px;height:var(--h-md);padding:0 4px 0 12px;border-radius:var(--r-pill);
+  background:var(--surface);box-shadow:var(--elev-1);border:0}
+.user-chip .who{display:grid;line-height:1.15;text-align:right}
+.user-chip .who b{font-size:var(--fs-caption);font-weight:var(--fw-medium);color:var(--ink-900)}
+.user-chip .who span{font-size:10.5px;color:var(--ink-400)}
+
+/* ---------- מונוגרמה (במקום תמונות פרופיל גנריות) ---------- */
+.mono{--sz:32px;width:var(--sz);height:var(--sz);flex:none;border-radius:50%;display:grid;place-items:center;
+  font-size:calc(var(--sz)*.38);font-weight:var(--fw-bold);color:#fff;letter-spacing:.02em;
+  background:linear-gradient(145deg,var(--c1,#6476B6),var(--c2,#33468A));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 2px var(--surface)}
+.mono.sm{--sz:26px}.mono.lg{--sz:44px}
+.mono.kraft{--c1:#D9C2A3;--c2:#A9865C}.mono.plum{--c1:#8B3A6B;--c2:#5E1542}.mono.gold{--c1:#F6B25B;--c2:#D97B0A}.mono.sage{--c1:#6FAF97;--c2:#2E8566}
+
+/* ---------- תגים וסטטוסים ---------- */
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
+  font-size:10.5px;font-weight:var(--fw-bold);background:var(--bad);color:#fff;font-variant-numeric:tabular-nums}
+.badge.gold{background:var(--gold);color:#2A1A04}
+.badge.soft{background:var(--royal-100);color:var(--royal)}
+.status{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px 0 10px;border-radius:var(--r-pill);
+  font-size:var(--fs-micro);font-weight:var(--fw-medium);white-space:nowrap;background:var(--surface-2);color:var(--ink-500)}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.status.ok{background:var(--ok-bg);color:var(--ok)}
+.status.warn{background:var(--warn-bg);color:var(--warn)}
+.status.bad{background:var(--bad-bg);color:var(--bad)}
+.status.info{background:var(--info-bg);color:var(--info)}
+.trend{display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-micro);font-weight:var(--fw-medium);direction:ltr}
+.trend.up{color:var(--ok)}.trend.down{color:var(--bad)}
+.tag{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:var(--r-pill);font-size:var(--fs-caption);
+  color:var(--ink-500);box-shadow:inset 0 0 0 1px var(--line-strong);background:rgba(255,255,255,.5)}
+
+/* ==========================================================================
+   כרטיסים
+   ========================================================================== */
+.card{position:relative;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--elev-2);padding:var(--pad-card);min-width:0}
+/* זכוכית בהירה — 5 שכבות: מילוי שקוף · טשטוש+רוויה · גבול בהיר · שפת אור · צל רך */
+.card-glass{background:var(--glass-1);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));
+  box-shadow:inset 0 0 0 1px var(--glass-edge),var(--hl-top),0 1px 2px rgba(20,26,51,.04),0 12px 32px -14px rgba(20,26,51,.16)}
+/* זכוכית כהה — סרגל צד, עוזר AI */
+.card-dark{background:var(--glass-dark);color:#E9EBF5;-webkit-backdrop-filter:blur(30px) saturate(140%);backdrop-filter:blur(30px) saturate(140%);
+  box-shadow:inset 0 0 0 1px var(--glass-dark-edge),inset 0 1px 0 rgba(255,255,255,.08),0 24px 60px -20px rgba(10,12,30,.6)}
+.card-dark h3,.card-dark h4{color:#fff}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.card-head h3{font-size:var(--fs-body);font-weight:var(--fw-medium)}
+.card-head .more{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--ink-400);background:transparent;border:0}
+.card-head .more:hover{background:var(--surface-2);color:var(--ink-900)}
+.link-sm{font-size:var(--fs-caption);color:var(--ink-500);display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--r-pill);background:var(--surface-2)}
+.link-sm:hover{color:var(--ink-900)}
+/* שורה בתוך כרטיס (Upcoming Appointments) */
+.row-tile{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-sm);background:var(--surface-2)}
+.card-glass .row-tile{background:var(--glass-2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+.row-tile .meta{flex:1;min-width:0;display:grid;line-height:1.3}
+.row-tile .meta b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-tile .meta span{font-size:var(--fs-micro);color:var(--ink-400)}
+
+/* ---------- כרטיס KPI (Total Patients) ---------- */
+.kpi{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;gap:18px;padding:16px 16px 14px}
+.kpi .kpi-top{display:flex;justify-content:space-between;align-items:center;font-size:var(--fs-caption);color:var(--ink-500)}
+.kpi .kpi-top .go{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--ink-400)}
+.kpi:hover .kpi-top .go{background:var(--surface-2);color:var(--ink-900)}
+.kpi .kpi-body{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.kpi .kpi-val{display:grid;gap:6px}
+.kpi svg.spark{flex:1 1 auto;min-width:44px;max-width:130px;height:40px}
+.kpi .kpi-val{flex:none}
+@media (max-width:760px){.kpi .kpi-body{flex-direction:column;align-items:stretch}.kpi svg.spark{max-width:none;width:100%;flex:none}.kpi .t-kpi{font-size:26px}}
+
+/* ---------- טבלה ---------- */
+.card:has(>.table-wrap){overflow:hidden}
+.table-wrap{overflow-x:auto;margin:0 calc(var(--pad-card) * -1);padding:0 var(--pad-card)}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-small);min-width:620px}
+.table th{font-size:var(--fs-micro);font-weight:var(--fw-regular);color:var(--ink-400);text-align:right;padding:0 10px 10px;white-space:nowrap}
+.table td{padding:10px;border-top:1px solid var(--line);vertical-align:middle;color:var(--ink-500);white-space:nowrap}
+.table tr:hover td{background:var(--surface-2)}
+.table tr td:first-child{border-radius:0 12px 12px 0}.table tr td:last-child{border-radius:12px 0 0 12px}
+.cell-book{display:flex;align-items:center;gap:12px}
+.cell-book img{width:34px;height:40px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(20,26,51,.22))}
+.cell-book b{display:block;font-weight:var(--fw-medium);color:var(--ink-900);font-size:var(--fs-small)}
+.cell-book span{font-size:var(--fs-micro);color:var(--ink-400)}
+.kebab{width:28px;height:28px;border-radius:50%;border:0;background:transparent;color:var(--ink-400);display:grid;place-items:center}
+.kebab:hover{background:var(--surface);color:var(--ink-900);box-shadow:var(--elev-1)}
+
+/* ---------- פס התקדמות ---------- */
+.bar{height:6px;border-radius:var(--r-pill);background:rgba(20,26,51,.07);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:inherit;background:var(--c,var(--royal));width:var(--v,50%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+
+/* ==========================================================================
+   סרגל צד (Sidebar UI) — זכוכית כהה מעל משי, פריט פעיל ברוחב מלא
+   ========================================================================== */
+.sidebar{position:relative;width:var(--sidebar-w);border-radius:var(--r-xl);overflow:hidden;color:#C9CDE0;
+  display:flex;flex-direction:column;isolation:isolate;transition:width var(--t-slow) var(--ease);
+  box-shadow:0 30px 60px -24px rgba(10,14,40,.55),0 0 0 1px rgba(20,26,51,.2)}
+.sidebar::before{content:"";position:absolute;inset:0;z-index:-2;background:var(--navy-night) var(--silk,none) center/cover no-repeat}
+.sidebar::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,rgba(26,31,58,.70),rgba(14,17,36,.86));
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.12)}
+.sb-head{display:flex;align-items:center;gap:10px;padding:20px 20px 16px}
+.sb-logo{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.sb-logo img{height:26px;width:auto;filter:brightness(0) invert(1);opacity:.95}
+.sb-logo .mark{width:30px;height:30px;flex:none}
+.sb-icon-btn{position:relative;width:30px;height:30px;border-radius:50%;border:0;display:grid;place-items:center;color:#E6E8F2;background:rgba(255,255,255,.06);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.sb-icon-btn:hover{background:rgba(255,255,255,.12)}
+.sb-icon-btn .badge{position:absolute;top:-4px;left:-4px;min-width:16px;height:16px;font-size:9.5px;box-shadow:0 0 0 2px #1A1F3A}
+.sb-rule{height:1px;margin:0 20px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.sb-profile{display:flex;align-items:center;gap:12px;margin:14px 12px 10px;padding:10px;border-radius:var(--r-md);background:transparent;border:0;color:inherit;text-align:right;width:calc(100% - 24px)}
+.sb-profile:hover{background:var(--glass-dark-row)}
+.sb-profile .mono{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 2px rgba(255,255,255,.12)}
+.sb-profile .who{flex:1;min-width:0;display:grid;line-height:1.3}
+.sb-profile b{color:#fff;font-weight:var(--fw-medium);font-size:var(--fs-body)}
+.sb-profile span{font-size:var(--fs-micro);color:#8D93B0;display:inline-flex;align-items:center;gap:4px}
+.sb-search{display:flex;align-items:center;gap:8px;height:36px;margin:4px 16px 8px;padding:0 14px;border-radius:var(--r-pill);
+  color:#8D93B0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+.sb-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;font-size:var(--fs-caption);letter-spacing:.02em}
+.sb-search input::placeholder{color:#7D83A2}
+.sb-nav{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:12px}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-label{padding:16px 24px 6px;font-size:11px;font-weight:var(--fw-medium);letter-spacing:.06em;color:#7D83A2}
+.sb-item{position:relative;display:flex;align-items:center;gap:14px;width:100%;height:46px;padding:0 20px;border:0;background:transparent;
+  color:#C9CDE0;font-size:var(--fs-body);text-align:right;transition:background var(--t-base) var(--ease),color var(--t-base) var(--ease)}
+.sb-item .i{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;background:rgba(255,255,255,.06);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);color:#E6E8F2;transition:inherit}
+.sb-item .lbl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-item:hover{background:rgba(255,255,255,.045);color:#fff}
+/* פעיל: פס מלא מקצה לקצה, כמו ב-Sidebar UI – בצבע המותג במקום אדום */
+.sb-item[aria-current="page"]{color:#fff;font-weight:var(--fw-medium);
+  background:linear-gradient(90deg,#3F5499 0%,#4D63AD 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.18),0 10px 24px -10px rgba(63,84,153,.9)}
+.sb-item[aria-current="page"] .i{background:transparent;box-shadow:none}
+.sb-item[aria-current="page"]::after{content:"";position:absolute;inset-inline-start:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--gold)}
+.sb-foot{padding:12px 16px 16px}
+.sb-promo{border-radius:var(--r-md);padding:14px;background:linear-gradient(160deg,rgba(242,145,28,.18),rgba(94,21,66,.25));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);font-size:var(--fs-caption);color:#E7DCCF;display:grid;gap:8px}
+.sb-promo b{color:#fff;font-weight:var(--fw-medium);font-size:var(--fs-small)}
+/* מצב מקופל */
+.sidebar.is-collapsed{width:var(--sidebar-w-collapsed)}
+.sidebar.is-collapsed .sb-logo img,.sidebar.is-collapsed .sb-profile .who,.sidebar.is-collapsed .sb-profile>.ico,
+.sidebar.is-collapsed .sb-search input,.sidebar.is-collapsed .sb-item .lbl,.sidebar.is-collapsed .sb-item .badge,
+.sidebar.is-collapsed .sb-label,.sidebar.is-collapsed .sb-promo,.sidebar.is-collapsed .sb-bell{display:none}
+.sidebar.is-collapsed .sb-head{flex-direction:column;padding-inline:0}
+.sidebar.is-collapsed .sb-item{padding:0;justify-content:center}
+.sidebar.is-collapsed .sb-profile{justify-content:center;padding:6px}
+.sidebar.is-collapsed .sb-search{margin-inline:18px;padding:0;justify-content:center}
+.sidebar.is-collapsed .sb-collapse .ico{transform:scaleX(-1)}
+.sidebar.is-collapsed .sb-label+*{margin-top:8px}
+
+/* ==========================================================================
+   לוח שנה עברי — פריסה מהאפליקציה הנקייה, בשפת הפלטפורמה
+   ========================================================================== */
+.hcal{display:grid;gap:0}
+.hcal-sheet{background:var(--surface);border-radius:var(--r-lg) var(--r-lg) var(--r-2xl) var(--r-2xl);padding:22px 20px 18px;
+  box-shadow:0 0 0 1px rgba(20,26,51,.04),0 18px 36px -18px rgba(20,26,51,.22)}
+.hcal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.hcal-title{display:grid;gap:2px}
+.hcal-month{font-size:46px;font-weight:var(--fw-black);line-height:.95;color:var(--ink-800);letter-spacing:-.01em}
+.hcal-year{font-size:var(--fs-lead);color:var(--ink-500);font-weight:var(--fw-regular)}
+.hcal-actions{display:flex;gap:8px;align-items:center}
+.hcal-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;text-align:center}
+.hcal-dow{font-size:20px;font-weight:var(--fw-black);color:var(--ink-800);padding-bottom:8px}
+.hcal-dow.shabbat{color:var(--royal)}
+.hcal-day{position:relative;display:grid;justify-items:center;align-content:start;gap:1px;height:62px;padding-top:6px;border:0;background:transparent;border-radius:var(--r-md)}
+.hcal-day .h{font-size:19px;font-weight:var(--fw-regular);color:var(--ink-700);line-height:1.15}
+.hcal-day .g{font-size:12px;color:var(--ink-300);font-variant-numeric:tabular-nums}
+.hcal-day .dot{width:6px;height:6px;border-radius:50%;background:var(--royal-400);margin-top:3px}
+.hcal-day .dot.gold{background:var(--gold)}
+.hcal-day:hover .h{color:var(--ink-900)}
+.hcal-day.is-shabbat .h{color:var(--royal)}
+.hcal-day.is-today::before{content:"";position:absolute;top:2px;width:44px;height:44px;left:50%;translate:-50% 0;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--royal-200)}
+.hcal-day[aria-pressed="true"]::before{content:"";position:absolute;top:0;width:50px;height:50px;left:50%;translate:-50% 0;border-radius:50%;
+  background:linear-gradient(180deg,#5469AF,var(--royal));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -6px rgba(63,84,153,.7)}
+.hcal-day[aria-pressed="true"] .h{color:#fff;font-weight:var(--fw-bold);position:relative}
+.hcal-day[aria-pressed="true"] .g{color:rgba(255,255,255,.75);position:relative}
+.hcal-detail{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px 18px;padding:22px 8px 6px}
+.hcal-detail .big{grid-row:span 2;display:grid;justify-items:center;line-height:1}
+.hcal-detail .big b{font-size:54px;font-weight:var(--fw-black);color:var(--ink-800)}
+.hcal-detail .big span{font-size:var(--fs-lead);font-weight:var(--fw-heavy);color:var(--ink-800);margin-top:6px}
+.hcal-detail .date{font-size:var(--fs-lead);font-weight:var(--fw-bold);color:var(--ink-700)}
+.hcal-detail .count{font-size:var(--fs-body);color:var(--ink-400);grid-column:2}
+.hcal-detail .btn-gold{grid-row:1/span 2;grid-column:3}
+.hcal-events{display:grid;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-strong)}
+.hcal-events .row-tile .time{font-size:var(--fs-caption);color:var(--ink-500);direction:ltr;font-variant-numeric:tabular-nums}
+.hcal-events .row-tile .bullet{width:4px;align-self:stretch;border-radius:4px;background:var(--royal-400)}
+.hcal-events .row-tile .bullet.gold{background:var(--gold)}
+.hcal-empty{font-size:var(--fs-small);color:var(--ink-400);padding:6px 0}
+.hcal-nav{display:flex;justify-content:space-between;margin-top:14px}
+
+/* ==========================================================================
+   הירו עם איור — "במה" שקטה, טקסט מימין, איור משמאל, צ'יפים מזכוכית
+   ========================================================================== */
+.hero{position:relative;overflow:hidden;border-radius:var(--r-xl);min-height:360px;
+  background:radial-gradient(120% 120% at 30% 40%,#DADDE5 0%,var(--stage) 55%,#C9CCD6 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 1px 2px rgba(20,26,51,.05)}
+.hero-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:20% 50%;
+  -webkit-mask-image:radial-gradient(70% 90% at 32% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(70% 90% at 32% 50%,#000 55%,transparent 100%)}
+.hero-copy{position:relative;z-index:1;display:grid;gap:14px;align-content:center;max-width:430px;min-height:inherit;padding:36px 36px 36px 0;margin-inline-start:0}
+.hero-copy .t-muted{font-size:var(--fs-small);max-width:34ch}
+.hero-copy .t-muted b{color:var(--ink-900);font-weight:var(--fw-medium)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.chip-float{position:absolute;z-index:2;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:var(--r-md);
+  background:var(--glass-chip);-webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),var(--hl-top),0 16px 30px -12px rgba(20,26,51,.28)}
+.chip-float .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--gold-600);box-shadow:0 2px 6px rgba(20,26,51,.12)}
+.chip-float .lab{display:grid;line-height:1.2}
+.chip-float .lab span{font-size:10.5px;color:var(--ink-500)}
+.chip-float .lab b{font-size:18px;font-weight:var(--fw-regular);color:var(--ink-900)}
+.chip-float img{width:26px;height:32px;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(20,26,51,.25))}
+
+/* ---------- כרטיס עוזר (Aria) ---------- */
+.assist{position:relative;overflow:hidden;min-height:340px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+  border-radius:var(--r-lg);padding:20px;color:#E9EBF5;background:#0C0C1A;isolation:isolate;
+  box-shadow:0 24px 50px -24px rgba(12,12,26,.7),inset 0 0 0 1px rgba(255,255,255,.06)}
+.assist>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;opacity:.95}
+.assist::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(12,12,26,.15) 0%,rgba(12,12,26,0) 40%,rgba(12,12,26,.55) 100%)}
+.assist h3{color:#fff;font-size:22px;font-weight:var(--fw-medium)}
+.assist .sub{font-size:var(--fs-caption);color:rgba(233,235,245,.7)}
+.assist .sugg{display:flex;flex-wrap:wrap;gap:6px}
+.assist .sugg button{height:28px;padding:0 12px;border-radius:var(--r-pill);border:0;font-size:var(--fs-micro);color:#F2F3FA;
+  background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.assist .sugg button:hover{background:rgba(255,255,255,.18)}
+.assist .ask{border-radius:var(--r-md);padding:10px;background:rgba(255,255,255,.9);color:var(--ink-900);
+  box-shadow:inset 0 1px 0 #fff,0 10px 24px -10px rgba(0,0,0,.5);display:grid;gap:8px}
+.assist .ask-top{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-500)}
+.assist .ask-top .up{color:var(--royal);font-weight:var(--fw-medium)}
+.assist .ask input{border:0;outline:0;background:transparent;font-size:var(--fs-small);padding:4px 2px}
+.assist .ask-row{display:flex;align-items:center;justify-content:space-between}
+.assist .ask-row .tools{display:flex;gap:4px;color:var(--ink-400)}
+.assist .send{width:32px;height:32px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--ink-800);color:#fff;box-shadow:var(--elev-primary)}
+
+/* ---------- גאוג' טבעת (Patient Diagnose) ---------- */
+.gauge{position:relative;display:grid;place-items:center}
+.gauge svg{width:100%;max-width:190px;height:auto}
+.gauge .center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:2px}
+.gauge .center b{font-size:28px;font-weight:var(--fw-regular);color:var(--ink-900);font-variant-numeric:tabular-nums}
+.gauge .center span{font-size:var(--fs-micro);color:var(--ink-400)}
+.legend{display:flex;justify-content:space-between;gap:8px;margin-top:10px}
+.legend div{display:grid;gap:0;font-size:var(--fs-micro);color:var(--ink-400)}
+.legend b{display:flex;align-items:center;gap:6px;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.legend b::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+
+/* ---------- רשימת לו"ז (Appointment record) ---------- */
+.agenda{display:grid;gap:4px}
+.agenda-item{display:grid;grid-template-columns:52px auto 1fr auto;align-items:center;gap:12px;padding:10px 6px;border-radius:var(--r-sm)}
+.agenda-item+.agenda-item{border-top:1px solid var(--line)}
+.agenda-item:hover{background:var(--surface-2)}
+.agenda-item .tm{display:grid;font-size:var(--fs-small);color:var(--ink-900);line-height:1.2;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.agenda-item .tm span{font-size:10.5px;color:var(--ink-400)}
+.agenda-item .meta{display:grid;line-height:1.3;min-width:0}
+.agenda-item .meta b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.agenda-item .meta span{font-size:var(--fs-micro);color:var(--ink-400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

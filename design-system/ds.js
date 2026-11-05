@@ -40,35 +40,41 @@
   };
   const sprite = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">' +
     Object.entries(P).map(([k, v]) => `<symbol id="i-${k}" viewBox="0 0 24 24">${v}</symbol>`).join("") + "</svg>";
-  document.body.insertAdjacentHTML("afterbegin", sprite);
   const icon = (n, cls = "") => `<svg class="ico ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   window.DS = { icon, icons: Object.keys(P) };
-  document.querySelectorAll("[data-icon]").forEach(el => { el.insertAdjacentHTML("afterbegin", icon(el.dataset.icon, el.dataset.iconClass || "")); });
 
-  /* ---------------- סרגל צד ---------------- */
-  document.querySelectorAll(".sidebar").forEach(sb => {
-    const btn = sb.querySelector(".sb-collapse");
-    if (btn) btn.addEventListener("click", () => {
-      const c = sb.classList.toggle("is-collapsed");
-      btn.setAttribute("aria-expanded", String(!c));
+  /* חלקי DOM: רצים מיד אם ה-body קיים, אחרת ב-DOMContentLoaded (כך אפשר לטעון את הקובץ גם ב-head) */
+  function domInit() {
+  document.body.insertAdjacentHTML("afterbegin", sprite);
+    document.querySelectorAll("[data-icon]").forEach(el => { el.insertAdjacentHTML("afterbegin", icon(el.dataset.icon, el.dataset.iconClass || "")); });
+
+    /* ---------------- סרגל צד ---------------- */
+    document.querySelectorAll(".sidebar").forEach(sb => {
+      const btn = sb.querySelector(".sb-collapse");
+      if (btn) btn.addEventListener("click", () => {
+        const c = sb.classList.toggle("is-collapsed");
+        btn.setAttribute("aria-expanded", String(!c));
+      });
+      sb.querySelectorAll(".sb-item[data-nav]").forEach(it => it.addEventListener("click", () => {
+        sb.querySelectorAll(".sb-item[aria-current]").forEach(x => x.removeAttribute("aria-current"));
+        it.setAttribute("aria-current", "page");
+      }));
     });
-    sb.querySelectorAll(".sb-item[data-nav]").forEach(it => it.addEventListener("click", () => {
-      sb.querySelectorAll(".sb-item[aria-current]").forEach(x => x.removeAttribute("aria-current"));
-      it.setAttribute("aria-current", "page");
+
+    /* ---------------- טאבים מפולחים ---------------- */
+    document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
     }));
-  });
 
-  /* ---------------- טאבים מפולחים ---------------- */
-  document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e => {
-    const b = e.target.closest("button"); if (!b) return;
-    seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
-  }));
+    /* ---------------- ברכה לפי שעה ---------------- */
+    document.querySelectorAll("[data-greeting]").forEach(el => {
+      const h = new Date().getHours();
+      el.textContent = h < 5 ? "לילה טוב" : h < 12 ? "בוקר טוב" : h < 17 ? "צהריים טובים" : h < 21 ? "ערב טוב" : "לילה טוב";
+    });
 
-  /* ---------------- ברכה לפי שעה ---------------- */
-  document.querySelectorAll("[data-greeting]").forEach(el => {
-    const h = new Date().getHours();
-    el.textContent = h < 5 ? "לילה טוב" : h < 12 ? "בוקר טוב" : h < 17 ? "צהריים טובים" : h < 21 ? "ערב טוב" : "לילה טוב";
-  });
+  }
+  if (document.body) domInit(); else document.addEventListener("DOMContentLoaded", domInit);
 
   /* ---------------- גימטריה ---------------- */
   function gematria(n, punct) {

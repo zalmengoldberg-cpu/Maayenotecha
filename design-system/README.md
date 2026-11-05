@@ -11,7 +11,12 @@
 | `ds.js` | אייקונים (SVG sprite), סרגל מתקפל, טאבים, לוח שנה עברי (Intl + גימטריה), ספארקליין, גאוג' |
 | `assets/` | Rubik, לוגואים וכריכות מחבילת המותג, איורי fal |
 
-## שימוש
+## שימוש ב-Claude הרגיל (claude.ai) – סקיל
+`skill/maayanotecha-ui.zip` הוא סקיל שמלביש את המערכת על כל אתר שנבנה למעיינותיך, בלי לשנות את האפיון או את תהליך העבודה.
+מעלים פעם אחת: claude.ai ← Settings ← Capabilities ← Skills ← Upload skill.
+`skin.css` + `class="mt-skin"` על ה-body מלבישים גם HTML רגיל בלי מחלקות (כפתורים, שדות, טבלאות, כותרות, כרטיסים).
+
+## שימוש בקוד
 ```html
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800;900&display=swap">
 <link rel="stylesheet" href="design-system/tokens.css">
