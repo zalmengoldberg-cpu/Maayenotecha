@@ -64,12 +64,13 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 דוגמה מלאה: `references/example-dashboard.html` – לעיון בלבד, לא תבנית שמעתיקים למסך שהאפיון לא מבקש.
 
 ## לוגו
-- `assets/logos/maayanotecha-logo.webp` – הלוגו המלא (מעיין + מילה) בצבעים המקוריים, לרקע בהיר.
-- `assets/logos/maayanotecha-logo-ondark.webp` – הלוגו המלא לרקע כהה: המילה והבסיס בלבן, עלי המעיין בצבעים המקוריים.
-- `assets/logos/maayanotecha-icon.webp` / `maayanotecha-icon-ondark.webp` – אייקון המעיין בלבד, למקומות צרים.
+המקור: קובץ הלוגו הרשמי (Illustrator, "לוגו בלי סלוגן"), וקטורי. כל הגרסאות הן SVG – חדות בכל גודל.
+- `assets/logos/maayanotecha-logo.svg` – הלוגו המלא (מעיין + מילה) בצבעים המקוריים, לרקע בהיר.
+- `assets/logos/maayanotecha-logo-ondark.svg` – הלוגו המלא לרקע כהה: המילה והבסיס בלבן, עלי המעיין בצבעים המקוריים.
+- `assets/logos/maayanotecha-icon.svg` / `maayanotecha-icon-ondark.svg` – אייקון המעיין בלבד, למקומות צרים.
 - **סרגל צד פתוח**: הלוגו המלא `-ondark` (גובה 58) ב-`sb-logo-full`. **סרגל סגור**: האייקון `-ondark` (רוחב 50) ב-`sb-logo-icon`. שניהם בתוך `.sb-logo`, ה-CSS מחליף ביניהם.
 - **רקע בהיר** (כותרת עליונה במובייל, מסך כניסה, favicon): הגרסה המקורית.
-- כשאף גרסה לא מתאימה לרקע – בוחרים את זו שקריאה יותר, לא צובעים מחדש את הלוגו ולא מציירים אותו.
+- בגרסת הרקע הכהה המילה והגל בלבן (#F1F2F8, צל #BFC5DD) ועלי המעיין בצבעים המקוריים. כשאף גרסה לא מתאימה לרקע – בוחרים את הקריאה יותר; לא צובעים מחדש בדרך אחרת ולא מציירים את הלוגו.
 
 ## משתמש
 שם המשתמש בסרגל ובצ'יפ המשתמש באנגלית: **Zalmen Goldberg**, מונוגרמה **ZG** (`<b dir="ltr">`). אם האפיון מגדיר משתמשים אחרים – לפי האפיון.
@@ -84,7 +85,7 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 - **RTL** לכל מכל, וספרות בתוך `.num` (LTR, tabular).
 
 ## תמונות
-- ארטיפקט לא יכול לטעון קבצים חיצוניים. נכס מהסקיל מוטמע כ-data URI: `python3 scripts/bundle.py --img assets/logos/maayanotecha-logo-ondark.webp`.
+- ארטיפקט לא יכול לטעון קבצים חיצוניים. נכס מהסקיל מוטמע כ-data URI: `python3 scripts/bundle.py --img assets/logos/maayanotecha-logo-ondark.svg`.
 - `assets/img/hero-wellspring.webp` (במת `hero`), `assistant-flame.webp` (כרטיס `assist`), `silk-waves.webp` (טקסטורת `sidebar` דרך `--silk:url(...)`), `assets/covers/` (12 כריכות אמיתיות לטבלאות ורשימות).
 - תמונה נכנסת רק למקום שהאפיון כבר הגדיר לתמונה. אחרת – הצעה בצ'אט (סעיף 3).
 - איור חדש ב-fal (אם יש חיבור): נושא אחד, תאורת סטודיו, רקע אחיד `#D1D4DD`, ליבה בזהב `#F2911C`, שבירות בכחול `#3F5499`, השליש הימני ריק, בלי טקסט בתמונה.
