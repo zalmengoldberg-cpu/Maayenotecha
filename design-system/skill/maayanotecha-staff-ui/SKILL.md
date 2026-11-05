@@ -46,7 +46,7 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 | כפתור משני / ביטול | `btn btn-secondary` או `btn btn-ghost` |
 | כפתור עם אייקון בלבד | `btn btn-secondary btn-icon` |
 | טאבים / סינון תצוגה | `seg` (ו-`seg seg-brand` לניווט ראשי), כל טאב `button[aria-selected]` |
-| שורת חיפוש | `search` (label עם input) |
+| שורת חיפוש / שאלה ל-AI / הודעה ל-Claude | `ai-search` (`label.ai-search > span.field[data-icon=searchAi] > input`). גלולה כהה עם טבעת אור בצבעי המעיין. בשורה העליונה בגובה 38, בסרגל 42, בסרגל סגור עיגול. שדה חיפוש פשוט בתוך טופס או טבלה: `search` |
 | משתמש מחובר | `user-chip` + `mono` |
 | כרטיס / פאנל / מודול | `card` · על רקע צבעוני או תמונה: `card card-glass` · כהה: `card card-dark` |
 | שורה ברשימה / כרטיס משימה | `row-tile` |
@@ -56,7 +56,7 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 | מונה התראות | `badge` (`gold` לחדש, `soft` לניטרלי) |
 | אדם בלי תמונה | `mono` עם ראשי תיבות (`plum`, `gold`, `sage`, `kraft`) |
 | פס התקדמות | `bar` עם `--v:60%` |
-| סרגל צד | `sidebar` + `sb-head`, `sb-profile`, `sb-search`, `sb-label`, `sb-item[aria-current=page]` |
+| סרגל צד | `sidebar` + `sb-head`, `sb-profile`, `ai-search`, `sb-label`, `sb-item[aria-current=page]` |
 | לוח שנה / תאריכים | `<div class="hcal"></div>` + `DS.calendar(el,{events})` |
 | כותרת פתיחה עם תמונה | `hero` + `hero-art` + `hero-copy` (+ `chip-float`) |
 | עוזר / צ'אט | `assist` |
@@ -68,7 +68,7 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 - `assets/logos/maayanotecha-logo.svg` – הלוגו המלא (מעיין + מילה) בצבעים המקוריים, לרקע בהיר.
 - `assets/logos/maayanotecha-logo-ondark.svg` – הלוגו המלא לרקע כהה: המילה והבסיס בלבן, עלי המעיין בצבעים המקוריים.
 - `assets/logos/maayanotecha-icon.svg` / `maayanotecha-icon-ondark.svg` – אייקון המעיין בלבד, למקומות צרים.
-- **סרגל צד פתוח**: הלוגו המלא `-ondark` (גובה 58) ב-`sb-logo-full`. **סרגל סגור**: האייקון `-ondark` (רוחב 50) ב-`sb-logo-icon`. שניהם בתוך `.sb-logo`, ה-CSS מחליף ביניהם.
+- **סרגל צד**: הלוגו המלא `-ondark` ב-`.sb-logo > img.sb-logo-full`. פתוח – גובה 58. סגור – אותו לוגו מלא כולל הכיתוב, ברוחב 60, ממורכז בפס.
 - **רקע בהיר** (כותרת עליונה במובייל, מסך כניסה, favicon): הגרסה המקורית.
 - בגרסת הרקע הכהה המילה והגל בלבן (#F1F2F8, צל #BFC5DD) ועלי המעיין בצבעים המקוריים. כשאף גרסה לא מתאימה לרקע – בוחרים את הקריאה יותר; לא צובעים מחדש בדרך אחרת ולא מציירים את הלוגו.
 
