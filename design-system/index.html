@@ -175,10 +175,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
         <h3>סרגל הצד</h3>
         <ul>
           <li>פאנל כהה צף עם רדיוס 28, זכוכית מעל טקסטורת משי: התמונה בשכבה הכי תחתונה, מעליה גרדיאנט כהה ו־blur.</li>
-          <li>כותרת: לוגו, פעמון עם תג אדום וכפתור כיווץ. מתחת כרטיס פרופיל עם ״החלפת חשבון״.</li>
+          <li>כותרת: לוגו ופעמון עם תג אדום. הלוגו עצמו הוא הכפתור שמכווץ ופותח את הסרגל (במובייל: סוגר את המגירה). מתחת כרטיס פרופיל עם ״החלפת חשבון״.</li>
           <li>חיפוש בצורת גלולה עם מתאר בלבד, ותוויות קבוצה קטנות (ניהול, תוכן, כללי).</li>
           <li>כל פריט בגובה 46 עם אייקון בתוך עיגול זכוכית. הפריט הפעיל הוא פס מלא מקצה לקצה. האדום של המקור הוחלף בכחול מלכותי עם קו זהב.</li>
-          <li>מצב מקופל ברוחב 84 שמשאיר רק אייקונים.</li>
+          <li>מצב מקופל ברוחב 84: הלוגו המלא קטן וממורכז, ומתחתיו רק אייקונים.</li>
         </ul>
         <p class="how"><b>איך זה עובד:</b> <code>::before</code> מחזיק את תמונת המשי, <code>::after</code> מחזיק גרדיאנט ו־<code>backdrop-filter</code>, וכך הטקסט תמיד על משטח בניגודיות קבועה.</p>
       </article>
@@ -316,15 +316,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
 
   <!-- ============ רכיבים חיים ============ -->
   <section class="sec" id="live">
-    <div class="sec-head"><span class="eyebrow">07</span><h2>רכיבים</h2><p>הכל כאן עובד: אפשר לכווץ את הסרגל, לבחור יום, לעבור חודש ולבחור טאב.</p></div>
+    <div class="sec-head"><span class="eyebrow">07</span><h2>רכיבים</h2><p>הכל כאן עובד: לחיצה על הלוגו מכווצת את הסרגל, אפשר לבחור יום, לעבור חודש ולבחור טאב.</p></div>
     <div class="live">
       <aside class="sidebar" aria-label="דוגמת סרגל צד">
         <div class="sb-head">
-          <div class="sb-logo">
-        <img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.svg" alt="מעיינותיך">
-      </div>
+          <button class="sb-logo" type="button" aria-label="כיווץ הסרגל" aria-expanded="true"><img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.svg" alt="מעיינותיך"></button>
           <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
-          <button class="sb-icon-btn sb-collapse" type="button" aria-label="כיווץ הסרגל" aria-expanded="true" data-icon="chevR" data-icon-class="ico-sm"></button>
         </div>
         <div class="sb-rule"></div>
         <button class="sb-profile" type="button"><span class="mono lg">ZG</span><span class="who"><b dir="ltr">Zalmen Goldberg</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg></button>

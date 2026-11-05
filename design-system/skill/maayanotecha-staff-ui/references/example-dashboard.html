@@ -18,8 +18,9 @@
 .main{min-width:0;max-width:var(--content-max);width:100%;margin-inline:auto;display:grid;gap:var(--gutter);align-content:start}
 .topbar{display:none;align-items:center;gap:10px}
 
-.menu-btn{display:none}
-.topbar-mark{display:none;height:30px;width:auto}
+.topbar-logo{border:0;background:none;padding:4px;margin:0;border-radius:var(--r-sm);cursor:pointer;transition:opacity var(--t-base),transform var(--t-fast) var(--ease)}
+.topbar-logo img{height:38px;width:auto;display:block}
+.topbar-logo:active{transform:scale(.97)}
 .scrim{display:none}
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter);align-items:start}
 .span-8{grid-column:span 8}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-3{grid-column:span 3}
@@ -50,8 +51,7 @@
   .app>.sidebar{position:fixed;z-index:50;top:12px;bottom:12px;right:12px;height:auto;max-width:calc(100vw - 24px);opacity:0;visibility:hidden;translate:24px 0;transition:translate var(--t-slow) var(--ease),opacity var(--t-base),visibility var(--t-base)}
   .app.nav-open>.sidebar{translate:0 0;opacity:1;visibility:visible}
   .topbar{display:flex}
-  .menu-btn{display:inline-flex}
-  .topbar-mark{display:block}
+  .app.nav-open .topbar-logo{opacity:0;pointer-events:none}
   .scrim{display:block;position:fixed;inset:0;z-index:40;background:rgba(20,26,51,.3);opacity:0;pointer-events:none;transition:opacity var(--t-base)}
   .app.nav-open .scrim{opacity:1;pointer-events:auto}
 }
@@ -61,9 +61,15 @@
   .right-col>section:first-child{grid-column:auto}
   .user-chip .who{display:none}
   .hero{display:grid;min-height:0}
-  .hero.open-top .hero-art{position:relative;width:100%;height:230px;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 70%,transparent)}
-  .hero-copy{padding:0 20px 24px;max-width:none}
-  .chip-a{left:12px;top:12px}.chip-b{display:none}
+  .app{padding-block:8px 16px;gap:10px}
+  .main{gap:12px}
+  .grid,.stack{gap:12px}
+  .hero.open-top .hero-art{position:relative;width:100%;height:150px;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 70%,transparent)}
+  .hero-copy{padding:0 18px 18px;gap:8px;max-width:none}
+  .hero-copy .t-h1{font-size:26px}
+  .hero-copy br{display:none}
+  .hero-cta .btn{--h:var(--h-sm)}
+  .chip-a{left:12px;top:8px;padding:6px 10px 6px 8px}.chip-a .lab b{font-size:15px}.chip-a .ic{width:24px;height:24px}.chip-b{display:none}
 }
 </style>
 </head>
@@ -73,11 +79,8 @@
   <!-- ============ סרגל צד ============ -->
   <aside class="sidebar" aria-label="ניווט ראשי">
     <div class="sb-head">
-      <div class="sb-logo">
-        <img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.svg" alt="מעיינותיך">
-      </div>
+      <button class="sb-logo" type="button" aria-label="כיווץ הסרגל" aria-expanded="true"><img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.svg" alt="מעיינותיך"></button>
       <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות, 4 חדשות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
-      <button class="sb-icon-btn sb-collapse" type="button" aria-label="כיווץ הסרגל" aria-expanded="true" data-icon="chevR" data-icon-class="ico-sm"></button>
     </div>
     <div class="sb-rule"></div>
     <button class="sb-profile" type="button">
@@ -114,8 +117,7 @@
   <!-- ============ תוכן ============ -->
   <main class="main">
     <header class="topbar">
-      <button class="btn btn-secondary btn-icon menu-btn" id="menuBtn" type="button" aria-label="פתיחת תפריט" data-icon="menu"></button>
-      <img class="topbar-mark" src="assets/logos/maayanotecha-icon.svg" alt="מעיינותיך">
+      <button class="topbar-logo" id="menuBtn" type="button" aria-label="פתיחת התפריט" aria-expanded="false"><img src="assets/logos/maayanotecha-logo.svg" alt="מעיינותיך"></button>
     </header>
 
     <div class="grid">
@@ -127,7 +129,7 @@
         <div class="chip-float chip-b"><img src="assets/covers/maggid-devarav-leyaakov-2.webp" alt=""><span class="lab"><span>נשלח לדפוס</span><b style="font-size:13px;font-weight:500">מגיד דבריו ליעקב ח״ב</b></span></div>
         <div class="hero-copy">
           <span class="eyebrow">מעיינותיך · אזור ניהול לצוות</span>
-          <h1 class="t-h1"><span data-greeting>שלום</span>,<br><b>זלמן</b></h1>
+          <h1 class="t-h1"><span data-greeting>שלום</span>,<br> <b>זלמן</b></h1>
           <p class="t-muted">יש לך <b>7 הזמנות חדשות</b> היום, <b>2 ספרים</b> בדפוס ו־12 כותרים שמחכים לקטלוג.</p>
           <div class="hero-cta">
             <button class="btn btn-primary" type="button" data-icon="bag" data-icon-class="ico-sm">להזמנות היום</button>
@@ -250,8 +252,11 @@
 
   // תפריט במובייל
   const app=document.getElementById("app");
-  document.getElementById("menuBtn").addEventListener("click",()=>app.classList.add("nav-open"));
-  document.getElementById("scrim").addEventListener("click",()=>app.classList.remove("nav-open"));
+  const menuBtn=document.getElementById("menuBtn"),sb=app.querySelector(".sidebar");
+  const setOpen=o=>{app.classList.toggle("nav-open",o);menuBtn.setAttribute("aria-expanded",String(o));if(o)sb.classList.remove("is-collapsed")};
+  menuBtn.addEventListener("click",()=>setOpen(true));
+  document.getElementById("scrim").addEventListener("click",()=>setOpen(false));
+  sb.addEventListener("ds:logo",e=>{if(app.classList.contains("nav-open")){e.preventDefault();setOpen(false)}});
 })();
 </script>
 </body>

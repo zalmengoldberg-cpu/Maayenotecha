@@ -51,11 +51,15 @@
 
     /* ---------------- סרגל צד ---------------- */
     document.querySelectorAll(".sidebar").forEach(sb => {
-      const btn = sb.querySelector(".sb-collapse");
-      if (btn) btn.addEventListener("click", () => {
+      /* לחיצה על הלוגו מכווצת/פותחת את הסרגל. עמוד שמציג את הסרגל כמגירה
+         (מובייל) יכול לבטל את האירוע ds:logo ולסגור את המגירה במקום. */
+      sb.querySelectorAll(".sb-logo, .sb-collapse").forEach(btn => btn.addEventListener("click", () => {
+        const ev = new CustomEvent("ds:logo", { cancelable: true });
+        if (!sb.dispatchEvent(ev)) return;
         const c = sb.classList.toggle("is-collapsed");
         btn.setAttribute("aria-expanded", String(!c));
-      });
+        btn.setAttribute("aria-label", c ? "פתיחת הסרגל" : "כיווץ הסרגל");
+      }));
       sb.querySelectorAll(".sb-item[data-nav]").forEach(it => it.addEventListener("click", () => {
         sb.querySelectorAll(".sb-item[aria-current]").forEach(x => x.removeAttribute("aria-current"));
         it.setAttribute("aria-current", "page");
