@@ -4,7 +4,7 @@ Usage:
   python3 scripts/bundle.py                 # tokens + skin + components CSS
   python3 scripts/bundle.py --js            # ...and ds.js (icons, calendar, sparkline, gauge, sidebar)
   python3 scripts/bundle.py --tailwind      # Tailwind theme.extend snippet mapped to the tokens
-  python3 scripts/bundle.py --img assets/img/hero-wellspring.webp   # data: URI of an asset
+  python3 scripts/bundle.py --img assets/logos/maayanotecha-logo-ondark.webp   # data: URI of an asset
 """
 import base64, mimetypes, pathlib, re, sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent

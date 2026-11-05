@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>מערכת העיצוב של מעיינותיך</title>
+<title>ממשק הצוות של מעיינותיך</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800;900&display=swap">
+<link rel="icon" type="image/webp" href="assets/logos/maayanotecha-icon.webp">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
 <style>
 .doc{max-width:1240px;margin:0 auto;padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:72px}
 .doc-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.doc-nav img{height:30px;width:auto}
+.doc-nav img{height:44px;width:auto}
 .doc-nav .seg{margin-inline-start:auto;overflow-x:auto;max-width:100%;scrollbar-width:none}
 .doc-nav .seg a{display:inline-flex;align-items:center;height:100%;padding:0 14px;border-radius:var(--r-pill);font-size:var(--fs-small);color:var(--ink-500);font-weight:var(--fw-medium);white-space:nowrap}
 .doc-nav .seg a:hover{color:var(--ink-900);background:var(--surface);box-shadow:var(--elev-1)}
@@ -135,7 +136,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
 <div class="doc">
 
   <nav class="doc-nav" aria-label="ניווט במסמך">
-    <img src="assets/logos/maayanotecha-wordmark.webp" alt="מעיינותיך">
+    <img src="assets/logos/maayanotecha-logo.webp" alt="מעיינותיך">
     <div class="seg">
       <a href="#sources">פירוק</a><a href="#principles">עקרונות</a><a href="#color">צבע</a><a href="#type">טיפוגרפיה</a><a href="#depth">עומק וזכוכית</a><a href="#controls">פקדים</a><a href="#live">רכיבים</a><a href="#art">איורים</a>
     </div>
@@ -145,10 +146,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
   <!-- ============ כריכה ============ -->
   <header class="cover">
     <div style="display:grid;gap:18px">
-      <span class="eyebrow">מערכת עיצוב · גרסה 1 · תשפ״ז</span>
-      <h1>מעיינותיך<span>שפה אחת לחנות, ללוח הניהול ולתוכן של ההוצאה</span></h1>
-      <p>קנבס שקט, משטחים לבנים וזכוכית, צבע מותג אחד פעיל ונגיעת זהב אחת לכל מסך. נבנתה מהנדסה לאחור של ארבעה מקורות, ומותאמת לצבעים, לגופן ולתוכן של מעיינותיך.</p>
-      <div class="tags"><span class="tag">אפליקציית ניהול</span><span class="tag">חנות ספרים</span><span class="tag">RTL מלא</span><span class="tag">לוח עברי</span></div>
+      <span class="eyebrow">מערכת עיצוב לכלים הפנימיים · גרסה 1.1 · תשפ״ז</span>
+      <h1>ממשק הצוות<span>שפה אחת לאזור הניהול ולמערכת תהליכי העבודה של עובדי מעיינותיך</span></h1>
+      <p>לשימוש העובדים בלבד: אזור הניהול, תהליכי העבודה והכלים הפנימיים. האתר הציבורי והתוכן השיווקי לא מושפעים. קנבס שקט, משטחים לבנים וזכוכית, צבע מותג אחד פעיל ונגיעת זהב אחת לכל מסך. נבנתה מהנדסה לאחור של ארבעה מקורות, ומותאמת לצבעים, לגופן ולתוכן של מעיינותיך.</p>
+      <div class="tags"><span class="tag">לשימוש פנימי</span><span class="tag">אזור ניהול</span><span class="tag">תהליכי עבודה</span><span class="tag">RTL מלא</span><span class="tag">לוח עברי</span></div>
     </div>
     <div class="present"><a class="frame" href="dashboard.html" style="display:block" aria-label="פתיחת מסך הדוגמה"><img src="assets/img/dashboard-preview.webp" alt="מסך לוח הניהול של מעיינותיך" width="2160" height="1350"></a></div>
   </header>
@@ -293,7 +294,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
         <div class="seg seg-brand" role="tablist"><button role="tab" aria-selected="true">סקירה</button><button role="tab" aria-selected="false">מכירות</button><button role="tab" aria-selected="false">מלאי</button></div>
         <div class="seg" role="tablist"><button role="tab" aria-selected="false">יום</button><button role="tab" aria-selected="true">שבוע</button><button role="tab" aria-selected="false">חודש</button></div>
         <label class="search" data-icon="search" data-icon-class="ico-sm" style="width:260px"><span class="sr-only">חיפוש</span><input id="q-demo" placeholder="חיפוש ספר, לקוח…"><kbd>⌘K</kbd></label>
-        <button class="user-chip" type="button"><span class="who"><b>זלמן גולדברג</b><span>הוצאת מעיינותיך</span></span><span class="mono sm kraft">זג</span></button>
+        <button class="user-chip" type="button"><span class="who"><b dir="ltr">Zalmen Goldberg</b><span>הוצאת מעיינותיך</span></span><span class="mono sm kraft">ZG</span></button>
       </div>
       <div class="spec-row"><span class="spec-label">סטטוסים ותגים</span>
         <span class="status ok">נשלח</span><span class="status info">בהכנה</span><span class="status warn">ממתין לתשלום</span><span class="status bad">הוחזר</span><span class="status">טיוטה</span>
@@ -315,12 +316,15 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
     <div class="live">
       <aside class="sidebar" aria-label="דוגמת סרגל צד">
         <div class="sb-head">
-          <div class="sb-logo"><img src="assets/logos/maayanotecha-wordmark.webp" alt="מעיינותיך"></div>
+          <div class="sb-logo">
+        <img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.webp" alt="מעיינותיך">
+        <img class="sb-logo-icon" src="assets/logos/maayanotecha-icon-ondark.webp" alt="מעיינותיך">
+      </div>
           <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
           <button class="sb-icon-btn sb-collapse" type="button" aria-label="כיווץ הסרגל" aria-expanded="true" data-icon="chevR" data-icon-class="ico-sm"></button>
         </div>
         <div class="sb-rule"></div>
-        <button class="sb-profile" type="button"><span class="mono lg">זג</span><span class="who"><b>זלמן גולדברג</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+        <button class="sb-profile" type="button"><span class="mono lg">ZG</span><span class="who"><b dir="ltr">Zalmen Goldberg</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg></button>
         <label class="sb-search" data-icon="search" data-icon-class="ico-sm"><span class="sr-only">חיפוש</span><input id="sb-q-demo" placeholder="חיפוש…"></label>
         <nav class="sb-nav">
           <div class="sb-label">ניהול</div>
@@ -403,7 +407,7 @@ Absolutely no text, no letters, no symbols, no logos, no people.</pre>
     </div>
   </section>
 
-  <footer class="foot"><span>מעיינותיך · מערכת עיצוב v1 · קבצים: tokens.css · components.css · ds.js</span><a href="dashboard.html">למסך הדוגמה המלא</a></footer>
+  <footer class="foot"><span>ממשק הצוות של מעיינותיך · v1.1 · קבצים: tokens.css · components.css · ds.js</span><a href="dashboard.html">למסך הדוגמה המלא</a></footer>
 </div>
 
 <script src="ds.js"></script>

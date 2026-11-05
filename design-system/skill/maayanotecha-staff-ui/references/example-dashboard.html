@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>מעיינותיך · לוח ניהול</title>
+<title>מעיינותיך · אזור ניהול</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800;900&display=swap">
+<link rel="icon" type="image/webp" href="assets/logos/maayanotecha-icon.webp">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="components.css">
 <style>
@@ -19,6 +20,7 @@
 .topbar .seg{margin-inline-end:auto}
 .topbar .search{width:min(280px,100%)}
 .menu-btn{display:none}
+.topbar-mark{display:none;height:30px;width:auto}
 .scrim{display:none}
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter);align-items:start}
 .span-8{grid-column:span 8}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-3{grid-column:span 3}
@@ -49,6 +51,7 @@
   .app>.sidebar{position:fixed;z-index:50;top:12px;bottom:12px;right:12px;height:auto;max-width:calc(100vw - 24px);opacity:0;visibility:hidden;translate:24px 0;transition:translate var(--t-slow) var(--ease),opacity var(--t-base),visibility var(--t-base)}
   .app.nav-open>.sidebar{translate:0 0;opacity:1;visibility:visible}
   .menu-btn{display:inline-flex}
+  .topbar-mark{display:block}
   .scrim{display:block;position:fixed;inset:0;z-index:40;background:rgba(20,26,51,.3);opacity:0;pointer-events:none;transition:opacity var(--t-base)}
   .app.nav-open .scrim{opacity:1;pointer-events:auto}
 }
@@ -73,15 +76,16 @@
   <aside class="sidebar" aria-label="ניווט ראשי">
     <div class="sb-head">
       <div class="sb-logo">
-        <img src="assets/logos/maayanotecha-wordmark.webp" alt="מעיינותיך">
+        <img class="sb-logo-full" src="assets/logos/maayanotecha-logo-ondark.webp" alt="מעיינותיך">
+        <img class="sb-logo-icon" src="assets/logos/maayanotecha-icon-ondark.webp" alt="מעיינותיך">
       </div>
       <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות, 4 חדשות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
       <button class="sb-icon-btn sb-collapse" type="button" aria-label="כיווץ הסרגל" aria-expanded="true" data-icon="chevR" data-icon-class="ico-sm"></button>
     </div>
     <div class="sb-rule"></div>
     <button class="sb-profile" type="button">
-      <span class="mono lg">זג</span>
-      <span class="who"><b>זלמן גולדברג</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span>
+      <span class="mono lg">ZG</span>
+      <span class="who"><b dir="ltr">Zalmen Goldberg</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span>
       <svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg>
     </button>
     <label class="sb-search" data-icon="search" data-icon-class="ico-sm"><span class="sr-only">חיפוש בתפריט</span><input id="sb-q" type="search" placeholder="חיפוש…"></label>
@@ -114,6 +118,7 @@
   <main class="main">
     <header class="topbar">
       <button class="btn btn-secondary btn-icon menu-btn" id="menuBtn" type="button" aria-label="פתיחת תפריט" data-icon="menu"></button>
+      <img class="topbar-mark" src="assets/logos/maayanotecha-icon.webp" alt="מעיינותיך">
       <div class="seg seg-brand" role="tablist" aria-label="תצוגה">
         <button role="tab" aria-selected="true">סקירה</button>
         <button role="tab" aria-selected="false">מכירות</button>
@@ -123,7 +128,7 @@
       </div>
       <label class="search" data-icon="search" data-icon-class="ico-sm"><span class="sr-only">חיפוש</span><input id="q" type="search" placeholder="חיפוש ספר, לקוח, הזמנה…"><kbd>⌘K</kbd></label>
       <button class="btn btn-secondary btn-icon" type="button" aria-label="התראות" data-icon="bell"></button>
-      <button class="user-chip" type="button"><span class="who"><b>זלמן גולדברג</b><span>הוצאת מעיינותיך</span></span><span class="mono sm kraft">זג</span></button>
+      <button class="user-chip" type="button"><span class="who"><b dir="ltr">Zalmen Goldberg</b><span>הוצאת מעיינותיך</span></span><span class="mono sm kraft">ZG</span></button>
     </header>
 
     <div class="grid">
@@ -134,7 +139,7 @@
         <div class="chip-float chip-a"><span class="ic" data-icon="flame" data-icon-class="ico-sm"></span><span class="lab"><span>מכירות היום</span><b class="num">₪4,280 <span class="trend up">+12%</span></b></span></div>
         <div class="chip-float chip-b"><img src="assets/covers/maggid-devarav-leyaakov-2.webp" alt=""><span class="lab"><span>נשלח לדפוס</span><b style="font-size:13px;font-weight:500">מגיד דבריו ליעקב ח״ב</b></span></div>
         <div class="hero-copy">
-          <span class="eyebrow">הוצאת מעיינותיך · לוח ניהול</span>
+          <span class="eyebrow">מעיינותיך · אזור ניהול לצוות</span>
           <h1 class="t-h1"><span data-greeting>שלום</span>,<br><b>זלמן</b></h1>
           <p class="t-muted">יש לך <b>7 הזמנות חדשות</b> היום, <b>2 ספרים</b> בדפוס ו־12 כותרים שמחכים לקטלוג.</p>
           <div class="hero-cta">
