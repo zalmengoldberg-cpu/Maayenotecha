@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מערכת העיצוב של מעיינותיך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800;900&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+.doc{max-width:1240px;margin:0 auto;padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:72px}
+.doc-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.doc-nav img{height:30px;width:auto}
+.doc-nav .seg{margin-inline-start:auto;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.doc-nav .seg a{display:inline-flex;align-items:center;height:100%;padding:0 14px;border-radius:var(--r-pill);font-size:var(--fs-small);color:var(--ink-500);font-weight:var(--fw-medium);white-space:nowrap}
+.doc-nav .seg a:hover{color:var(--ink-900);background:var(--surface);box-shadow:var(--elev-1)}
+
+/* כריכה */
+.cover{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px;align-items:center}
+.cover h1{font-size:clamp(40px,6vw,76px);font-weight:var(--fw-black);line-height:.95;color:var(--ink-800)}
+.cover h1 span{display:block;font-weight:var(--fw-light);font-size:.42em;color:var(--ink-500);margin-top:14px;line-height:1.25}
+.cover p{max-width:44ch;color:var(--ink-500);font-size:var(--fs-lead)}
+.cover .tags{display:flex;gap:8px;flex-wrap:wrap}
+.present{perspective:2600px;padding:20px 0;min-width:0}
+.present img{width:100%;height:auto}
+.present .frame{transform:rotateX(16deg) rotateY(14deg) rotateZ(-4deg);transform-origin:50% 50%;border-radius:20px;overflow:hidden;
+  box-shadow:0 0 0 8px #0E1226,0 0 0 9px rgba(255,255,255,.08),0 60px 80px -30px rgba(20,26,51,.55),0 30px 30px -20px rgba(20,26,51,.3);transition:transform 900ms var(--ease)}
+.present:hover .frame{transform:rotateX(8deg) rotateY(6deg) rotateZ(-2deg)}
+
+/* כותרות סקשן */
+.sec{display:grid;gap:24px}
+.sec-head{display:grid;gap:6px;max-width:70ch}
+.sec-head h2{font-size:var(--fs-h2);font-weight:var(--fw-black);color:var(--ink-800);line-height:1.1}
+.sec-head p{color:var(--ink-500)}
+
+/* פירוק */
+.sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gutter)}
+.src{display:grid;gap:14px;align-content:start}
+.src h3{font-size:var(--fs-h4)}
+.src .from{font-size:var(--fs-caption);color:var(--ink-400)}
+.src ul{margin:0;padding:0 18px 0 0;display:grid;gap:6px;color:var(--ink-700)}
+.src li::marker{color:var(--gold)}
+.src .how{font-size:var(--fs-small);color:var(--ink-500);padding:12px 14px;border-radius:var(--r-sm);background:var(--surface-2)}
+.src .how b{color:var(--ink-900);font-weight:var(--fw-medium)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;direction:ltr;unicode-bidi:isolate;background:rgba(20,26,51,.06);padding:1px 6px;border-radius:6px;color:var(--ink-800)}
+
+/* עקרונות */
+.principles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--gutter)}
+.pr{display:grid;gap:8px;align-content:start}
+.pr b{font-size:var(--fs-lead);font-weight:var(--fw-bold);color:var(--ink-900)}
+.pr p{font-size:var(--fs-small);color:var(--ink-500)}
+
+/* צבע */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.sw{border-radius:var(--r-md);overflow:hidden;background:var(--surface);box-shadow:var(--elev-2)}
+.sw i{display:block;height:76px;background:var(--c);box-shadow:inset 0 -1px 0 rgba(20,26,51,.06)}
+.sw div{padding:10px 12px;display:grid;line-height:1.35}
+.sw b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.sw span{font-size:var(--fs-micro);color:var(--ink-400)}
+.sw code{background:none;padding:0;font-size:10.5px;color:var(--ink-500)}
+.swatch-group{display:grid;gap:10px}
+.swatch-group h4{font-size:var(--fs-small);color:var(--ink-500);font-weight:var(--fw-medium)}
+
+/* טיפוגרפיה */
+.type-rows{display:grid}
+.type-row{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;align-items:baseline;padding:16px 0;border-top:1px solid var(--line)}
+.type-row .spec{font-size:var(--fs-micro);color:var(--ink-400);display:grid;gap:2px}
+.type-row .spec b{font-size:var(--fs-caption);color:var(--ink-700);font-weight:var(--fw-medium)}
+
+/* עומק */
+.depth{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;padding:28px;border-radius:var(--r-xl);background:var(--canvas)}
+.depth .lv{height:120px;border-radius:var(--r-lg);background:var(--surface);display:grid;place-content:center;text-align:center;gap:2px}
+.depth .lv b{font-size:var(--fs-h4);font-weight:var(--fw-medium);color:var(--ink-900)}
+.depth .lv span{font-size:var(--fs-micro);color:var(--ink-400)}
+.glass-stage{position:relative;border-radius:var(--r-xl);overflow:hidden;padding:28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;
+  background:linear-gradient(135deg,#B7C3E4 0%,#E9E4DA 55%,#F3D8B3 100%)}
+.glass-stage::before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,#F2911C,transparent 65%);top:-60px;left:12%;opacity:.55}
+.glass-stage::after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,#3F5499,transparent 65%);bottom:-140px;right:20%;opacity:.45}
+.glass-stage>*{position:relative;z-index:1}
+.layers{display:grid;gap:8px;margin:0;padding:0;list-style:none;counter-reset:l}
+.layers li{counter-increment:l;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;font-size:var(--fs-small);color:var(--ink-700)}
+.layers li::before{content:counter(l);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:var(--fs-micro);font-weight:var(--fw-bold);background:var(--royal-100);color:var(--royal)}
+
+/* פקדים */
+.specimen{display:grid;gap:18px}
+.spec-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.spec-label{font-size:var(--fs-micro);color:var(--ink-400);letter-spacing:.04em;width:100%}
+.bar-demo{display:grid;gap:10px;max-width:420px}
+
+/* דמו רכיבים */
+.live{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:var(--gutter);align-items:start}
+.live .sidebar{height:720px;--silk:url("assets/img/silk-waves.webp")}
+.live-col{display:grid;gap:var(--gutter);min-width:0}
+
+/* איורים */
+.art{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter)}
+.art figure{margin:0;display:grid;gap:10px;align-content:start}
+.art .ph{border-radius:var(--r-lg);overflow:hidden;aspect-ratio:4/3;background:var(--stage);box-shadow:var(--elev-2)}
+.art .ph img{width:100%;height:100%;object-fit:cover}
+.art figcaption{font-size:var(--fs-small);color:var(--ink-500)}
+.art figcaption b{display:block;color:var(--ink-900);font-weight:var(--fw-medium)}
+.recipe{font-size:var(--fs-small);color:var(--ink-700);display:grid;gap:10px}
+.recipe pre{margin:0;white-space:pre-wrap;direction:ltr;text-align:left;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;background:var(--navy-night);color:#D7DBEC;padding:16px 18px;border-radius:var(--r-md);overflow-x:auto}
+
+/* אייקונים */
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.icons div{display:grid;justify-items:center;gap:8px;padding:16px 6px;border-radius:var(--r-md);background:var(--surface);box-shadow:var(--elev-2);color:var(--ink-800);font-size:10.5px}
+.icons div span{color:var(--ink-400);direction:ltr}
+
+/* עשה / אל תעשה */
+.dodont{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gutter)}
+.dodont ul{margin:0;padding:0 18px 0 0;display:grid;gap:8px}
+.dodont .do h3{color:var(--ok)}.dodont .dont h3{color:var(--bad)}
+.foot{font-size:var(--fs-caption);color:var(--ink-400);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px}
+
+@media (max-width:1100px){
+  .principles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .live{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .live .sidebar{grid-row:span 2;height:auto;min-height:680px}
+}
+@media (max-width:860px){
+  .cover,.sources,.dodont,.art{grid-template-columns:minmax(0,1fr)}
+  .depth{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .glass-stage{grid-template-columns:minmax(0,1fr)}
+  .live{grid-template-columns:minmax(0,1fr)}
+  .live .sidebar{width:100%;max-width:340px;min-height:640px;grid-row:auto}
+  .type-row{grid-template-columns:minmax(0,1fr);gap:6px}
+}
+@media (max-width:520px){.principles{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body class="bg-mist">
+<div class="doc">
+
+  <nav class="doc-nav" aria-label="ניווט במסמך">
+    <img src="assets/logos/maayanotecha-wordmark.webp" alt="מעיינותיך">
+    <div class="seg">
+      <a href="#sources">פירוק</a><a href="#principles">עקרונות</a><a href="#color">צבע</a><a href="#type">טיפוגרפיה</a><a href="#depth">עומק וזכוכית</a><a href="#controls">פקדים</a><a href="#live">רכיבים</a><a href="#art">איורים</a>
+    </div>
+    <a class="btn btn-primary btn-sm" href="dashboard.html" data-icon="home" data-icon-class="ico-sm">למסך הדוגמה</a>
+  </nav>
+
+  <!-- ============ כריכה ============ -->
+  <header class="cover">
+    <div style="display:grid;gap:18px">
+      <span class="eyebrow">מערכת עיצוב · גרסה 1 · תשפ״ז</span>
+      <h1>מעיינותיך<span>שפה אחת לחנות, ללוח הניהול ולתוכן של ההוצאה</span></h1>
+      <p>קנבס שקט, משטחים לבנים וזכוכית, צבע מותג אחד פעיל ונגיעת זהב אחת לכל מסך. נבנתה מהנדסה לאחור של ארבעה מקורות, ומותאמת לצבעים, לגופן ולתוכן של מעיינותיך.</p>
+      <div class="tags"><span class="tag">אפליקציית ניהול</span><span class="tag">חנות ספרים</span><span class="tag">RTL מלא</span><span class="tag">לוח עברי</span></div>
+    </div>
+    <div class="present"><a class="frame" href="dashboard.html" style="display:block" aria-label="פתיחת מסך הדוגמה"><img src="assets/img/dashboard-preview.webp" alt="מסך לוח הניהול של מעיינותיך" width="2160" height="1350"></a></div>
+  </header>
+
+  <!-- ============ פירוק ============ -->
+  <section class="sec" id="sources">
+    <div class="sec-head"><span class="eyebrow">01 · מאיפה זה בא</span><h2>הפירוק</h2><p>מכל מקור לקחנו מבנה וטכניקה, לא צבע ולא תוכן. הצבעים, הגופן והתמונות הוחלפו בשפה של מעיינותיך.</p></div>
+    <div class="sources">
+      <article class="card src">
+        <span class="from">מקור: אפליקציית לוח שנה עברי</span>
+        <h3>לוח השנה</h3>
+        <ul>
+          <li>גיליון לבן שצף מעל רקע אפור, עם פינות תחתונות גדולות במיוחד (36px) מול פינות עליונות רגילות.</li>
+          <li>שם החודש במשקל 900, גדול, צמוד לשורת השנה העברית והלועזית.</li>
+          <li>אותיות הימים (א–ש) כבדות. בכל תא אות עברית במשקל רגיל, ומתחתיה המספר הלועזי, קטן ואפור.</li>
+          <li>נקודה מתחת ליום עם אירוע. יום נבחר הוא עיגול מלא בצבע המותג, והיום הנוכחי מסומן בטבעת דקה.</li>
+          <li>פאנל יום: אות ענקית ויום בשבוע, תאריך לועזי, מונה אירועים וכפתור ״זמני היום״ בזהב רך.</li>
+        </ul>
+        <p class="how"><b>איך זה עובד:</b> התאריך העברי מחושב בדפדפן עם <code>Intl.DateTimeFormat('en-u-ca-hebrew')</code>, ופונקציית גימטריה ממירה ימים ושנים (כולל ט״ו/ט״ז וגרשיים). אין תלות בשרת או בספרייה.</p>
+      </article>
+      <article class="card src">
+        <span class="from">מקור: Sidebar UI</span>
+        <h3>סרגל הצד</h3>
+        <ul>
+          <li>פאנל כהה צף עם רדיוס 28, זכוכית מעל טקסטורת משי: התמונה בשכבה הכי תחתונה, מעליה גרדיאנט כהה ו־blur.</li>
+          <li>כותרת: לוגו, פעמון עם תג אדום וכפתור כיווץ. מתחת כרטיס פרופיל עם ״החלפת חשבון״.</li>
+          <li>חיפוש בצורת גלולה עם מתאר בלבד, ותוויות קבוצה קטנות (ניהול, תוכן, כללי).</li>
+          <li>כל פריט בגובה 46 עם אייקון בתוך עיגול זכוכית. הפריט הפעיל הוא פס מלא מקצה לקצה. האדום של המקור הוחלף בכחול מלכותי עם קו זהב.</li>
+          <li>מצב מקופל ברוחב 84 שמשאיר רק אייקונים.</li>
+        </ul>
+        <p class="how"><b>איך זה עובד:</b> <code>::before</code> מחזיק את תמונת המשי, <code>::after</code> מחזיק גרדיאנט ו־<code>backdrop-filter</code>, וכך הטקסט תמיד על משטח בניגודיות קבועה.</p>
+      </article>
+      <article class="card src">
+        <span class="from">מקור: דשבורד MediCore</span>
+        <h3>הדשבורד והירו</h3>
+        <ul>
+          <li>קנבס אפור־קריר ובמה אחת עם איור פרמיום. הטקסט יושב במרווח הריק שהאיור משאיר.</li>
+          <li>ברכה גדולה במשקל רגיל, השם במשקל בינוני. טקסט משני קטן עם מילים מודגשות.</li>
+          <li>כפתור ראשי כהה וכפתור רפאים לידו. כל פקדי השורה העליונה בגובה 38, ברדיוס גלולה ובאותה שכבת עומק.</li>
+          <li>KPI: כותרת קטנה, אחוז שינוי צבעוני, מספר גדול במשקל רגיל וגרף מדורג עם מילוי שקוף.</li>
+          <li>טבלה בלי מסגרות, רק קווי הפרדה דקים, וטבעת נתונים עם רווחים בין הקטעים.</li>
+        </ul>
+        <p class="how"><b>איך זה עובד:</b> האיור נוצר ב־fal על רקע בצבע <code>#D1D4DD</code>, ואותו צבע משמש כרקע הבמה. <code>mask-image</code> רדיאלי ממיס את שולי התמונה לתוך הבמה, כך שלא רואים איפה התמונה נגמרת.</p>
+      </article>
+      <article class="card src">
+        <span class="from">מקור: CareNest</span>
+        <h3>זכוכית ועומק</h3>
+        <ul>
+          <li>כרטיסים שקופים למחצה מעל ערפל צבעוני, ושורות פנימיות לבנות ואטומות יותר מהכרטיס עצמו.</li>
+          <li>תמונה עגולה או כריכה בצד ימין של כל שורה, טקסט ראשי כהה וטקסט משני אפור.</li>
+          <li>כרטיס כהה אחד עם צילום אווירה, מתאים לעוזר החכם, עם הצעות בגלולות וקופסת שאלה לבנה.</li>
+          <li>הצגה בפרספקטיבה תלת־ממדית למסכי שיווק.</li>
+        </ul>
+        <p class="how"><b>איך זה עובד:</b> חמש שכבות בכל כרטיס זכוכית. הפירוט בסקשן ״עומק וזכוכית״ למטה.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ עקרונות ============ -->
+  <section class="sec" id="principles">
+    <div class="sec-head"><span class="eyebrow">02</span><h2>חמישה עקרונות</h2></div>
+    <div class="principles">
+      <div class="card pr"><b>שקט קודם</b><p>קנבס אפור־קריר, הרבה אוויר, בלי מסגרות מיותרות. כל קישוט צריך להצדיק את עצמו.</p></div>
+      <div class="card pr"><b>צבע אחד פעיל</b><p>כחול מלכותי לפעולה ולמצב פעיל. זהב מופיע פעם אחת במסך, לרגע הכי חשוב.</p></div>
+      <div class="card pr"><b>עומק בשכבות</b><p>ארבע רמות עומק בלבד. שפת אור עליונה וצל רך, בלי גרדיאנטים צעקניים.</p></div>
+      <div class="card pr"><b>אותה צורה ואותו עומק</b><p>פקדים באותה שורה חולקים גובה, רדיוס ושכבת עומק. אין כפתור ״מיוחד״ בשורה.</p></div>
+      <div class="card pr"><b>איור אחד למסך</b><p>איור פרמיום אחד שמספר את המותג (מעיין, ספר, אור). שאר המסך עובד בשבילו.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ צבע ============ -->
+  <section class="sec" id="color">
+    <div class="sec-head"><span class="eyebrow">03</span><h2>צבע</h2><p>צבעי המותג נשמרו מהפוסטר של מעיינותיך. הניטרלים נוטים קלות לכחול כדי שהאפור ייראה מכוון.</p></div>
+    <div class="swatch-group"><h4>מותג</h4><div class="swatches" id="sw-brand"></div></div>
+    <div class="swatch-group"><h4>דיו ומשטחים</h4><div class="swatches" id="sw-ink"></div></div>
+    <div class="swatch-group"><h4>סמנטי (נפרד מצבע המותג)</h4><div class="swatches" id="sw-sem"></div></div>
+  </section>
+
+  <!-- ============ טיפוגרפיה ============ -->
+  <section class="sec" id="type">
+    <div class="sec-head"><span class="eyebrow">04</span><h2>טיפוגרפיה</h2><p>גופן אחד, Rubik, הגופן של המותג. הניגוד נוצר ממשקלים: 900 ללוח השנה ולכותרות תצוגה, 400 לברכה ולמספרים, 500 לכותרות כרטיסים.</p></div>
+    <div class="card type-rows">
+      <div class="type-row" style="border-top:0"><span class="spec"><b>Display · 900</b>64 / 1.0</span><span class="t-display">חשון</span></div>
+      <div class="type-row"><span class="spec"><b>H1 · 400 + 500</b>44 / 1.15</span><span class="t-h1">ערב טוב, <b>זלמן</b></span></div>
+      <div class="type-row"><span class="spec"><b>H2 · 500</b>34 / 1.3</span><span class="t-h2">הזמנות אחרונות</span></div>
+      <div class="type-row"><span class="spec"><b>KPI · 400</b>32 / 1.0</span><span class="t-kpi num">₪86,420</span></div>
+      <div class="type-row"><span class="spec"><b>H4 · 500</b>20 / 1.3</span><span class="t-h4">מגיד דבריו ליעקב המבואר</span></div>
+      <div class="type-row"><span class="spec"><b>Body · 400</b>14 / 1.6</span><span>ביאור חדש לתניא מבית ׳לב לדעת׳, בעריכת הרב דב ליברמן.</span></div>
+      <div class="type-row"><span class="spec"><b>Caption · 400</b>12 / 1.5</span><span class="t-caption">עודכן לפני 4 דקות · 42 קרטונים</span></div>
+      <div class="type-row"><span class="spec"><b>Label · 500</b>11 · ריווח 0.08em</span><span class="eyebrow">הוצאת מעיינותיך · לוח ניהול</span></div>
+    </div>
+  </section>
+
+  <!-- ============ עומק וזכוכית ============ -->
+  <section class="sec" id="depth">
+    <div class="sec-head"><span class="eyebrow">05</span><h2>עומק וזכוכית</h2><p>תחושת התלת־ממד מגיעה משכבות דקות שחוזרות על עצמן בכל רכיב, לא מצללים כבדים.</p></div>
+    <div class="depth">
+      <div class="lv" style="box-shadow:none;background:var(--surface-2)"><b>0</b><span>שטוח · בתוך כרטיס</span></div>
+      <div class="lv" style="box-shadow:var(--elev-1)"><b>1</b><span>פקד · <code>--elev-1</code></span></div>
+      <div class="lv" style="box-shadow:var(--elev-2)"><b>2</b><span>כרטיס · <code>--elev-2</code></span></div>
+      <div class="lv" style="box-shadow:var(--elev-3)"><b>3</b><span>צף · <code>--elev-3</code></span></div>
+      <div class="lv" style="box-shadow:var(--elev-4)"><b>4</b><span>מודאל · <code>--elev-4</code></span></div>
+    </div>
+    <div class="glass-stage">
+      <div class="card card-glass" style="display:grid;gap:12px">
+        <h3 class="t-title">מתכון כרטיס זכוכית</h3>
+        <ol class="layers">
+          <li>מילוי לבן שקוף 56% <code>--glass-1</code></li>
+          <li>טשטוש 22px ורוויה 160%</li>
+          <li>גבול פנימי לבן 1px</li>
+          <li>שפת אור עליונה <code>--hl-top</code></li>
+          <li>צל רך ונמוך שמתחיל מתחת לכרטיס</li>
+        </ol>
+      </div>
+      <div class="card card-glass" style="display:grid;gap:8px;align-content:start">
+        <div class="card-head" style="margin:0"><h3>תורים קרובים</h3><a class="link-sm" href="#depth">הכל</a></div>
+        <div class="row-tile"><span class="mono sm">מכ</span><span class="meta"><b>מנחם כהן</b><span>איסוף מהמחסן</span></span><span class="t-caption num">08:15</span></div>
+        <div class="row-tile"><span class="mono sm plum">רש</span><span class="meta"><b>רבקה שוורץ</b><span>משלוח שליח</span></span><span class="t-caption num">09:30</span></div>
+        <div class="row-tile"><span class="mono sm sage">של</span><span class="meta"><b>שמואל לוי</b><span>חנות, מרכז</span></span><span class="t-caption num">14:45</span></div>
+      </div>
+      <div style="display:grid;gap:14px;align-content:center;justify-items:start">
+        <div class="chip-float" style="position:relative"><span class="ic" data-icon="flame" data-icon-class="ico-sm"></span><span class="lab"><span>צ׳יפ צף · רמה 3</span><b class="num">₪4,280</b></span></div>
+        <div class="card card-dark" style="display:grid;gap:6px;width:100%"><h4 style="font-weight:500">זכוכית כהה</h4><span style="font-size:12px;color:#A9AFCB">לסרגל הצד ולעוזר החכם. מילוי 70%, טשטוש 30px.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ פקדים ============ -->
+  <section class="sec" id="controls">
+    <div class="sec-head"><span class="eyebrow">06</span><h2>פקדים</h2><p>גובה 38 ורדיוס גלולה לכל פקד בשורה. 30 לפקד קטן בתוך כרטיס, 46 לפעולה ראשית בעמוד.</p></div>
+    <div class="card specimen">
+      <div class="spec-row"><span class="spec-label">כפתורים</span>
+        <button class="btn btn-primary" type="button" data-icon="bag" data-icon-class="ico-sm">להזמנות היום</button>
+        <button class="btn btn-brand" type="button" data-icon="plus" data-icon-class="ico-sm">הוסף אירוע</button>
+        <button class="btn btn-secondary" type="button">ייצוא</button>
+        <button class="btn btn-ghost" type="button" data-icon="plus" data-icon-class="ico-sm">ספר חדש</button>
+        <button class="btn btn-gold" type="button" data-icon="clock" data-icon-class="ico-sm">זמני היום</button>
+        <button class="btn btn-secondary btn-icon" type="button" aria-label="התראות" data-icon="bell"></button>
+        <button class="btn btn-fab" type="button" aria-label="הבא" data-icon="chevL" data-icon-class="ico-lg"></button>
+      </div>
+      <div class="spec-row"><span class="spec-label">שורה עליונה: טאבים, חיפוש, התראות, משתמש — אותו גובה ואותו עומק</span>
+        <div class="seg seg-brand" role="tablist"><button role="tab" aria-selected="true">סקירה</button><button role="tab" aria-selected="false">מכירות</button><button role="tab" aria-selected="false">מלאי</button></div>
+        <div class="seg" role="tablist"><button role="tab" aria-selected="false">יום</button><button role="tab" aria-selected="true">שבוע</button><button role="tab" aria-selected="false">חודש</button></div>
+        <label class="search" data-icon="search" data-icon-class="ico-sm" style="width:260px"><span class="sr-only">חיפוש</span><input id="q-demo" placeholder="חיפוש ספר, לקוח…"><kbd>⌘K</kbd></label>
+        <button class="user-chip" type="button"><span class="who"><b>זלמן גולדברג</b><span>הוצאת מעיינותיך</span></span><span class="mono sm kraft">זג</span></button>
+      </div>
+      <div class="spec-row"><span class="spec-label">סטטוסים ותגים</span>
+        <span class="status ok">נשלח</span><span class="status info">בהכנה</span><span class="status warn">ממתין לתשלום</span><span class="status bad">הוחזר</span><span class="status">טיוטה</span>
+        <span class="badge">7</span><span class="badge gold">12</span><span class="badge soft">3</span>
+        <span class="trend up">▲ +12%</span><span class="trend down">▼ −3%</span><span class="tag">חסידות</span>
+      </div>
+      <div class="spec-row"><span class="spec-label">מונוגרמות (במקום תמונות פרופיל)</span>
+        <span class="mono lg">מכ</span><span class="mono lg plum">רש</span><span class="mono lg gold">חמ</span><span class="mono lg sage">של</span><span class="mono lg kraft">יר</span>
+      </div>
+      <div class="spec-row"><span class="spec-label">התקדמות</span>
+        <div class="bar-demo" style="width:100%"><div class="bar" style="--v:92%"><i></i></div><div class="bar" style="--v:61%;--c:var(--gold)"><i></i></div><div class="bar" style="--v:38%;--c:var(--ok)"><i></i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ רכיבים חיים ============ -->
+  <section class="sec" id="live">
+    <div class="sec-head"><span class="eyebrow">07</span><h2>רכיבים</h2><p>הכל כאן עובד: אפשר לכווץ את הסרגל, לבחור יום, לעבור חודש ולבחור טאב.</p></div>
+    <div class="live">
+      <aside class="sidebar" aria-label="דוגמת סרגל צד">
+        <div class="sb-head">
+          <div class="sb-logo"><img src="assets/logos/maayanotecha-wordmark.webp" alt="מעיינותיך"></div>
+          <button class="sb-icon-btn sb-bell" type="button" aria-label="התראות" data-icon="bell" data-icon-class="ico-sm"><span class="badge">4</span></button>
+          <button class="sb-icon-btn sb-collapse" type="button" aria-label="כיווץ הסרגל" aria-expanded="true" data-icon="chevR" data-icon-class="ico-sm"></button>
+        </div>
+        <div class="sb-rule"></div>
+        <button class="sb-profile" type="button"><span class="mono lg">זג</span><span class="who"><b>זלמן גולדברג</b><span data-icon="swap" data-icon-class="ico-sm">החלפת חשבון</span></span><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+        <label class="sb-search" data-icon="search" data-icon-class="ico-sm"><span class="sr-only">חיפוש</span><input id="sb-q-demo" placeholder="חיפוש…"></label>
+        <nav class="sb-nav">
+          <div class="sb-label">ניהול</div>
+          <button class="sb-item" data-nav type="button" aria-current="page"><span class="i" data-icon="home" data-icon-class="ico-sm"></span><span class="lbl">לוח בקרה</span></button>
+          <button class="sb-item" data-nav type="button"><span class="i" data-icon="bag" data-icon-class="ico-sm"></span><span class="lbl">הזמנות</span><span class="badge">7</span></button>
+          <button class="sb-item" data-nav type="button"><span class="i" data-icon="book" data-icon-class="ico-sm"></span><span class="lbl">קטלוג ספרים</span></button>
+          <button class="sb-item" data-nav type="button"><span class="i" data-icon="calendar" data-icon-class="ico-sm"></span><span class="lbl">לוח שנה</span></button>
+          <div class="sb-label">תוכן</div>
+          <button class="sb-item" data-nav type="button"><span class="i" data-icon="sparkle" data-icon-class="ico-sm"></span><span class="lbl">החדשים של מעיינותיך</span><span class="badge gold">12</span></button>
+          <button class="sb-item" data-nav type="button"><span class="i" data-icon="quote" data-icon-class="ico-sm"></span><span class="lbl">ציטוטים ותובנות</span></button>
+          <div class="sb-label">כללי</div>
+          <button class="sb-item" data-nav type="button"><span class="i" data-icon="settings" data-icon-class="ico-sm"></span><span class="lbl">הגדרות</span></button>
+          <button class="sb-item" type="button"><span class="i" data-icon="logout" data-icon-class="ico-sm"></span><span class="lbl">יציאה</span></button>
+        </nav>
+      </aside>
+      <div class="live-col">
+        <section class="card" style="background:var(--surface-2);padding:10px" aria-label="לוח שנה עברי"><div id="cal" class="hcal"></div></section>
+      </div>
+      <div class="live-col">
+        <article class="card kpi"><div class="kpi-top">הזמנות היום<span class="go" data-icon="arrowUpLeft" data-icon-class="ico-sm"></span></div>
+          <div class="kpi-body"><div class="kpi-val"><span class="trend up">▲ +12%</span><span class="t-kpi num">47</span></div><svg class="spark" data-spark="18,22,20,26,24,31,29,38,47" data-c="#3F5499"></svg></div></article>
+        <section class="card"><div class="card-head"><h3>מכירות לפי תחום</h3></div>
+          <div class="gauge"><svg id="gauge" role="img" aria-label="חסידות 46%, תפילה ומועדים 31%, הגות וסיפור 23%"></svg><div class="center"><b>1,284</b><span>ספרים נמכרו</span></div></div>
+          <div class="legend"><div style="--c:var(--royal)"><b class="num">46%</b>חסידות</div><div style="--c:var(--gold)"><b class="num">31%</b>תפילה</div><div style="--c:var(--kraft-600)"><b class="num">23%</b>הגות</div></div></section>
+        <section class="assist" aria-label="כרטיס עוזר">
+          <img alt="" src="https://v3b.fal.media/files/b/0ab1458a/v_6peiQ9ZvA9rvQYUAVhY_unFvo78z.jpg" onerror="this.onerror=null;this.src='assets/img/assistant-flame.webp'">
+          <div><h3>מעיין</h3><p class="sub">העוזר החכם של ההוצאה</p></div>
+          <div class="ask"><div class="ask-top"><span>שאלות על הקטלוג וההזמנות</span><span class="up">חדש</span></div><input id="ask-demo" placeholder="שאל כל דבר…" aria-label="שאלה לעוזר"><div class="ask-row"><span class="tools"></span><button class="send" type="button" aria-label="שליחה" data-icon="send" data-icon-class="ico-sm"></button></div></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ איורים ============ -->
+  <section class="sec" id="art">
+    <div class="sec-head"><span class="eyebrow">08</span><h2>איורים ותמונות</h2><p>נוצרו ב־fal (Nano Banana 2.1). הכלל: נושא אחד, תאורת סטודיו, רקע בצבע הבמה, בלי טקסט, ובפלטה של המותג. כך התמונות נבלעות בממשק ולא נראות כמו ״תמונת AI״ שהודבקה.</p></div>
+    <div class="art">
+      <figure><div class="ph"><img alt="ספר זכוכית פתוח שממנו עולה מעיין של אור" src="https://v3b.fal.media/files/b/0ab1458a/jNxza-vEAZhBqg-OrivsP_vhVUVod2.png" onerror="this.onerror=null;this.src='assets/img/hero-wellspring.webp'"></div>
+        <figcaption><b>במת הירו · ״מעיין מספר״</b>ספר זכוכית שקוף, ליבה בזהב, שבירות בכחול מלכותי. השליש הימני ריק לטקסט.</figcaption></figure>
+      <figure><div class="ph" style="background:#0C0C1A"><img alt="להבה רכה של אור על רקע כהה" src="https://v3b.fal.media/files/b/0ab1458a/v_6peiQ9ZvA9rvQYUAVhY_unFvo78z.jpg" onerror="this.onerror=null;this.src='assets/img/assistant-flame.webp'"></div>
+        <figcaption><b>כרטיס העוזר · ״נר ה׳ נשמת אדם״</b>להבה־טיפה רכה בשזיף ובכחול לילה. מקום ריק למעלה לכותרת.</figcaption></figure>
+      <figure><div class="ph" style="background:#141B33"><img alt="קפלי משי כהים" src="https://v3b.fal.media/files/b/0ab1458a/7jmsUyv_AapEMrkcB1eyn_pnVueL9i.jpg" onerror="this.onerror=null;this.src='assets/img/silk-waves.webp'"></div>
+        <figcaption><b>טקסטורת הסרגל</b>קפלי משי בגרפיט וכחול לילה. תמיד מתחת לשכבת זכוכית כהה, אף פעם לא לבד.</figcaption></figure>
+    </div>
+    <div class="card recipe">
+      <b class="t-title">תבנית פרומפט לאיורים חדשים</b>
+      <pre>Premium 3D visualization render, [ONE SUBJECT from the Jewish-book world: open book / scroll / oil lamp / spring of water],
+made of translucent frosted glass with visible inner structure. Inner core glows warm amber (#F2911C);
+glass refracts soft royal blue (#3F5499) and periwinkle. Soft diffused studio light, subsurface scattering, calm, not busy.
+Subject in the left-center, right third completely empty. Seamless flat background #D1D4DD, no floor line.
+Absolutely no text, no letters, no symbols, no logos, no people.</pre>
+      <span class="t-muted">אין לבקש מהמודל טקסט עברי בתוך תמונה. טקסט תמיד ב־HTML מעל התמונה.</span>
+    </div>
+  </section>
+
+  <!-- ============ אייקונים ============ -->
+  <section class="sec" id="icons">
+    <div class="sec-head"><span class="eyebrow">09</span><h2>אייקונים</h2><p>קו 1.6, פינות מעוגלות, 24×24. בסרגל הצד הם יושבים בתוך עיגול זכוכית, ובכל מקום אחר בלי רקע.</p></div>
+    <div class="icons" id="iconGrid"></div>
+  </section>
+
+  <!-- ============ עשה / אל תעשה ============ -->
+  <section class="sec">
+    <div class="sec-head"><span class="eyebrow">10</span><h2>עשה ואל תעשה</h2></div>
+    <div class="dodont">
+      <div class="card do"><h3 class="t-h4">עשה</h3><ul>
+        <li>להשתמש רק בטוקנים מתוך <code>tokens.css</code>.</li>
+        <li>להציג כריכות ספרים אמיתיות עם צל רך, במקום תמונות אילוסטרציה.</li>
+        <li>מונוגרמות לאנשים. תמונת פרופיל רק כשיש תמונה אמיתית.</li>
+        <li>לשמור כל פקדי שורה באותו גובה, רדיוס ועומק.</li>
+        <li>ספרות ב־LTR ובמשקל של הטקסט שסביבן.</li>
+      </ul></div>
+      <div class="card dont"><h3 class="t-h4">אל תעשה</h3><ul>
+        <li>לא את הלוגו של ״ספרי אור החיים״, ולא ב״ה כברירת מחדל.</li>
+        <li>לא יותר מנגיעת זהב אחת במסך.</li>
+        <li>לא צללים כהים ולא גבולות עבים. עומק מגיע משכבות.</li>
+        <li>לא תמונות סטוק של אנשים מחייכים או אימוג׳י כאייקונים.</li>
+        <li>לא להמציא שמות ספרים, מחירים או תאריכים בתוכן אמיתי.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>מעיינותיך · מערכת עיצוב v1 · קבצים: tokens.css · components.css · ds.js</span><a href="dashboard.html">למסך הדוגמה המלא</a></footer>
+</div>
+
+<script src="ds.js"></script>
+<script>
+(function(){
+  const sw=(id,list)=>document.getElementById(id).innerHTML=list.map(([n,v,u])=>`<div class="sw"><i style="--c:${v}"></i><div><b>${n}</b><code>${v}</code><span>${u}</span></div></div>`).join("");
+  sw("sw-brand",[["royal","#3F5499","פעולה, מצב פעיל"],["royal-400","#6476B6","גרפים, מצב hover"],["royal-100","#E4E8F4","רקע מידע"],["gold","#F2911C","נגיעה אחת במסך"],["gold-100","#FCEBD3","זמני היום"],["plum","#5E1542","מונוגרמות, קידום"],["kraft","#D2B899","נייר, כריכות"],["navy-night","#121733","סרגל צד"]]);
+  sw("sw-ink",[["ink-900","#141A33","כותרות ומספרים"],["ink-700","#353D5E","טקסט גוף"],["ink-500","#626A88","טקסט משני"],["ink-300","#B7BBCB","מספרים לועזיים"],["canvas","#ECEEF3","רקע האפליקציה"],["stage","#D1D4DD","במת האיור"],["surface-2","#F6F7FA","שורה בתוך כרטיס"],["surface","#FFFFFF","כרטיס"]]);
+  sw("sw-sem",[["ok","#2E8566","נשלח, שולם"],["warn","#B86A0A","ממתין"],["bad","#B93B36","הוחזר, התראה"],["info","#3F5499","בהכנה"]]);
+  document.getElementById("iconGrid").innerHTML=DS.icons.map(n=>`<div>${DS.icon(n,"ico-lg")}<span>${n}</span></div>`).join("");
+  document.querySelectorAll("svg[data-spark]").forEach(s=>DS.spark(s,s.dataset.spark.split(",").map(Number),s.dataset.c));
+  DS.gauge(document.getElementById("gauge"),[{v:46,c:"#3F5499"},{v:31,c:"#F2911C"},{v:23,c:"#A9865C"}]);
+  const t=new Date();t.setHours(12,0,0,0);const E={};const add=(n,e)=>{const k=DS.iso(DS.addDays(t,n));(E[k]=E[k]||[]).push(e)};
+  add(0,{t:"סגירת קבצים לדפוס",s:"מגיד דבריו ליעקב המבואר · חלק ב׳",time:"10:00",gold:true});
+  add(2,{t:"משלוח לחנויות",s:"42 קרטונים",time:"09:00"});add(-3,{t:"פגישת עריכה",s:"שערי לוי יצחק",time:"11:00"});add(6,{t:"צילום כריכות",s:"4 כותרים",time:"13:00"});
+  DS.calendar(document.getElementById("cal"),{events:E});
+})();
+</script>
+</body>
+</html>
