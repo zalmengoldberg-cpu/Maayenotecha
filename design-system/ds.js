@@ -141,7 +141,9 @@
       });
       const sh = heb(selected), sev = events[iso(selected)] || [];
       const list = sev.length ? sev.map(e => `<div class="row-tile"><i class="bullet ${e.gold ? "gold" : ""}"></i><div class="meta"><b>${e.t}</b><span>${e.s || ""}</span></div><span class="time">${e.time || ""}</span></div>`).join("")
-        : `<p class="hcal-empty">אין אירועים ביום הזה. אפשר להוסיף אירוע מהכפתור למעלה.</p>`;
+        : (opts && opts.emptyIcon
+          ? `<div class="empty"><img class="icon-3d" src="${opts.emptyIcon}" alt=""><b>יום פנוי</b><span>אין אירועים ביום הזה. אפשר להוסיף אירוע מהכפתור למעלה.</span></div>`
+          : `<p class="hcal-empty">אין אירועים ביום הזה. אפשר להוסיף אירוע מהכפתור למעלה.</p>`);
       root.innerHTML = `
         <div class="hcal-sheet">
           <div class="hcal-top">

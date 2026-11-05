@@ -364,7 +364,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
 
   <!-- ============ איורים ============ -->
   <section class="sec" id="art">
-    <div class="sec-head"><span class="eyebrow">08</span><h2>איורים ותמונות</h2><p>נוצרו ב־fal (Nano Banana 2.1). הכלל: נושא אחד, תאורת סטודיו, רקע בצבע הבמה, בלי טקסט, ובפלטה של המותג. כך התמונות נבלעות בממשק ולא נראות כמו ״תמונת AI״ שהודבקה.</p></div>
+    <div class="sec-head"><span class="eyebrow">08</span><h2>איורים ותמונות</h2><p>נוצרו ב־fal (Nano Banana 2.1, והסרת רקע ב־BiRefNet). המתכונים המלאים בסקיל, בקובץ <code>references/fal-imagery.md</code>. הכלל: נושא אחד, תאורת סטודיו, רקע בצבע הבמה, בלי טקסט, ובפלטה של המותג. כך התמונות נבלעות בממשק ולא נראות כמו ״תמונת AI״ שהודבקה.</p></div>
     <div class="art">
       <figure><div class="ph"><img alt="ספר זכוכית פתוח שממנו עולה מעיין של אור" src="https://v3b.fal.media/files/b/0ab1458a/jNxza-vEAZhBqg-OrivsP_vhVUVod2.png" onerror="this.onerror=null;this.src='assets/img/hero-wellspring.webp'"></div>
         <figcaption><b>במת הירו · ״מעיין מספר״</b>ספר זכוכית שקוף, ליבה בזהב, שבירות בכחול מלכותי. השליש הימני ריק לטקסט.</figcaption></figure>
@@ -372,6 +372,17 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
         <figcaption><b>כרטיס העוזר · ״נר ה׳ נשמת אדם״</b>להבה־טיפה רכה בשזיף ובכחול לילה. מקום ריק למעלה לכותרת.</figcaption></figure>
       <figure><div class="ph" style="background:#141B33"><img alt="קפלי משי כהים" src="https://v3b.fal.media/files/b/0ab1458a/7jmsUyv_AapEMrkcB1eyn_pnVueL9i.jpg" onerror="this.onerror=null;this.src='assets/img/silk-waves.webp'"></div>
         <figcaption><b>טקסטורת הסרגל</b>קפלי משי בגרפיט וכחול לילה. תמיד מתחת לשכבת זכוכית כהה, אף פעם לא לבד.</figcaption></figure>
+    </div>
+    <div class="card" style="display:grid;gap:14px">
+      <b class="t-title">אייקונים תלת־ממדיים מזכוכית · <code>.icon-3d</code></b>
+      <span class="t-muted" style="font-size:13px">לאריחי אזורים, מצבים ריקים ואונבורדינג. נוצרו ב־fal באותו מתכון (זווית, תאורה וזכוכית זהות) ועברו הסרת רקע, כך שהם עומדים על כל משטח.</span>
+      <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:end">
+        <div class="empty"><img class="icon-3d lg" src="assets/icons-3d/orders.webp" alt=""><b>הזמנות</b></div>
+        <div class="empty"><img class="icon-3d lg" src="assets/icons-3d/catalog.webp" alt=""><b>קטלוג</b></div>
+        <div class="empty"><img class="icon-3d lg" src="assets/icons-3d/calendar.webp" alt=""><b>לוח שנה</b></div>
+        <div class="empty"><img class="icon-3d lg" src="assets/icons-3d/delivery.webp" alt=""><b>הפצה</b></div>
+        <div class="empty" style="max-width:240px;background:rgba(255,255,255,.6);border-radius:var(--r-lg);box-shadow:var(--elev-2)"><img class="icon-3d" src="assets/icons-3d/orders.webp" alt=""><b>אין הזמנות חדשות</b><span>הזמנה חדשה תופיע כאן ברגע שתיכנס.</span></div>
+      </div>
     </div>
     <div class="card recipe">
       <b class="t-title">תבנית פרומפט לאיורים חדשים</b>

@@ -502,3 +502,11 @@ p{margin:0}
 .hero-copy,.hero .chip-float{z-index:3}
 @media (prefers-reduced-motion:reduce){.hero-glow,.hero .chip-float{animation:none}}
 @media (max-width:760px){.hero{--spring-x:44%;--spring-y:30%}}
+
+/* ---------------- אייקון תלת-ממדי (fal, מתכון B) ומצב ריק ---------------- */
+.icon-3d{--sz:64px;width:var(--sz);height:var(--sz);object-fit:contain;flex:none;filter:drop-shadow(0 10px 14px rgba(20,26,51,.18))}
+.icon-3d.sm{--sz:40px}.icon-3d.lg{--sz:96px}
+.empty{display:grid;justify-items:center;text-align:center;gap:4px;padding:14px 8px}
+.empty .icon-3d{margin-bottom:4px}
+.empty b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.empty span{font-size:var(--fs-caption);color:var(--ink-400);max-width:30ch}
