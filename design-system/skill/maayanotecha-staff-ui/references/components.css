@@ -434,3 +434,71 @@ p{margin:0}
 .tour-progress i{display:block;height:100%;background:linear-gradient(90deg,#6FD6E6,#4A86E8,#7A5BB8);border-radius:inherit;transition:width var(--t-slow) var(--ease)}
 .tour-actions{display:flex;justify-content:flex-end;gap:6px}
 .tour-actions [hidden]{display:none}
+
+/* ==========================================================================
+   תמונות פרופיל ואייקוני מותגים
+   ========================================================================== */
+.avatar{--sz:32px;position:relative;width:var(--sz);height:var(--sz);flex:none;border-radius:50%;
+  box-shadow:0 0 0 2px #fff,0 2px 6px rgba(20,26,51,.18)}
+.avatar>img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.avatar.sm{--sz:26px}.avatar.lg{--sz:44px}
+.avatar .brand{position:absolute;bottom:-3px;left:-3px;--sz:15px;box-shadow:0 0 0 2px #fff}
+.brand{--sz:32px;width:var(--sz);height:var(--sz);flex:none;border-radius:50%;display:inline-grid;place-items:center;color:#fff;background:var(--b,#3F5499);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 2px 6px -1px rgba(20,26,51,.25)}
+.brand svg{width:54%;height:54%;fill:currentColor}
+.brand.sq{border-radius:10px}
+.brand.facebook{--b:#0866FF}
+.brand.instagram{--b:radial-gradient(circle at 30% 107%,#FDF497 0%,#FDF497 5%,#FD5949 45%,#D6249F 60%,#285AEB 90%)}
+.brand.whatsapp{--b:#25D366}
+.brand.youtube{--b:#FF0000}
+.brand.gmail{--b:#fff;color:#EA4335}
+.brand.google{--b:#fff;color:#4285F4}
+.brand.site{--b:#fff;color:var(--royal)}
+.brand.site img{width:76%;height:auto}
+
+/* ==========================================================================
+   ממשק זכוכית (CareNest) — .glass-ui על עטיפת העמוד:
+   רקע צבעוני רך, כרטיסים שקופים למחצה, והפריטים בתוכם לבנים ואטומים יותר
+   כך שהם "צפים" מעל הכרטיס.
+   ========================================================================== */
+.bg-aurora{background:
+  radial-gradient(55% 45% at 92% 0%,rgba(84,108,184,.50),transparent 70%),
+  radial-gradient(45% 40% at 22% 8%,rgba(111,196,212,.42),transparent 70%),
+  radial-gradient(50% 45% at 62% 100%,rgba(242,170,90,.26),transparent 70%),
+  radial-gradient(40% 40% at 0% 72%,rgba(122,91,184,.20),transparent 70%),
+  linear-gradient(180deg,#D8DEEB 0%,#E4EBEC 50%,#EEEAE2 100%);background-attachment:fixed}
+.glass-ui{--tile:rgba(255,255,255,.86);--tile-shadow:0 1px 2px rgba(20,26,51,.05),0 6px 16px -10px rgba(20,26,51,.22)}
+.glass-ui .card:not(.open-top),.glass-ui .open-top::before{
+  background:rgba(255,255,255,.42);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.62),inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(20,26,51,.04),0 14px 34px -18px rgba(20,26,51,.28)}
+.glass-ui .open-top:not(.hero)::before{-webkit-mask-image:linear-gradient(to bottom,transparent var(--ot-fade));mask-image:linear-gradient(to bottom,transparent var(--ot-fade))}
+/* פריטים צפים */
+.glass-ui .row-tile,.glass-ui .agenda-item,.glass-ui .tb,.glass-ui .sched-progress,.glass-ui .ch-row{background:var(--tile);box-shadow:var(--tile-shadow);border-radius:14px}
+.glass-ui .agenda{gap:8px}
+.glass-ui .agenda-item{padding:10px 12px;border-top:0!important}
+.glass-ui .agenda-item:hover,.glass-ui .row-tile:hover,.glass-ui .tb:hover,.glass-ui .ch-row:hover{background:#fff}
+.glass-ui .tb{padding:10px 12px}
+.glass-ui .link-sm,.glass-ui .card-head .more:hover{background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.8)}
+.glass-ui .table{border-spacing:0 8px}
+.glass-ui .table td{background:var(--tile);border-top:0;box-shadow:0 1px 0 rgba(20,26,51,.03)}
+.glass-ui .table tr td:first-child{border-radius:0 14px 14px 0}.glass-ui .table tr td:last-child{border-radius:14px 0 0 14px}
+.glass-ui .table tbody tr{filter:drop-shadow(0 6px 10px rgba(20,26,51,.06))}
+.glass-ui .table tr:hover td{background:#fff}
+.glass-ui .bar{background:rgba(20,26,51,.08)}
+.glass-ui .hcal-sheet{box-shadow:0 0 0 1px rgba(255,255,255,.7),0 18px 36px -18px rgba(20,26,51,.3)}
+.glass-ui .legend div,.glass-ui .kpi .kpi-top{color:var(--ink-500)}
+
+/* ---------------- הירו חי ---------------- */
+.hero{--spring-x:28%;--spring-y:60%}
+.hero-sparks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:transform 600ms var(--ease)}
+.hero-glow{position:absolute;width:260px;height:260px;margin:-130px 0 0 -130px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,196,110,.55) 0%,rgba(255,170,80,.18) 35%,transparent 70%);mix-blend-mode:screen;
+  animation:hero-breathe 4.5s var(--ease-in-out) infinite;transition:translate 600ms var(--ease)}
+@keyframes hero-breathe{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.12)}}
+.hero-art{transition:transform 700ms var(--ease)}
+.hero .chip-float{transition:translate 600ms var(--ease);animation:chip-bob 6s var(--ease-in-out) infinite}
+.hero .chip-b{animation-delay:-3s}
+@keyframes chip-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hero-copy,.hero .chip-float{z-index:3}
+@media (prefers-reduced-motion:reduce){.hero-glow,.hero .chip-float{animation:none}}
+@media (max-width:760px){.hero{--spring-x:44%;--spring-y:30%}}

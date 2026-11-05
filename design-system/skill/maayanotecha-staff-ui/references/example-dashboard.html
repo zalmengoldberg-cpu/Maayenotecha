@@ -39,9 +39,22 @@
 .sched-progress{display:grid;gap:8px;padding:12px;border-radius:var(--r-sm);background:var(--surface-2);margin-bottom:6px}
 .sched-progress .r{display:flex;justify-content:space-between;font-size:var(--fs-micro);color:var(--ink-500)}
 .sched-progress .r b{font-size:var(--fs-small);color:var(--ink-900);font-weight:var(--fw-medium)}
+.ch-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.ch-row{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"ic pc" "meta meta" "bar bar";align-items:center;gap:10px 8px;padding:12px}
+.ch-row>.brand{grid-area:ic}
+.ch-row .pc{grid-area:pc;justify-self:end;font-size:var(--fs-h4)!important;font-weight:400}
+.ch-row .meta{grid-area:meta}
+.ch-row .meta{display:grid;line-height:1.25;min-width:0}
+.ch-row .meta b{font-size:var(--fs-small);font-weight:500;color:var(--ink-900)}
+.ch-row .meta span{font-size:var(--fs-micro);color:var(--ink-400)}
+.ch-row .pc{font-size:var(--fs-small);color:var(--ink-900)}
+.ch-row .bar{grid-area:bar}
+.cell-ch{display:inline-flex;align-items:center;gap:8px;color:var(--ink-500)}
+.brand.sm{--sz:24px}
 .demo-note{font-size:var(--fs-micro);color:var(--ink-400);text-align:center;padding:8px 0 4px}
 
 @media (max-width:1280px){
+  .ch-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .span-8,.span-4{grid-column:span 12}
   .right-col{grid-template-columns:repeat(2,minmax(0,1fr))}
   .right-col>section:first-child{grid-column:span 2}
@@ -58,6 +71,9 @@
 @media (max-width:760px){
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .side-col,.right-col{grid-template-columns:minmax(0,1fr)!important}
+  .ch-grid{grid-template-columns:repeat(5,128px);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -20px;padding:4px 20px 10px}
+  .ch-grid::-webkit-scrollbar{display:none}
+  .ch-row{scroll-snap-align:start}
   .right-col>section:first-child{grid-column:auto}
   .user-chip .who{display:none}
   .hero{display:grid;min-height:0}
@@ -73,8 +89,8 @@
 }
 </style>
 </head>
-<body class="bg-mist">
-<div class="app" id="app">
+<body class="bg-aurora">
+<div class="app glass-ui" id="app">
 
   <!-- ============ סרגל צד ============ -->
   <aside class="sidebar" aria-label="ניווט ראשי" data-tour="sidebar">
@@ -124,7 +140,7 @@
     <div class="grid">
      <div class="stack span-8">
       <!-- הירו -->
-      <section class="hero open-top" aria-label="פתיחה">
+      <section class="hero open-top" data-alive aria-label="פתיחה">
         <img class="hero-art" alt="" src="https://v3b.fal.media/files/b/0ab1458a/jNxza-vEAZhBqg-OrivsP_vhVUVod2.png" onerror="this.onerror=null;this.src='assets/img/hero-wellspring.webp'">
         <div class="chip-float chip-a"><span class="ic" data-icon="flame" data-icon-class="ico-sm"></span><span class="lab"><span>מכירות היום</span><b class="num">₪4,280 <span class="trend up">+12%</span></b></span></div>
         <div class="chip-float chip-b"><img src="assets/covers/maggid-devarav-leyaakov-2.webp" alt=""><span class="lab"><span>נשלח לדפוס</span><b style="font-size:13px;font-weight:500">מגיד דבריו ליעקב ח״ב</b></span></div>
@@ -156,7 +172,7 @@
         <div class="card-head"><h3 id="o-h">הזמנות אחרונות</h3><a class="link-sm" href="#">לכל ההזמנות</a></div>
         <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>ספר</th><th>לקוח</th><th>תאריך</th><th>סטטוס</th><th>סכום</th><th><span class="sr-only">פעולות</span></th></tr></thead>
+            <thead><tr><th>ספר</th><th>לקוח</th><th>ערוץ</th><th>תאריך</th><th>סטטוס</th><th>סכום</th><th><span class="sr-only">פעולות</span></th></tr></thead>
             <tbody id="orders"></tbody>
           </table>
         </div>
@@ -164,6 +180,10 @@
 
       <!-- עמודה תחתונה -->
       <div class="grid side-col" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <section class="card channels" aria-labelledby="ch-h" style="grid-column:1/-1">
+          <div class="card-head"><h3 id="ch-h">הזמנות לפי ערוץ · השבוע</h3><a class="link-sm" href="#">לדוח המלא</a></div>
+          <div class="ch-grid" id="channels"></div>
+        </section>
         <section class="card" aria-labelledby="tb-h">
           <div class="card-head"><h3 id="tb-h">הנמכרים החודש</h3><a class="link-sm" href="#">לכל הקטלוג</a></div>
           <div class="top-books" id="topBooks"></div>
@@ -190,7 +210,7 @@
       </section>
 
       <!-- לוח שנה -->
-      <section class="card" data-tour="calendar" style="background:var(--surface-2);padding:10px" aria-label="לוח שנה עברי">
+      <section class="card" data-tour="calendar" style="padding:10px" aria-label="לוח שנה עברי">
         <div id="cal" class="hcal"></div>
       </section>
 
@@ -235,21 +255,29 @@
 
   // הזמנות
   const B={nm:["נשמתא דאורייתא","ביאורי חסידות לש״ס","nishmata-deoraita"],tz:["צדיק יסוד עולם","תולדות הריי״צ","tzaddik-yesod-olam"],tn:["תניא בפיך ובלבבך","ביאור חדש לתניא","tanya-befikha-uvilvavkha"],lt:["לתקן עולם","מסע ל־50 בתי חב״ד","letaken-olam"],lc:["לב חדש","שיחות עם אישים","lev-chadash"],cl:["חזון למועד","הרב יחזקאל סופר","chazon-lamoed"]};
-  const O=[["tn","מנחם כהן","",0,"ok","שולם","₪138"],["nm","רבקה שוורץ","plum",0,"info","בהכנה","₪96"],["lt","שמואל לוי","sage",-1,"warn","ממתין לתשלום","₪74"],["tz","חיה מושקא פרידמן","gold",-1,"ok","נשלח","₪212"],["lc","לוי יצחק גרין","",-2,"bad","הוחזר","₪58"],["cl","יוסף רוזנברג","kraft",-2,"ok","נשלח","₪64"]];
+  // תמונות הלקוחות נוצרו ב-fal; ערוץ = מאיפה הגיעה ההזמנה
+  const CH={instagram:"אינסטגרם",facebook:"פייסבוק",whatsapp:"וואטסאפ",site:"אתר",gmail:"מייל"};
+  const chBadge=k=>k==="site"?`<span class="brand site" role="img" aria-label="אתר"><img src="assets/logos/maayanotecha-icon.svg" alt=""></span>`:DS.brand(k,CH[k]);
+  const O=[["tn","מנחם כהן","menachem-cohen","site",0,"ok","שולם","₪138"],["nm","רבקה שוורץ","rivka-schwartz","instagram",0,"info","בהכנה","₪96"],["lt","שמואל לוי","shmuel-levi","whatsapp",-1,"warn","ממתין לתשלום","₪74"],["tz","חיה מושקא פרידמן","chaya-mushka-friedman","facebook",-1,"ok","נשלח","₪212"],["lc","לוי יצחק גרין","levi-yitzchak-green","gmail",-2,"bad","הוחזר","₪58"],["cl","יוסף רוזנברג","yosef-rosenberg","site",-2,"ok","נשלח","₪64"]];
   const dfmt=new Intl.DateTimeFormat("he-IL",{day:"numeric",month:"short"});
-  document.getElementById("orders").innerHTML=O.map(([b,n,c,d,s,st,p])=>`<tr>
+  document.getElementById("orders").innerHTML=O.map(([b,n,av,ch,d,s,st,p])=>`<tr>
     <td><div class="cell-book"><img src="assets/covers/${B[b][2]}.webp" alt=""><div><b>${B[b][0]}</b><span>${B[b][1]}</span></div></div></td>
-    <td><div class="cell-book" style="gap:10px"><span class="mono sm ${c}">${n.split(" ").map(x=>x[0]).slice(0,2).join("")}</span>${n}</div></td>
+    <td><div class="cell-book" style="gap:10px"><span class="avatar"><img src="assets/avatars/${av}.webp" alt=""></span><span style="color:var(--ink-900)">${n}</span></div></td>
+    <td><span class="cell-ch">${chBadge(ch).replace('class="brand','class="brand sm')}${CH[ch]}</span></td>
     <td class="num">${dfmt.format(addDays(t,d))}</td><td><span class="status ${s}">${st}</span></td>
     <td class="num" style="color:var(--ink-900)">${p}</td><td><button class="kebab" type="button" aria-label="פעולות להזמנה">${icon("more","ico-sm")}</button></td></tr>`).join("");
+
+  // ערוצים
+  const CHS=[["site",64,41],["instagram",38,24],["whatsapp",27,17],["facebook",19,12],["gmail",9,6]];
+  document.getElementById("channels").innerHTML=CHS.map(([k,n,pc])=>`<div class="ch-row">${chBadge(k)}<span class="meta"><b>${CH[k]}</b><span class="num">${n} הזמנות</span></span><span class="pc num">${pc}%</span><div class="bar" style="--v:${pc*2.2}%;--c:var(--royal-400)"><i></i></div></div>`).join("");
 
   // הנמכרים
   const TB=[["tn",184,92,"var(--royal)"],["nm",151,76,"var(--royal-400)"],["lt",122,61,"var(--gold)"],["tz",97,49,"var(--kraft-600)"]];
   document.getElementById("topBooks").innerHTML=TB.map(([b,n,v,c])=>`<div class="tb"><img src="assets/covers/${B[b][2]}.webp" alt=""><b>${B[b][0]}</b><span class="n num">${n} עותקים</span><div class="bar" style="--v:${v}%;--c:${c}"><i></i></div></div>`).join("");
 
   // סדר יום
-  const A=[["09:00","09:30","ישיבת צוות בוקר","תכנון שבועי","",'ok',"הושלם"],["10:00","11:00","סגירת קבצים לדפוס","מגיד דבריו ליעקב ח״ב","gold",'info',"עכשיו"],["14:30","15:00","שיחה עם המפיץ","עדכון מלאי","sage","",'מתוכנן'],["17:00","17:30","אישור פוסט שבועי","תובנה בהשראת הפרשה","plum","",'מתוכנן']];
-  document.getElementById("agenda").innerHTML=A.map(([a,b,ti,su,c,s,st])=>`<div class="agenda-item"><span class="tm">${a}<span>${b}</span></span><span class="mono sm ${c}">${ti[0]}</span><span class="meta"><b>${ti}</b><span>${su}</span></span><span class="status ${s}">${st}</span></div>`).join("");
+  const A=[["09:00","09:30","ישיבת צוות בוקר","תכנון שבועי",`<span class="mono sm">צ</span>`,'ok',"הושלם"],["10:00","11:00","סגירת קבצים לדפוס","מגיד דבריו ליעקב ח״ב",`<span class="mono sm gold">ד</span>`,'info',"עכשיו"],["14:30","15:00","שיחה עם המפיץ","שמואל לוי · עדכון מלאי",`<span class="avatar sm"><img src="assets/avatars/shmuel-levi.webp" alt=""></span>`,"",'מתוכנן'],["17:00","17:30","אישור פוסט שבועי","תובנה בהשראת הפרשה",DS.brand("instagram","אינסטגרם").replace('class="brand','class="brand sm'),"",'מתוכנן']];
+  document.getElementById("agenda").innerHTML=A.map(([a,b,ti,su,ic,s,st])=>`<div class="agenda-item"><span class="tm">${a}<span>${b}</span></span>${ic}<span class="meta"><b>${ti}</b><span>${su}</span></span><span class="status ${s}">${st}</span></div>`).join("");
 
   // תפריט במובייל
   const app=document.getElementById("app");

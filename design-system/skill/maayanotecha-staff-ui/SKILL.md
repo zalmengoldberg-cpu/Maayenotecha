@@ -55,16 +55,19 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 | שורת חיפוש / שאלה ל-AI / הודעה ל-Claude | `ai-search` (`label.ai-search > span.field[data-icon=searchAi] > input`). גלולה כהה עם טבעת אור בצבעי המעיין. בשורה העליונה בגובה 38, בסרגל 42, בסרגל סגור עיגול. שדה חיפוש פשוט בתוך טופס או טבלה: `search` |
 | משתמש מחובר | `user-chip` + `mono` |
 | כרטיס / פאנל / מודול | `card` · על רקע צבעוני או תמונה: `card card-glass` · כהה: `card card-dark` |
+| מראה זכוכית לכל המסך (ברירת המחדל למסך ניהול) | `bg-aurora` על ה-body ו-`glass-ui` על עטיפת האפליקציה: הכרטיסים שקופים למחצה, והשורות שבתוכם (`row-tile`, שורות טבלה, `agenda-item`, `tb`, `ch-row`) לבנות ואטומות יותר וצפות מעל הכרטיס |
 | שורה ברשימה / כרטיס משימה | `row-tile` |
 | מספר מרכזי / KPI | `card kpi` + `t-kpi` (+ `DS.spark` רק אם יש נתוני מגמה) |
 | טבלה | `table` בתוך `table-wrap` |
 | סטטוס / שלב בתהליך | `status ok / warn / bad / info` |
 | מונה התראות | `badge` (`gold` לחדש, `soft` לניטרלי) |
+| אדם עם תמונה | `avatar` (`<span class="avatar"><img></span>`, `sm`/`lg`). תג ערוץ קטן בפינה: `<span data-brand="whatsapp"></span>` בתוך ה-avatar |
 | אדם בלי תמונה | `mono` עם ראשי תיבות (`plum`, `gold`, `sage`, `kraft`) |
+| ערוץ / רשת חברתית / מקור (פייסבוק, אינסטגרם, וואטסאפ, יוטיוב, ג'ימייל, גוגל) | `<span data-brand="instagram"></span>` או `DS.brand("instagram","אינסטגרם")` – אייקון המותג האמיתי (Simple Icons) בעיגול בצבע המותג. האתר של מעיינותיך: `brand site` עם אייקון המעיין |
 | פס התקדמות | `bar` עם `--v:60%` |
 | סרגל צד | `sidebar` + `sb-head`, `sb-profile`, `ai-search`, `sb-label`, `sb-item[aria-current=page]` |
 | לוח שנה / תאריכים | `<div class="hcal"></div>` + `DS.calendar(el,{events})` |
-| כותרת פתיחה עם תמונה | `hero` + `hero-art` + `hero-copy` (+ `chip-float`) |
+| כותרת פתיחה עם תמונה | `hero` + `hero-art` + `hero-copy` (+ `chip-float`). `data-alive` מוסיף ניצוצות שעולים מהאיור, ליבה שפועמת ועומק שמגיב לעכבר (נקודת המוצא: `--spring-x/--spring-y`). מכבד הפחתת תנועה |
 | כרטיסי השורה הראשונה כשאין שורה עליונה | מוסיפים `open-top` (גם ל-`hero`): המשטח נמס לרקע למעלה, המסגרת נשארת בצדדים ובתחתית |
 | עוזר / צ'אט | `assist` |
 | מדריך / הדרכה / onboarding | `DS.tour(steps,{key})` (דורש `--js`): עמעום, זרקור, נקודת "כאן לוחצים" וכרטיס הסבר. `action:"click"` מחכה ללחיצה אמיתית. `tour.autostart()` בכניסה הראשונה + פריט `sb-item` "מדריך למערכת" (אייקון `help`) שמפעיל `tour.start()`. דוגמה מלאה ב-`example-dashboard.html` |
@@ -96,6 +99,7 @@ description: ממשק הצוות של מעיינותיך – מערכת עיצו
 
 ## תמונות
 - ארטיפקט לא יכול לטעון קבצים חיצוניים. נכס מהסקיל מוטמע כ-data URI: `python3 scripts/bundle.py --img assets/logos/maayanotecha-logo-ondark.svg`.
+- `assets/avatars/` – 6 תמונות פרופיל לדוגמה שנוצרו ב-fal. רק לנתוני הדגמה מסומנים; כשיש משתמשים אמיתיים – התמונות שלהם, ואם אין תמונה – `mono`.
 - `assets/img/hero-wellspring.webp` (במת `hero`), `assistant-flame.webp` (כרטיס `assist`), `silk-waves.webp` (טקסטורת `sidebar` דרך `--silk:url(...)`), `assets/covers/` (12 כריכות אמיתיות לטבלאות ורשימות).
 - תמונה נכנסת רק למקום שהאפיון כבר הגדיר לתמונה. אחרת – הצעה בצ'אט (סעיף 3).
 - איור חדש ב-fal (אם יש חיבור): נושא אחד, תאורת סטודיו, רקע אחיד `#D1D4DD`, ליבה בזהב `#F2911C`, שבירות בכחול `#3F5499`, השליש הימני ריק, בלי טקסט בתמונה.
