@@ -253,6 +253,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
       <div class="lv" style="box-shadow:var(--elev-3)"><b>3</b><span>צף · <code>--elev-3</code></span></div>
       <div class="lv" style="box-shadow:var(--elev-4)"><b>4</b><span>מודאל · <code>--elev-4</code></span></div>
     </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;padding:28px 28px 34px;border-radius:var(--r-xl);background:var(--canvas)">
+      <div class="card open-top" style="min-height:170px;display:grid;align-content:end;gap:4px"><b class="t-title">פתוח כלפי מעלה · <code>.open-top</code></b><span class="t-caption">לשורה הראשונה כשאין שורה עליונה: המשטח נמס לרקע בחלק העליון, והמסגרת והצל נשארים בצדדים ובתחתית.</span></div>
+      <div class="card" style="min-height:170px;display:grid;align-content:end;gap:4px"><b class="t-title">כרטיס רגיל · <code>.card</code></b><span class="t-caption">לכל שאר הכרטיסים במסך.</span></div>
+    </div>
     <div class="glass-stage">
       <div class="card card-glass" style="display:grid;gap:12px">
         <h3 class="t-title">מתכון כרטיס זכוכית</h3>
@@ -290,7 +294,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;dir
         <button class="btn btn-secondary btn-icon" type="button" aria-label="התראות" data-icon="bell"></button>
         <button class="btn btn-fab" type="button" aria-label="הבא" data-icon="chevL" data-icon-class="ico-lg"></button>
       </div>
-      <div class="spec-row"><span class="spec-label">שורה עליונה: טאבים, חיפוש + AI, משתמש — אותו גובה. שדה החיפוש הוא גם המקום לשאול את ה-AI של המערכת ולשלוח הודעה ל-Claude, ולכן הוא הפקד היחיד שזוהר.</span>
+      <div class="spec-row"><span class="spec-label">פקדים באותה שורה — אותו גובה ואותו עומק. שדה החיפוש הוא גם המקום לשאול את ה-AI של המערכת ולשלוח הודעה ל-Claude, ולכן הוא הפקד היחיד שזוהר. במסך הניהול הוא יושב בסרגל, ואין שורה עליונה שמכפילה אותו.</span>
         <div class="seg seg-brand" role="tablist"><button role="tab" aria-selected="true">סקירה</button><button role="tab" aria-selected="false">מכירות</button><button role="tab" aria-selected="false">מלאי</button></div>
         <div class="seg" role="tablist"><button role="tab" aria-selected="false">יום</button><button role="tab" aria-selected="true">שבוע</button><button role="tab" aria-selected="false">חודש</button></div>
         <label class="ai-search" style="width:min(360px,100%)"><span class="field" data-icon="searchAi"><span class="sr-only">חיפוש או שאלה ל-AI</span><input id="q-demo" type="search" placeholder="חיפוש או שאלה ל־AI…"><kbd>⌘K</kbd></span></label>
