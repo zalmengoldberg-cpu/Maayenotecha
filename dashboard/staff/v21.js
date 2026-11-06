@@ -291,37 +291,59 @@ function heroTrim(){const hero=$1('#heroMt');if(!hero)return;hero.classList.add(
   const bt=briefTime();const n=(S&&S.att||[]).length;const urgent=(S&&S.att||[]).filter(a=>a.type==='blocked'||a.type==='late').length;
   b.setAttribute('aria-expanded',String(briefOpen));b.innerHTML=`<span class="bb-ic">${BRIEF_ICO[bt.k]}</span><span class="bb-tx"><b>${bt.t}</b><small>${n?`${n} דברים מחכים${urgent?` · ${urgent} דחופים`:''}`:'הכול רגוע'}</small></span><span class="bb-ch">${DS.icon('chevD','ico-sm')}</span>`}
 function ensureDeck(){let d=$1('#briefDeck');if(d)return d;d=document.createElement('section');d.id='briefDeck';d.className='brief-deck';d.setAttribute('aria-label','בריף');($1('#dayNow')||$1('#heroMt')).after(d);return d}
-function bCard(o){return `<article class="bcard ${o.tone||''}" style="--i:${o.i}"><header><span class="bc-ic">${o.icon}</span><span class="bc-k">${esc(o.k)}</span>${o.pill?`<span class="bc-pill ${o.tone||''}">${esc(o.pill)}</span>`:''}</header>
-  <div class="bc-big">${o.big}</div>${o.sub?`<p class="bc-sub">${o.sub}</p>`:''}${o.rows&&o.rows.length?`<div class="bc-rows">${o.rows.join('')}</div>`:''}${o.act?`<footer>${o.act}</footer>`:''}</article>`}
+/* כרטיסיות הבריף בסגנון כרטיס מוצק: צבע אחד לכל נושא, שורת מטא, כותרת, מספר גדול, פס שלבים עם תוויות,
+   לוח מידע בשלוש עמודות, אנשים ופעולה. אותן לחיצות כמו קודם */
+const BC_COL={gold:1,cream:1,royal:1,plum:1,orange:1,paper:1,navy:1,sage:1};
+function bCard(o){const bar=o.bar&&o.bar.length?`<div class="bc-steps">${o.bar.map(x=>`<div class="bc-st ${x.on?'on':''}" ${x.attrs||''}><i></i><span>${esc(x.l)}${x.v!=null?` <b class="num">${x.v}</b>`:''}</span></div>`).join('')}</div>`:'';
+  const panel=o.panel&&o.panel.length?`<div class="bc-panel">${o.panel.map(x=>`<div ${x.attrs||''}><small>${esc(x.k)}</small><b>${x.v}</b></div>`).join('')}</div>`:'';
+  const ppl=o.people&&o.people.length?`<div class="bc-ppl">${o.people.slice(0,3).map(id=>`<span class="bc-pp" data-list="who:${esc(id)}" role="button" tabindex="0"><span class="avatar">${av(id)}</span>${esc(((P(id)||{}).name||'').split(/\s+/)[0])}</span>`).join('')}</div>`:'';
+  return `<article class="bcard bc-${o.color||'cream'}" style="--i:${o.i}">
+    <div class="bc-meta"><span>${o.icon}${esc(o.meta||'')}</span>${o.pill?`<span class="bc-pill">${esc(o.pill)}</span>`:''}</div>
+    <h3 class="bc-title">${esc(o.k)}</h3>${o.sub?`<p class="bc-sub">${o.sub}</p>`:''}
+    ${o.big?`<div class="bc-big">${o.big}</div>`:''}${bar}${panel}${o.rows&&o.rows.length?`<div class="bc-rows">${o.rows.join('')}</div>`:''}${ppl}
+    ${o.act?`<footer>${o.act}</footer>`:''}</article>`}
 function bRow(attrs,av_,title,sub){return `<button type="button" class="bc-row" ${attrs}>${av_||''}<span class="bc-rt"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="chev">‹</span></button>`}
 function renderDeck(){const d=ensureDeck();if(typeof S==='undefined'||!S.loaded)return;d.classList.toggle('open',briefOpen);if(!briefOpen){d.innerHTML='';return}
-  const att=S.att||[];const its=items();const cards=[];let i=0;const ico=n=>DS.icon(n);
-  const b8h=$1('#b8h')?.innerHTML||'';
-  cards.push(bCard({i:i++,k:'צריך אותך',icon:ico('bell'),tone:att.length?'warn':'ok',pill:att.length?`${att.length} פתוחים`:'הכול טופל',big:`<span class="num">${att.length}</span>`,sub:b8h,
-    rows:att.slice(0,3).map((a,n)=>bRow(`data-res="${n}"`,personBadge((a.it.blocked&&a.it.blocked.who)||a.it.waitingOn||a.it.owner,a.it),a.title||a.it.title,a.sub)),
+  const att=S.att||[];const its=items();const cards=[];let i=1;const ico=n=>DS.icon(n,'ico-sm');const tnow=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const cnt=t=>att.filter(a=>a.type===t).length;const who=a=>(a.it.blocked&&a.it.blocked.who)||a.it.waitingOn||a.it.owner;
+  const uniq=a=>[...new Set(a.filter(Boolean))];
+  cards.push(bCard({i:i++,color:'gold',icon:ico('bell'),meta:`עודכן ${tnow}`,k:'צריך אותך',sub:$1('#b8h')?.innerHTML||'',pill:att.length?`${att.length} פתוחים`:'הכול טופל',
+    bar:[['blocked','תקוע'],['late','באיחור'],['urgent','דחוף'],['review','לאישור'],['due','דדליין']].map(([t,l])=>({l,v:cnt(t),on:cnt(t)>0})),
+    rows:att.slice(0,3).map((a,n)=>bRow(`data-res="${n}"`,personBadge(who(a),a.it),a.title||a.it.title,a.sub)),
+    people:uniq(att.map(who)).filter(x=>x!=='claude'),
     act:att.length?`<button type="button" class="bc-go" data-bproxy="startBtn">${DS.icon('arrowUpLeft','ico-sm')}מה מחכה לנו</button>`:''}));
-  const proj=its.filter(x=>x.kind==='project'&&x.status!=='done');const dl=$1('#dateLine')?.textContent||'';
-  cards.push(bCard({i:i++,k:'הפרויקטים',icon:ico('box'),pill:`${proj.length} פעילים`,big:`<span class="num">${proj.length}</span><em>פרויקטים</em>`,sub:esc(dl),
+  const proj=its.filter(x=>x.kind==='project'&&x.status!=='done');const mine=typeof units==='function'?units(false).filter(u=>!u.done&&u.owner===ME()).length:0;
+  const work=its.filter(x=>x.kind!=='event'&&x.kind!=='recurring'&&x.status!=='done');const sc=st=>work.filter(x=>(x.status||'todo')===st).length;
+  cards.push(bCard({i:i++,color:'royal',icon:ico('box'),meta:'כל העבודה',k:'הפרויקטים',big:`<span class="num">${proj.length}</span><em>פעילים</em>`,
+    bar:[['idea','רעיון'],['todo','לעשות'],['doing','בהפקה'],['review','לאישור'],['scheduled','מתוזמן']].map(([st,l])=>({l,v:sc(st),on:sc(st)>0,attrs:`data-list="status:${st}" role="button" tabindex="0"`})),
+    panel:[{k:'פרויקטים',v:`<span class="num">${proj.length}</span>`},{k:'צעדים עליך',v:`<span class="num">${mine}</span>`,attrs:`data-go="#tasks" role="button" tabindex="0"`},{k:'תשומת לב',v:`<span class="num">${att.length}</span>`}],
     rows:proj.slice().sort((a,b)=>String(a.due||'9').localeCompare(String(b.due||'9'))).slice(0,3).map(p=>{const pr=progress(p);return `<button type="button" class="bc-row" data-open="${esc(p.id)}">${thumbOf(p)}<span class="bc-rt"><b>${esc(p.title)}</b><span class="bc-bar"><i style="width:${pr}%"></i></span></span><span class="bc-pc num">${pr}%</span></button>`}),
     act:`<button type="button" class="bc-go" data-go="#gantt">${DS.icon('chart','ico-sm')}לגאנט</button>`}));
   const rev=its.filter(x=>x.status==='review');
-  cards.push(bCard({i:i++,k:'ממתין לאישור מענדי',icon:ico('clock'),tone:rev.length?'review':'ok',pill:rev.length?'ממתין':'אין',big:`<span class="num">${rev.length}</span><em>לאישור</em>`,
-    rows:rev.slice(0,3).map(x=>bRow(`data-open="${esc(x.id)}"`,thumbOf(x),x.title,(CHANNEL[x.channel]||''))),act:rev.length?`<button type="button" class="bc-go" data-list="status:review">${DS.icon('users','ico-sm')}כל מה שממתין</button>`:''}));
-  const y=typeof yarid==='function'?yarid():null;if(y&&y.start){const dn=daysTo(y.start);if(dn>=0)cards.push(bCard({i:i++,k:'יריד החסידות',icon:ico('calendar'),tone:dn<=7?'warn':'',pill:dn===0?'היום':`עוד ${dn} ימים`,big:`<span class="num">${dn}</span><em>ימים</em>`,sub:esc(fmt(y.start)+(y.due&&y.due!==y.start?' – '+fmt(y.due):'')),
-    rows:its.filter(x=>x.kind==='project'&&/יריד|קמפיין/.test(x.title||'')&&x.id!==y.id).slice(0,2).map(p=>{const pr=progress(p);return `<button type="button" class="bc-row" data-open="${esc(p.id)}">${thumbOf(p)}<span class="bc-rt"><b>${esc(p.title)}</b><span class="bc-bar"><i style="width:${pr}%"></i></span></span><span class="bc-pc num">${pr}%</span></button>`}),
-    act:`<button type="button" class="bc-go" data-open="${esc(y.id)}">${DS.icon('arrowUpLeft','ico-sm')}לפרטי היריד</button>`}))}
+  cards.push(bCard({i:i++,color:'plum',icon:ico('clock'),meta:'מענדי בלוי',k:'ממתין לאישור',big:`<span class="num">${rev.length}</span><em>${rev.length===1?'פריט':'פריטים'}</em>`,pill:rev.length?'ממתין':'אין',
+    rows:rev.slice(0,3).map(x=>bRow(`data-open="${esc(x.id)}"`,thumbOf(x),x.title,(CHANNEL[x.channel]||''))),people:rev.length?['mendy']:[],
+    act:rev.length?`<button type="button" class="bc-go" data-list="status:review">${DS.icon('users','ico-sm')}כל מה שממתין</button>`:''}));
+  const y=typeof yarid==='function'?yarid():null;if(y&&y.start){const dn=daysTo(y.start);if(dn>=0){const camp=its.filter(x=>x.kind==='project'&&/יריד|קמפיין/.test(x.title||'')&&x.id!==y.id);const cp=camp.length?Math.round(camp.reduce((s,p)=>s+progress(p),0)/camp.length):null;
+    cards.push(bCard({i:i++,color:'orange',icon:ico('calendar'),meta:esc(fmt(y.start)+(y.due&&y.due!==y.start?' – '+fmt(y.due):'')),k:'יריד החסידות',sub:esc(y.title||''),big:`<span class="num">${dn}</span><em>${dn===1?'יום':'ימים'}</em>`,
+      bar:cp!=null?[20,40,60,80,100].map((v,n)=>({l:['התחלה','רעיונות','הפקה','עריכה','מוכן'][n],on:cp>=v-10})):null,
+      panel:cp!=null?[{k:'הקמפיין',v:`<span class="num">${cp}%</span>`},{k:'פרויקטים',v:`<span class="num">${camp.length}</span>`},{k:'נשארו',v:`<span class="num">${dn}</span> ימים`}]:null,
+      act:`<button type="button" class="bc-go" data-open="${esc(y.id)}">${DS.icon('arrowUpLeft','ico-sm')}לפרטי היריד</button>`}))}}
   const wk=its.filter(x=>x.channel==='weekly'&&x.kind!=='project'&&x.publishAt&&x.publishAt>=iso(TODAY)&&x.status!=='done').sort((a,b)=>a.publishAt.localeCompare(b.publishAt))[0];
-  if(wk)cards.push(bCard({i:i++,k:'הפוסט השבועי',icon:ico('book'),tone:wk.status==='review'?'review':'',pill:STATUS[wk.status]||'',big:`<span class="bc-cover">${thumbOf(wk)}</span>`,sub:`${esc(wk.title)} · עולה ${esc(fmt(wk.publishAt))}`,
-    act:`<button type="button" class="bc-go" data-open="${esc(wk.id)}">${DS.icon('arrowUpLeft','ico-sm')}לפוסט</button>`}));
-  const bgU=typeof units==='function'?units(false).filter(u=>u.bg&&!u.done):[];
-  cards.push(bCard({i:i++,k:'קלוד ברקע',icon:ico('sparkle'),pill:bgU.length?`${bgU.length} בתור`:'פנוי',big:`<span class="num">${bgU.length}</span><em>משימות</em>`,rows:bgU.slice(0,3).map(u=>bRow(`data-open="${esc(u.item.id)}"`,'',u.title,u.parent||'')),
+  if(wk){const order=['todo','doing','review','scheduled','done'];const k=order.indexOf(wk.status||'todo');
+    cards.push(bCard({i:i++,color:'paper',icon:ico('book'),meta:`עולה ${fmt(wk.publishAt)}`,k:'הפוסט השבועי',sub:esc(wk.title),big:`<span class="bc-cover">${thumbOf(wk)}</span>`,
+      bar:['לעשות','בהפקה','לאישור','מתוזמן','פורסם'].map((l,n)=>({l,on:n<=k})),people:uniq([wk.owner,'mendy']),
+      act:`<button type="button" class="bc-go" data-open="${esc(wk.id)}">${DS.icon('arrowUpLeft','ico-sm')}לפוסט</button>`}))}
+  const bgU=typeof units==='function'?units(false).filter(u=>u.bg&&!u.done):[];const q=bgU.filter(u=>inQueue(u.key)).length;
+  cards.push(bCard({i:i++,color:'navy',icon:ico('sparkle'),meta:'עובד בשבילך',k:'קלוד ברקע',big:`<span class="num">${bgU.length}</span><em>משימות</em>`,
+    panel:[{k:'בתור',v:`<span class="num">${q}</span>`},{k:'מחכות לשליחה',v:`<span class="num">${bgU.length-q}</span>`},{k:'זמן משוער',v:esc(fmtEst(bgU.reduce((s,u)=>s+(u.est||0),0),true)||'—')}],
+    rows:bgU.slice(0,2).map(u=>bRow(`data-open="${esc(u.item.id)}"`,'',u.title,u.parent||'')),
     act:`<button type="button" class="bc-go" data-go="#agents">${DS.icon('sparkle','ico-sm')}לקלוד וסוכנים</button>`}));
   const hid=document.querySelectorAll('[data-arrange] > [data-cid][hidden]').length;
-  cards.push(bCard({i:i++,k:'הלוח שלך',icon:ico('sliders'),pill:hid?`${hid} מוסתרים`:'',big:`<span class="num">${hid}</span><em>כרטיסים מוסתרים</em>`,sub:'אפשר להחזיר כרטיס או לסדר מחדש את תמונת המצב.',
-    act:`${hid?`<button type="button" class="bc-go" data-bproxy="hiddenBtn">${DS.icon('eye','ico-sm')}הכרטיסים המוסתרים</button>`:''}<button type="button" class="bc-go ghost" data-bproxy="arrangeBtn">${DS.icon('sliders','ico-sm')}סידור הלוח</button>`}));
+  cards.push(bCard({i:i++,color:'sage',icon:ico('sliders'),meta:'תמונת מצב',k:'הלוח שלך',big:`<span class="num">${hid}</span><em>מוסתרים</em>`,sub:'מחזירים כרטיס או מסדרים מחדש.',
+    act:`${hid?`<button type="button" class="bc-go" data-bproxy="hiddenBtn">${DS.icon('eye','ico-sm')}המוסתרים</button>`:''}<button type="button" class="bc-go ghost" data-bproxy="arrangeBtn">${DS.icon('sliders','ico-sm')}סידור</button>`}));
   if(PREF('kpis','brief')==='brief'){const k=kpiCard();if(k)cards.unshift(k)}
   d.innerHTML=`<div class="bd-track">${cards.join('')}</div>`}
-document.addEventListener('click',e=>{const b=e.target.closest('#briefBtn');if(b){briefOpen=!briefOpen;try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck();if(briefOpen)$1('#briefDeck')?.scrollIntoView({behavior:'smooth',block:'nearest'});return}
+document.addEventListener('click',e=>{const b=e.target.closest('#briefBtn');if(b){briefOpen=!briefOpen;try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck();masonry();if(briefOpen)$1('#briefDeck')?.scrollIntoView({behavior:'smooth',block:'nearest'});return}
   const px=e.target.closest('[data-bproxy]');if(px){e.stopPropagation();const t=document.getElementById(px.dataset.bproxy);if(!t)return;const h=t.hidden;t.hidden=false;t.click();t.hidden=h;
     if(px.dataset.bproxy==='hiddenBtn'){const p=$1('#hidPop');if(p){const r=px.getBoundingClientRect();p.style.top=Math.min(innerHeight-300,r.bottom+8)+'px';p.style.right='auto';p.style.left=Math.max(8,Math.min(innerWidth-300,r.left))+'px'}}}},true);
 
@@ -334,7 +356,7 @@ applyPrefs();
 function kpiCard(){const ks=[...document.querySelectorAll('#kpis .kpi')];if(!ks.length)return'';
   const cells=ks.map(k=>{const attrs=[...k.attributes].filter(a=>a.name.startsWith('data-')&&a.name!=='data-cid').map(a=>`${a.name}="${esc(a.value)}"`).join(' ');
     return `<button type="button" class="bk-cell" ${attrs}><small>${esc(k.querySelector('.k2')?.textContent||'')}</small><b class="num">${esc(k.querySelector('.v')?.textContent||'')}</b><span>${k.querySelector('.sub')?.innerHTML||''}</span></button>`}).join('');
-  return `<article class="bcard bk" style="--i:0"><header><span class="bc-ic">${DS.icon('chart')}</span><span class="bc-k">המדדים</span></header><div class="bk-grid">${cells}</div></article>`}
+  return `<article class="bcard bk bc-cream" style="--i:0"><div class="bc-meta"><span>${DS.icon('chart','ico-sm')}היום במספרים</span></div><h3 class="bc-title">המדדים</h3><div class="bk-grid">${cells}</div></article>`}
 
 /* ---- תזכורות: בדף הבית, פריט אחרי פריט, הוספה, והתראה ליד המדד כשמגיע הזמן ---- */
 let remIdx=0,remTimer=0,remSig='',remForm=false;
@@ -453,11 +475,12 @@ function masonry(){cancelAnimationFrame(masRaf);masRaf=requestAnimationFrame(()=
   vis.forEach(el=>{if([hero,dn,deck,cal].includes(el))return;el.style.gridRowStart='';el.style.gridRowEnd='span '+S_.get(el)})})}
 addEventListener('resize',masonry);
 {const ro=new ResizeObserver(()=>masonry());const watch=()=>{document.querySelectorAll('#v-today>.mtx-wrap>*,#v-today>.bento>*').forEach(el=>{if(!el._mro){el._mro=1;ro.observe(el)}})};
-  new MutationObserver(()=>{watch();masonry()}).observe(document.querySelector('#v-today')||document.body,{childList:true,subtree:false});
+  [document.querySelector('#v-today'),document.querySelector('#v-today>.mtx-wrap')].filter(Boolean).forEach(n=>new MutationObserver(()=>{watch();masonry()}).observe(n,{childList:true,subtree:false}));
+  window.__masWatch=watch;
   const b=document.querySelector('#v-today>.bento');if(b)new MutationObserver(()=>{watch();masonry()}).observe(b,{childList:true,attributes:true,attributeFilter:['hidden'],subtree:true});
   addEventListener('hashchange',()=>setTimeout(masonry,30));setTimeout(()=>{watch();masonry()},0)}
 
-function paintV22(){try{masonry();sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery()}catch(e){console.error(e)}}
+function paintV22(){try{sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery();window.__masWatch&&__masWatch();masonry()}catch(e){console.error(e)}}
 const _ra22=window.renderAll;window.renderAll=function(){const r=_ra22.apply(this,arguments);paintV22();return r};
 new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded)dressRows()}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
 
