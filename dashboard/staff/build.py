@@ -78,6 +78,10 @@ for v in DONE_VIEWS:
     j = j if j > 0 else s.index('<div class="scrim"', i)
     s = s[:i] + STYLE_RE.sub(r'\1', s[i:j]) + s[j:]
 
+# ---------- 3ג1. צבעי ברירת המחדל של תגיות הסטטוס (רק אם לא נשמר צבע בעורך) מהפלטה של הסקיל ----------
+sub1("F_COL={idea:'#A9B1C2',todo:'#579BFC',doing:'#FDAB3D',review:'#A25DDC',scheduled:'#00A9C7',done:'#00C875'};",
+     "F_COL={idea:'#8B91A9',todo:'#3F5499',doing:'#F2911C',review:'#6A55A8',scheduled:'#2B727C',done:'#2E8566'};")
+
 # ---------- 3ג2. צבעי הערוצים בלוח (CH_COL ומקרא הלוח) מהפלטה של הסקיל ----------
 sub1("const CH_COL={video:'#E89A2C',post:'#5B6BD6',weekly:'#2A4F95',newsletter:'#1C86A3',site:'#7B4AA8',brand:'#7B4AA8',data:'#4C5B53',admin:'#88958D',event:'#16294D'};",
      "const CH_COL={video:'#F2911C',post:'#6476B6',weekly:'#3F5499',newsletter:'#4A8BAA',site:'#A9865C',brand:'#A9865C',data:'#2E8566',admin:'#626A88',event:'#141A33'};")
