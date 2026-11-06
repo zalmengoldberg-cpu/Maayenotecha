@@ -65,7 +65,7 @@ sub1('<meta name="claude:viewport-fit-sides" content="cover">',
 # ---------- 3ב. צבעי הכריכות והגרפים מהפלטה של הסקיל (בלי סגול – שמור ל"ממתין לאישור") ----------
 # הקבועים חיים בתוך בלוק של הקוד הישן ולכן מוחלפים כאן, ולא מ-v21.js. רק ערכי צבע משתנים.
 sub1("const CV_PAL={weekly:['#142A5C','#2F63CF'],video:['#7A3A0E','#F2911C'],post:['#2E2F86','#6E7CF0'],newsletter:['#0B4E61','#2AA3B8'],site:['#3D2470','#8B5CF6'],data:['#0C4433','#22A06B'],brand:['#4A1036','#C9A24B'],event:['#101F45','#3F5499'],admin:['#232B3D','#5B6783']};",
-     "const CV_PAL={weekly:['#1F2747','#3F5499'],video:['#C9730C','#F2911C'],post:['#33468A','#6476B6'],newsletter:['#2B727C','#4A8BAA'],site:['#121733','#33468A'],data:['#1F5E48','#2E8566'],brand:['#A9865C','#D2B899'],event:['#141A33','#3F5499'],admin:['#353D5E','#626A88']};")
+     "const CV_PAL={weekly:['#E3E5EC','#F6F4EE'],video:['#C9730C','#F2911C'],post:['#33468A','#6476B6'],newsletter:['#2B727C','#4A8BAA'],site:['#121733','#33468A'],data:['#1F5E48','#2E8566'],brand:['#A9865C','#D2B899'],event:['#141A33','#3F5499'],admin:['#353D5E','#626A88']};")
 sub1("const SERIES=['#2A4F95','#5C7CC0','#B9C8E6','#E89A2C','#5B6BD6','#1C86A3','#D2443A','#88958D','#C9A27A'];",
      "const SERIES=['#3F5499','#6476B6','#C6CDE6','#F2911C','#4A8BAA','#2B727C','#B93B36','#8B91A9','#D2B899'];")
 
@@ -138,6 +138,20 @@ if icons:
 # פקודת התור: אחרי הבקשות, שגרת התמונות
 sub1("ועדכן את הכרטיס המתאים באוסף items.`;",
      "ועדכן את הכרטיס המתאים באוסף items. בסוף הרץ את שגרת התמונות של חדר הבקרה לפי הסקיל maayanotecha-staff-ui (references/fal-imagery.md, סעיף 4): כריכה ב-fal לכל כרטיס בלי thumb ובלי כריכת ספר אמיתית, ואייקון תלת-ממדי לכל סוכן בלי img. עד 12 תמונות בהרצה; אם יש יותר, רשום את הרשימה בפעילות וחכה לאישור.`;")
+
+# ---------- 3ו. פוסט הפרשה השבועי (החלטה 6.11): נכנס כמשימה רק ביום שלישי של השבוע שלו ----------
+# עד אז הוא נעיצה: רק במפת התוכן בלוח, לא במשימות, בקנבן, בתשומת לב ובגאנט הפרויקטים
+sub1("if(it.channel==='weekly'&&it.publishAt)return daysTo(it.publishAt)>7;",
+     "if(it.channel==='weekly'&&it.publishAt){if(it.status==='doing')return false;const p=parse(it.publishAt);const tue=new Date(p);tue.setDate(p.getDate()-((p.getDay()+5)%7));return daysTo(iso(tue))>0}")
+sub1("const proj=items().filter(i=>(i.kind==='project'||i.kind==='content')&&(i.start||i.due))",
+     "const proj=items().filter(i=>(i.kind==='project'||i.kind==='content')&&(i.start||i.due)&&!isPlanned(i))")
+# הכריכה של כל מה ששייך לפוסט השבועי היא לוגו "תובנה" מהגרפיקה של הפוסט (לא fal). נכנס כשהקובץ קיים ב-staff/icons/tovana.*
+tov = next(iter(sorted((B / 'icons').glob('tovana.*'))), None)
+if tov:
+    mt = {'.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg'}[tov.suffix]
+    TOV = f'data:{mt};base64,' + base64.b64encode(tov.read_bytes()).decode()
+    sub1("function coverSrc(it){const t=(it.title||'')+' '+(it.id||'');if(it.thumb)return {img:[it.thumb],art:!!it.thumbArt};",
+         "function coverSrc(it){const t=(it.title||'')+' '+(it.id||'');if(it.channel==='weekly'||it.id==='weekly')return {img:['" + TOV + "'],logo:1};if(it.thumb)return {img:[it.thumb],art:!!it.thumbArt};")
 
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
