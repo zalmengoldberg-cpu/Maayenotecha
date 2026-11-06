@@ -731,6 +731,81 @@ html.dragging,html.dragging *{cursor:grabbing!important;user-select:none}
 .person>.btn.sm{justify-self:start}
 
 /* ==========================================================================
+   קלוד וסוכנים
+   ========================================================================== */
+#v-agents .pagehead>div:last-child{display:flex;flex-wrap:wrap;gap:8px}
+#v-agents .pagehead .btn{--h:var(--h-sm);min-height:var(--h-sm);padding:0 14px;font-size:var(--fs-caption);text-decoration:none}
+/* באנר: כרטיס העוזר (assist) של הסקיל, עם תמונת הלהבה */
+.agban{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr);gap:14px;
+  padding:22px;border-radius:var(--r-lg);color:#E9EBF5;background:#0C0C1A url("__FLAME__") center/cover no-repeat;box-shadow:var(--elev-2)}
+.agban::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(12,12,26,.35),rgba(12,12,26,.85))}
+.agban .live{display:flex;align-items:center;gap:8px;font-size:var(--fs-micro);letter-spacing:var(--track-label);color:rgba(233,235,245,.7)}
+.agban .live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(46,133,102,.25)}
+.agban h2{margin:10px 0 16px;font-size:var(--fs-h4);font-weight:var(--fw-light);line-height:var(--lh-snug);color:#fff}
+.agban h2 b{font-weight:var(--fw-medium);color:var(--gold)}
+.agban .st4{display:flex;flex-wrap:wrap;gap:26px}
+.agban .st4 small{display:block;font-size:var(--fs-micro);color:rgba(233,235,245,.6)}
+.agban .st4 b{font-size:var(--fs-h4);font-weight:var(--fw-medium);color:#fff;font-variant-numeric:tabular-nums}
+.agban .st4 b[style]{color:var(--gold)!important}
+.agban .lst{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:var(--r-md);font-size:var(--fs-caption);
+  background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.agban .lst b{display:flex;align-items:center;gap:6px;font-size:var(--fs-small);font-weight:var(--fw-medium);color:#fff}
+.agban .lst span{display:flex;align-items:center;gap:6px;color:rgba(233,235,245,.78)}
+/* כרטיסי סוכנים */
+.aggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--gutter);margin-top:var(--gutter)}
+.card.agc{display:flex;flex-direction:column;gap:12px;cursor:pointer;transition:box-shadow var(--t-fast)}
+.card.agc:hover{box-shadow:var(--elev-2),inset 0 0 0 1.5px var(--royal-200)}
+.agc .h{display:flex;align-items:flex-start;justify-content:space-between}
+.agc .ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,#2C3142,#1B1E2A);box-shadow:0 8px 16px -8px rgba(10,12,30,.6)}
+.agc .ic svg{width:17px;height:17px}
+.agc .stt{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:var(--r-pill);font-size:var(--fs-micro);font-weight:var(--fw-medium);background:var(--ok-bg);color:var(--ok)}
+.agc .stt i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.agc .stt.need{background:var(--warn-bg);color:var(--warn)}
+.agc .stt.off{background:var(--surface-2);color:var(--ink-500)}
+.agc h3{margin:0;font-size:var(--fs-body);font-weight:var(--fw-medium);color:var(--ink-900)}
+.agc p{margin:2px 0 0;font-size:var(--fs-caption);color:var(--ink-500)}
+.agc .m2{display:grid;grid-template-columns:1fr 1fr}
+.agc .m2 b{display:block;font-size:var(--fs-h4);font-weight:var(--fw-regular);color:var(--ink-900);font-variant-numeric:tabular-nums}
+.agc .m2 small{font-size:var(--fs-micro);color:var(--ink-400)}
+.agc .last{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r-tile);font-size:var(--fs-caption);background:var(--tile);box-shadow:var(--tile-shadow)}
+.agc .last span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auto{display:grid;gap:6px}
+.auto .ab{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.auto .ab i{height:5px;border-radius:3px;background:rgba(20,26,51,.08)}
+.auto .ab i.on{background:var(--royal)}
+.auto .al{display:flex;justify-content:space-between;font-size:var(--fs-micro);color:var(--ink-400)}
+.auto .al b{font-weight:var(--fw-medium);color:var(--ink-900)}
+#v-agents>.bento{margin-top:var(--gutter)}
+#v-agents>.bento>.s5{display:flex;flex-direction:column;gap:var(--gutter)}
+#agQueue .ch .seg{--h-md:var(--h-sm);height:var(--h-sm)}
+#agQueue .ch .seg button{padding:0 12px;font-size:var(--fs-caption)}
+#inboxList{display:grid;gap:10px}
+.card.req{display:flex;flex-direction:column;gap:8px;padding:14px 16px;background:var(--tile);box-shadow:var(--tile-shadow)}
+.req>div:first-child b{font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.req small.muted{font-size:var(--fs-micro)}
+.req pre{margin:0;max-height:160px;overflow:auto;white-space:pre-wrap;padding:10px 12px;border-radius:var(--r-sm);font-family:var(--font);font-size:var(--fs-caption);color:var(--ink-700);background:var(--surface-2)}
+.req .btn.sm{min-height:0;height:26px;padding:0 10px;font-size:var(--fs-micro)}
+#gList{display:grid}
+.tgl{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.tgl:last-child{border-bottom:0}
+.tgl b{display:block;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.tgl small{display:block;font-size:var(--fs-micro);color:var(--ink-400)}
+.sw{position:relative;width:40px;height:22px;flex:none}
+.sw input{position:absolute;opacity:0;width:0;height:0;min-height:0}
+.sw span{position:absolute;inset:0;border-radius:var(--r-pill);background:var(--ink-200);cursor:pointer;transition:background var(--t-base)}
+.sw span::before{content:"";position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(20,26,51,.3);transition:transform var(--t-base) var(--ease)}
+.sw input:checked+span{background:var(--royal)}
+.sw input:checked+span::before{transform:translateX(-18px)}
+.sw input:disabled+span{opacity:.55;cursor:not-allowed}
+.howto h3{margin:0 0 4px;font-size:var(--fs-body);font-weight:var(--fw-medium);color:var(--ink-900)}
+.howto ol{display:grid;gap:6px;margin:6px 0 0;padding-inline-start:20px;font-size:var(--fs-small);color:var(--ink-700)}
+.code{margin-top:10px;padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-micro);line-height:1.55;
+  color:var(--ink-700);background:var(--surface-2);word-break:break-all;user-select:all}
+.howto .code+div{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.howto .btn.sm{min-height:0;height:var(--h-sm);padding:0 12px;font-size:var(--fs-caption);text-decoration:none}
+.btn.gold{background:var(--royal);color:#fff;box-shadow:var(--elev-1)}
+
+/* ==========================================================================
    התנהגות (מגירה, חלון, חיפוש, הודעה, סידור הלוח) – מראה מהסקיל
    ========================================================================== */
 .scrim{position:fixed;inset:0;z-index:40;background:rgba(20,26,51,.3);opacity:0;pointer-events:none;transition:opacity var(--t-base)}
@@ -772,6 +847,8 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
    רספונסיבי (נקודות השבירה של הסקיל)
    ========================================================================== */
 @media (max-width:1280px){
+  .agban{grid-template-columns:1fr 1fr}
+  .agban>div:first-child{grid-column:1/-1}
   .calgrid{grid-template-columns:minmax(0,1fr)}
   .calside{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
   .tlay{grid-template-columns:minmax(0,1fr)}
@@ -790,6 +867,7 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
   html.sb-open .sb-scrim{opacity:1;pointer-events:auto}
 }
 @media (max-width:760px){
+  .agban{grid-template-columns:1fr;padding:18px}
   .g-name{min-width:150px;max-width:150px;padding:8px 10px}
   .g-name .ring{display:none}
   .kanban{grid-auto-columns:86%;scroll-snap-type:x mandatory;margin-inline:-16px;padding-inline:16px}
