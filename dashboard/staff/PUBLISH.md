@@ -32,3 +32,7 @@
 ## גרסה 25 (6.11.2026) — פורסמה
 - רקע ברירת מחדל "אגם בערפל", כרטיסים נפתחים במרכז, "על סדר היום" בסרגל.
 - גיבוי: `dashboard/backups/v25_published_2026-11-06.html`.
+
+## גרסה 25 – מאושרת ע"י זלמן (6.11.2026)
+- הגרסה שמורה: `dashboard/backups/v25_published_2026-11-06.html` ו-tag מקומי `staff-ui-v25-approved` (דחיפת tag נחסמה בשרת, הקובץ בענף הוא הגיבוי).
+- עותק הדגמה (סטודיו אופק): https://claude.ai/artifact/NBZNK82LW6oQ4ZcKVSTEsz · מקור: `dashboard/demo/`.
