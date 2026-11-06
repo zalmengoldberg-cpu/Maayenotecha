@@ -18,7 +18,10 @@ function skillKpis(){const kp=$1('#kpis');if(!kp)return;kp.querySelectorAll('.kp
   c.replaceChildren(top,body);if(dw){dw.hidden=true;c.append(dw)}})}
 function greet(){const g=$1('#greet');if(!g)return;const n=firstName();g.innerHTML=GREET(new Date().getHours())+(n?`, <b>${esc(n)}</b>`:'')}
 function setDate(){const hd=$1('#hdate');if(hd){const d=new Date();hd.textContent=hebDate(d)+' · '+new Intl.DateTimeFormat('he-IL',{weekday:'long',day:'numeric',month:'long'}).format(d)}}
-function paintV21(){try{skillKpis();greet();setDate()}catch(e){console.error(e)}}
+/* גאנט במובייל: עמודת השמות צרה יותר (הקוד קובע 220px בתוך הסגנון) */
+function ganttMobile(){const g=$1('#gantt');if(!g)return;const m=matchMedia('(max-width:760px)').matches;g.style.gridTemplateColumns=g.style.gridTemplateColumns.replace(/^\d+px/,m?'150px':'220px')}
+addEventListener('resize',ganttMobile);
+function paintV21(){try{skillKpis();greet();setDate();ganttMobile()}catch(e){console.error(e)}}
 const _ra=window.renderAll;window.renderAll=function(){const r=_ra.apply(this,arguments);paintV21();return r};
 
 /* עיגולים בכל מסך: הסתרה והצגה משותפות עם תמונת מצב (אותו מפתח, mt-circles) */

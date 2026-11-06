@@ -70,7 +70,7 @@ sub1("const SERIES=['#2A4F95','#5C7CC0','#B9C8E6','#E89A2C','#5B6BD6','#1C86A3',
      "const SERIES=['#3F5499','#6476B6','#C6CDE6','#F2911C','#4A8BAA','#2B727C','#B93B36','#8B91A9','#D2B899'];")
 
 # ---------- 3ג. בלי עיצוב inline ישן במסכים שכבר עברו לסקיל (מלבד צבעי מקרא: <i> ו-.dot) ----------
-DONE_VIEWS = ['today', 'tasks', 'calendar', 'board']
+DONE_VIEWS = ['today', 'tasks', 'calendar', 'board', 'gantt']
 STYLE_RE = re.compile(r'(<(?!i\b)[a-z0-9]+\b(?:(?!class="dot")[^>])*?)\s+style="[^"]*"')
 for v in DONE_VIEWS:
     i = s.index(f'<section class="view" id="v-{v}">')
@@ -97,6 +97,10 @@ AI = ('data-pal="1"', 'sparkle', 'שאל את קלוד', True)
 tasks_head_end = s.index('<p class="muted"', s.index('<section class="view" id="v-tasks">'))
 s = s[:tasks_head_end] + circles('tasks', [('data-new="task"', 'check', 'משימה', False),
                                            ('data-proxy="estAll"', 'clock', 'הערכת זמנים', False), AI]) + s[tasks_head_end:]
+sub1('<span><i style="background:var(--gold)"></i>היום</span>', '<span><i style="background:var(--royal)"></i>היום</span>')
+sub1('<span><i style="background:color-mix(in srgb,var(--plum) 30%,transparent)"></i>יריד החסידות</span>', '<span><i style="background:var(--gold-100)"></i>יריד החסידות</span>')
+gw = s.index('<div class="gwrap"', s.index('<section class="view" id="v-gantt">'))
+s = s[:gw] + circles('gantt', [('data-new="project"', 'box', 'פרויקט', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[gw:]
 kan = s.index('<div class="kanban"', s.index('<section class="view" id="v-board">'))
 s = s[:kan] + circles('board', [('data-new="content"', 'image', 'תוכן', False), ('data-new="project"', 'box', 'פרויקט', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[kan:]
 cal_grid = s.index('<div class="calgrid">', s.index('<section class="view" id="v-calendar">'))
