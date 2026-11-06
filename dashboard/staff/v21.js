@@ -108,40 +108,65 @@ function wireCal(){const root=$1('#mtCal');if(!root)return;decorateCal(root);if(
 document.addEventListener('click',e=>{if(!e.target.closest('[data-dntoday]'))return;dnSel=null;const b=$1(`#mtCal .hcal-day[data-k="${iso(TODAY)}"]`);
   if(b)b.click();else{const c=$1('#miniCal');if(c){c.innerHTML='';window.renderMiniCal&&renderMiniCal();wireCal()}}renderDayNow()});
 
-/* ---- "על סדר היום": עמוד מלא עם הלו"ז של היום ---- */
-let agDay=null;
+/* ---- "על סדר היום": עמוד מלא בהשראת "My Day" של Any.do — רקע חד מלא, כרטיס תאריך,
+   משימות בשקיפות, הצעות לצרף להיום, ו"7 הימים הקרובים" בעמודות (גרירה בין ימים) ---- */
+let agDay=null,agTab='day',agQ='';
+window.MT_WALLS=__WALLSJSON__;const WALL_DEF='lake';
+function curWall(){const r=document.documentElement;const v=getComputedStyle(r).getPropertyValue('--wall').trim();return r.dataset.wp&&r.dataset.wp.startsWith('ph-')?v:null}
 function ensureAgenda(){let el=$1('#agendaPage');if(el)return el;el=document.createElement('section');el.id='agendaPage';el.className='agp';el.hidden=true;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-labelledby','agH');document.body.append(el);return el}
-function renderAgenda(){const el=ensureAgenda();if(el.hidden||typeof S==='undefined'||!S.loaded)return;const ds=agDay||iso(TODAY);const d=parse(ds);const h=hebParts(d);const {par,ev}=dayList(ds);
-  const G=[['t','משימות ויעדים'],['c','תוכן שעולה'],['e','אירועים וקבועים']];const done=ev.filter(evDone).length;const pc=ev.length?Math.round(done/ev.length*100):0;
-  const people={};ev.forEach(e=>{const o=ownerOf(e);if(o)people[o]=(people[o]||0)+1});
-  const plat={};ev.forEach(e=>brandsOf(e.it).forEach(b=>plat[b]=(plat[b]||0)+1));
-  const st=e=>{const it=e.it||{};if(evDone(e))return '<span class="status ok">בוצע</span>';if(typeof isBlocked==='function'&&it.id&&isBlocked(it))return '<span class="status bad">תקוע</span>';
-    if(it.status==='review')return '<span class="status review">ממתין לאישור</span>';if(ds<iso(TODAY))return '<span class="status warn">לא סומן</span>';return `<span class="status info">${esc((STATUS&&STATUS[it.status])||'מתוכנן')}</span>`};
-  const item=e=>{const it=e.it||{};const T=TYPE22[e.type]||TYPE22.due;const open=it.id&&!e.virtual?`data-open="${esc(it.id)}" role="button" tabindex="0"`:'';
-    return `<div class="agenda-item${evDone(e)?' done':''}" ${open}><span class="tm">${esc(T.t)}<span>${e.type==='rec'||e.type==='evt'?'כל היום':'עד סוף היום'}</span></span>${thumbOf(it.id?it:null)||'<span class="th22 none"></span>'}<span class="meta"><b>${esc(evTitle(e))}</b><span>${esc(evSub(e))}</span></span>${personBadge(ownerOf(e),it)}${st(e)}</div>`};
-  const groups=G.map(([g,t])=>{const L=ev.filter(e=>TYPE22[e.type]?.g===g);return L.length?`<section class="agp-g"><h4>${t}<span class="num">${L.length}</span></h4><div class="agenda">${L.map(item).join('')}</div></section>`:''}).join('');
-  el.innerHTML=`<div class="agp-in">
-    <header class="agp-top"><div class="agp-t"><span class="eyebrow">על סדר היום</span><h2 id="agH">${ds===iso(TODAY)?'הלו״ז של היום':'הלו״ז של יום '+HDOW[d.getDay()]}</h2>
-      <span class="t-muted">${esc(gem(h.day,true)+' ב'+h.mon)} · ${esc(new Intl.DateTimeFormat('he-IL',{weekday:'long',day:'numeric',month:'long'}).format(d))}${par?' · '+esc(par.label):''}</span></div>
-      <div class="agp-act"><button class="btn btn-secondary btn-icon btn-sm" type="button" data-agstep="-1" aria-label="היום הקודם">${DS.icon('chevR','ico-sm')}</button>
-        <button class="btn btn-secondary btn-sm" type="button" data-agstep="0">היום</button>
-        <button class="btn btn-secondary btn-icon btn-sm" type="button" data-agstep="1" aria-label="היום הבא">${DS.icon('chevL','ico-sm')}</button>
-        <button class="btn btn-brand btn-sm" type="button" data-newday="${ds}">${DS.icon('plus','ico-sm')}הוסף ליום</button>
-        <button class="btn btn-ghost btn-icon btn-sm agp-x" type="button" data-agclose="1" aria-label="סגירה">${DS.icon('plus','ico-sm')}</button></div></header>
-    <div class="agp-body"><div class="agp-main">${groups||`<div class="empty">${window.MT_IMG&&MT_IMG['e-dayPanel']?`<img class="icon-3d" src="${MT_IMG['e-dayPanel']}" alt="">`:''}<b>יום פנוי</b><span>אין משימות, תוכן או אירועים ביום הזה. אפשר להוסיף מהכפתור למעלה.</span></div>`}</div>
-      <aside class="agp-side"><div class="card"><div class="sched-progress"><div class="r"><span>התקדמות היום</span><b class="num">${done}/${ev.length}</b></div><div class="bar" style="--v:${pc}%;--c:var(--ok)"><i></i></div></div>
-        <div class="agp-sum">${G.map(([g,t])=>`<div><b class="num">${ev.filter(e=>TYPE22[e.type]?.g===g).length}</b><span>${t}</span></div>`).join('')}</div></div>
-        ${Object.keys(people).length?`<div class="card"><h4>מי עובד על זה</h4>${Object.entries(people).map(([id,n])=>`<div class="agp-p" data-list="who:${esc(id)}" role="button" tabindex="0"><span class="avatar">${av(id)}</span><b>${esc((P(id)||{}).name||'')}</b><span class="num">${n}</span></div>`).join('')}</div>`:''}
-        ${Object.keys(plat).length?`<div class="card"><h4>פלטפורמות</h4>${Object.entries(plat).map(([k,n])=>`<div class="ch-row">${brandBadge(k)}<span class="meta"><b>${BRL[k]}</b><span class="num">${n} פריטים</span></span></div>`).join('')}</div>`:''}
-      </aside></div></div>`}
-function openAgenda(ds){agDay=ds||dnSel||iso(TODAY);const el=ensureAgenda();el.hidden=false;document.documentElement.classList.add('agp-open');renderAgenda();el.querySelector('.agp-x')?.focus();if(location.hash!=='#agenda')history.pushState(null,'','#agenda')}
+const isOpenUnit=u=>!u.done&&!(u.item&&u.item.status==='done');
+function uKey(u){return u.step?{id:u.item.id,i:u.idx}:{id:u.item.id,i:null}}
+function crumb(it,step){const ch=(typeof CHANNEL!=='undefined'&&CHANNEL[it.channel])||(typeof KIND!=='undefined'&&KIND[it.kind])||'';return step?`${it.title}${ch?' › '+ch:''}`:(ch||'')}
+function chk(e){const it=e.it||{};if(!it.id||e.virtual||e.type==='rec'||e.type==='evt')return '<span class="agx-dot"></span>';
+  return e.type==='step'?`<button class="check ${evDone(e)?'on':''}" data-step="${esc(it.id)}" data-i="${e.si}" aria-label="סמן בוצע"></button>`:`<button class="check ${evDone(e)?'on':''}" data-done="${esc(it.id)}" aria-label="סמן בוצע"></button>`}
+function taskCard(e,ds){const it=e.it||{};const open=it.id&&!e.virtual?`data-open="${esc(it.id)}"`:'';const T=TYPE22[e.type]||TYPE22.due;
+  const dragAttr=it.id&&!e.virtual&&/pub|due|step/.test(e.type)?`data-agmove="${esc(it.id)}|${e.type}|${e.si??''}|${ds}"`:'';
+  return `<div class="agx-card${evDone(e)?' done':''}" ${dragAttr}>${chk(e)}<div class="agx-t" ${open} ${open?'role="button" tabindex="0"':''}><small>${DS.icon('box','ico-sm')}${esc(e.type==='step'?crumb(it,1):T.t+(crumb(it)?' · '+crumb(it):''))}</small><b>${esc(evTitle(e))}</b></div>${personBadge(ownerOf(e),it)}</div>`}
+function suggestions(ds){if(typeof units!=='function')return[];const today=iso(TODAY);
+  return units(false).filter(u=>isOpenUnit(u)&&(!u.due||u.due<today)&&u.due!==ds&&(u.owner===ME()||!u.owner)).filter(u=>!agQ||(u.title+' '+(u.parent||'')).includes(agQ))
+    .sort((a,b)=>(a.due?0:1)-(b.due?0:1)||String(a.due||'').localeCompare(String(b.due||''))).slice(0,30)}
+function renderAgenda(){const el=ensureAgenda();if(el.hidden||typeof S==='undefined'||!S.loaded)return;const today=iso(TODAY);const ds=agDay||today;const d=parse(ds);const h=hebParts(d);
+  const wall=curWall();el.style.setProperty('--agbg',wall||`url("${(window.MT_WALLS||{})[WALL_DEF]||''}")`);
+  const {par,ev}=dayList(ds);const evs=ev.filter(e=>e.type==='evt'||e.type==='rec');const tasks=ev.filter(e=>e.type!=='evt'&&e.type!=='rec');
+  const n=firstName();const sub=tasks.length?`${tasks.filter(e=>!evDone(e)).length} דברים פתוחים ${ds===today?'להיום':'ליום הזה'}${tasks.some(evDone)?` · ${tasks.filter(evDone).length} כבר בוצעו`:''}`:'יום נקי. אפשר לצרף משימות מההצעות';
+  const dateCard=`<div class="agx-date"><div class="agx-dd"><span>${HDOW[d.getDay()]}</span><b class="num">${d.getDate()}</b><em>${esc(new Intl.DateTimeFormat('he-IL',{month:'long'}).format(d))}</em></div>
+    <div class="agx-ev">${evs.length?evs.map(e=>`<div class="agx-evr" ${e.it&&e.it.id?`data-open="${esc(e.it.id)}" role="button" tabindex="0"`:''}><i style="--c:${TYPE22[e.type].c}"></i><b>${esc(evTitle(e))}</b><span>${e.type==='rec'?'קבוע':'אירוע'}</span></div>`).join(''):`<p>אין אירועים מתוזמנים ${ds===today?'להיום':'ליום הזה'}</p>`}
+      <span class="agx-heb">${esc(gem(h.day,true)+' ב'+h.mon)}${par?' · '+esc(par.label):''}</span></div></div>`;
+  const dayView=`<div class="agx-main"><h2 id="agH" class="agx-hi">${esc(GREET(new Date().getHours()))}${n?', '+esc(n):''}<i></i></h2><p class="agx-sub">${esc(sub)}</p>${dateCard}
+      <div class="agx-list">${tasks.map(e=>taskCard(e,ds)).join('')}</div>
+      <div class="agx-add"><button type="button" class="agx-addb" data-newday="${ds}">${DS.icon('plus','ico-sm')}הוספת משימה ${ds===today?'להיום':'ליום הזה'}</button><button type="button" class="agx-wall" data-agwall="1" aria-label="החלפת רקע" style="background-image:var(--agbg)"></button></div></div>
+    <aside class="agx-sug" aria-label="הצעות להיום"><div class="agx-sh">${DS.icon('sparkle','ico-sm')}<b>הצעות ${ds===today?'להיום':'ליום הזה'}</b></div>
+      <label class="agx-flt"><span class="sr-only">סינון</span><input type="search" id="agFlt" placeholder="סינון" value="${esc(agQ)}"></label>
+      <div class="agx-sl">${suggestions(ds).map(u=>{const k=uKey(u);return `<div class="agx-s"><button type="button" class="agx-plus" data-agplan="${esc(k.id)}|${k.i??''}" aria-label="צירוף ל${ds===today?'היום':'יום הזה'}">${DS.icon('plus','ico-sm')}</button><div class="agx-t" data-open="${esc(u.item.id)}" role="button" tabindex="0"><small>${DS.icon('box','ico-sm')}${esc(u.parent||(CHANNEL[u.item.channel]||''))}</small><b>${esc(u.title)}</b><em class="${u.due?'late':''}">${u.due?'באיחור · '+esc(fmt(u.due)):'בלי תאריך'}</em></div></div>`}).join('')||'<p class="agx-none">אין הצעות כרגע. כל המשימות שלך מתוזמנות.</p>'}</div></aside>`;
+  const days=[...Array(7)].map((_,i)=>{const x=new Date(TODAY);x.setDate(x.getDate()+i);return iso(x)});
+  const weekView=`<div class="agx-week" id="agH" tabindex="-1">${days.map((k,i)=>{const dd=parse(k);const L=dayList(k).ev;return `<section class="agx-col" data-agday="${k}"><h3>${i===0?'היום':i===1?'מחר':''} <span>${i<2?HDOW[dd.getDay()]:'יום '+HDOW[dd.getDay()]}</span><em>${dd.getDate()}.${dd.getMonth()+1}</em></h3>
+      <div class="agx-cl">${L.map(e=>taskCard(e,k)).join('')}</div><button type="button" class="agx-addb sm" data-newday="${k}">${DS.icon('plus','ico-sm')}הוספה</button></section>`}).join('')}</div>`;
+  el.innerHTML=`<div class="agx-bg" aria-hidden="true"></div><div class="agx-in">
+    <header class="agx-top"><div class="agx-pill">${DS.icon('calendar')}<b>על סדר היום</b>
+      <div class="agx-seg" role="tablist"><button type="button" role="tab" data-agtab="day" aria-selected="${agTab==='day'}">${ds===today?'היום':HDOW[d.getDay()]}</button><button type="button" role="tab" data-agtab="week" aria-selected="${agTab==='week'}">7 הימים הקרובים</button></div>
+      ${agTab==='day'?`<span class="agx-nav"><button type="button" data-agstep="-1" aria-label="היום הקודם">${DS.icon('chevR','ico-sm')}</button>${ds!==today?'<button type="button" data-agstep="0">היום</button>':''}<button type="button" data-agstep="1" aria-label="היום הבא">${DS.icon('chevL','ico-sm')}</button></span>`:''}</div>
+      <button type="button" class="agx-x" data-agclose="1" aria-label="סגירה">${DS.icon('plus')}</button></header>
+    ${agTab==='day'?`<div class="agx-day">${dayView}</div>`:weekView}</div>`;
+  const f=el.querySelector('#agFlt');if(f){f.addEventListener('input',()=>{agQ=f.value.trim();const pos=f.selectionStart;renderAgenda();const g=$1('#agFlt');if(g){g.focus();g.setSelectionRange(pos,pos)}})}}
+function openAgenda(ds){agDay=ds||dnSel||iso(TODAY);const el=ensureAgenda();el.hidden=false;document.documentElement.classList.add('agp-open');renderAgenda();el.querySelector('.agx-x')?.focus();if(location.hash!=='#agenda')history.pushState(null,'','#agenda')}
 function closeAgenda(back){const el=$1('#agendaPage');if(!el||el.hidden)return;el.hidden=true;document.documentElement.classList.remove('agp-open');if(back&&location.hash==='#agenda')history.back();$1('[data-agenda]')?.focus()}
+/* צירוף הצעה ליום: נותן לה את התאריך (שלב: יעד השלב; משימה: יעד) */
+function planOn(id,i,ds){const it=S.items[id];if(!it)return;if(i!==''&&i!=null){const st=(it.steps||[])[+i];if(!st)return;const old=st.due||null;setStep(id,+i,{due:ds});toastUndo(`"${st.t}" צורף ל${ds===iso(TODAY)?'היום':fmt(ds)}`,()=>setStep(id,+i,{due:old}))}
+  else{const old=it.due||null;saveItem(id,{due:ds});toastUndo(`"${it.title}" צורף ל${ds===iso(TODAY)?'היום':fmt(ds)}`,()=>saveItem(id,{due:old}))}log(`צירף ל${fmt(ds)}: ${(i!==''&&i!=null)?(it.steps[+i]||{}).t:it.title}`,id)}
+/* גרירה בין ימים ב"7 הימים הקרובים" */
+function moveTo(spec,to){const [id,type,si,from]=spec.split('|');const it=S.items[id];if(!it||from===to)return;
+  if(type==='step'){const st=(it.steps||[])[+si];if(!st)return;const old=st.due||null;setStep(id,+si,{due:to});toastUndo(`"${st.t}" הוזז ל${fmt(to)}`,()=>setStep(id,+si,{due:old}))}
+  else{const f=type==='pub'?'publishAt':'due';const old=it[f]||null;saveItem(id,{[f]:to});toastUndo(`"${it.title}" הוזז ל${fmt(to)}`,()=>saveItem(id,{[f]:old}))}log(`הזיז את "${it.title}" ל${fmt(to)}`,id)}
+pdrag({item:'#agendaPage .agx-card[data-agmove]',target:'#agendaPage .agx-col[data-agday]',drop(el,col){moveTo(el.dataset.agmove,col.dataset.agday)}});
 document.addEventListener('click',e=>{const a=e.target.closest('[data-agenda]');if(a){openAgenda(a.dataset.agenda);return}
   if(e.target.closest('[data-agclose]')){closeAgenda(true);return}
-  const s=e.target.closest('[data-agstep]');if(s){const n=+s.dataset.agstep;if(!n)agDay=iso(TODAY);else{const d=parse(agDay||iso(TODAY));d.setDate(d.getDate()+n);agDay=iso(d)}renderAgenda();return}
-  const ag=$1('#agendaPage');if(ag&&!ag.hidden&&e.target.closest('#agendaPage [data-open],#agendaPage [data-list],#agendaPage [data-newday]'))setTimeout(()=>closeAgenda(true),0)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$1('#agendaPage:not([hidden])')&&!document.querySelector('.drawer.on,.modal.on')){closeAgenda(true)}});
+  const tb=e.target.closest('[data-agtab]');if(tb){agTab=tb.dataset.agtab;renderAgenda();return}
+  const pl=e.target.closest('[data-agplan]');if(pl){const [id,i]=pl.dataset.agplan.split('|');planOn(id,i,agDay||iso(TODAY));return}
+  if(e.target.closest('[data-agwall]')){e.stopPropagation();const b=document.getElementById('bgT');if(b)b.click();return}
+  const s=e.target.closest('[data-agstep]');if(s){const n=+s.dataset.agstep;if(!n)agDay=iso(TODAY);else{const d=parse(agDay||iso(TODAY));d.setDate(d.getDate()+n);agDay=iso(d)}renderAgenda();return}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$1('#agendaPage:not([hidden])')&&!document.querySelector('.drawer.on,.modal:not([hidden]),#bgPop')){closeAgenda(true)}});
 addEventListener('popstate',()=>{if(location.hash!=='#agenda')closeAgenda(false);else if($1('#agendaPage')?.hidden)openAgenda(agDay)});
+new MutationObserver(()=>{if($1('#agendaPage:not([hidden])'))renderAgenda()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-wp']});
 
 /* ---- 2. שורות בסגנון של טבלת ההזמנות: תמונת הפרויקט, האדם ואייקון הפלטפורמה ---- */
 function dressRows(){if(typeof S==='undefined'||!S.loaded)return;

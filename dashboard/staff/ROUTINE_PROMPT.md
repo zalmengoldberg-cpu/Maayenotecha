@@ -14,8 +14,9 @@
 
 הארטיפקט: https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z. לא מפרסמים את הדף עצמו ולא משנים בו קוד. רק מעלים נכסים ומעדכנים שדות תמונה במסד.
 
-1. ArtifactData list על items ועל agents.
+1. ArtifactData list על items, על agents ועל people.
 2. כרטיס צריך כריכה אם: kind הוא project, content או task; אין לו thumb; channel אינו weekly והמזהה אינו weekly (לפוסט השבועי יש לוגו "תובנה" מובנה); והכותרת או המזהה לא תואמים ל-/תניא|פיצול אישיות|tanya|החדשים|קמפיין|סרטונים ליריד/. אירועים (event) ופריטים קבועים (recurring) לא מקבלים תמונה.
+   אדם צריך אווטאר אם אין לו avatar ואין לו photo (מתכון E2: אווטאר מאויר בתלת-ממד, לא צילום; המראה רק לפי התפקיד; רקע בגוון הצבע שלו).
    סוכן צריך אייקון אם אין לו img. הסוכנים: weekly, creative, media, newsletter, site, data. אם אין מסמך בשמו באוסף agents, הוא צריך אייקון.
 3. אם אין מה לייצר: עוצרים בלי לכתוב כלום.
 4. אם יש יותר מ-12: לא מייצרים. כותבים באוסף activity מסמך אחד {who:'claude', text:'מחכות N תמונות לאישור: <רשימה>', at:<ISO>} ועוצרים.
@@ -24,5 +25,5 @@
    - אייקון לסוכן (מתכון B, 1:1, 1K): "Premium 3D icon render of a single [החפץ של התחום של הסוכן], made of translucent frosted glass with subtle inner structure. Inner core glows warm amber (#F2911C); the glass refracts royal blue (#3F5499), turquoise (#4A8BAA) and soft purple (#6A55A8). Soft diffused studio light, gentle subsurface scattering, slight three-quarter view, centered, object fills 70% of the frame. Seamless flat pure white background, no floor, no shadow. Minimal, elegant, not busy. No text, no numbers, no letters, no logos."
 6. בדיקה: inspect_images לכל תמונה. אין טקסט, אין אנשים, אין עיוותים. תמונה שנכשלה מריצים שוב פעם אחת.
 7. שמירה: ה-preview ש-inspect_images שומר מקומית. כריכה כ-WebP. אייקון: מסירים את הרקע הלבן, חותכים לריבוע ומקטינים ל-192×192 WebP. מעלים עם Artifact publish: url של הארטיפקט, asset:true, file_paths.
-8. חיבור (ArtifactData batch, עם if_version לכל מסמך קיים): לכרטיס {thumb:<url>, thumbArt:true, thumbSrc:{endpoint, recipe, subject}}; לסוכן set או update {img:<url>, imgSrc:{...}}; ומסמך activity אחד {who:'claude', text:'יצר N תמונות: ...', at}. לא נוגעים בשום שדה אחר.
+8. חיבור (ArtifactData batch, עם if_version לכל מסמך קיים): לכרטיס {thumb:<url>, thumbArt:true, thumbSrc:{endpoint, recipe, subject}}; לסוכן set או update {img:<url>, imgSrc:{...}}; לאדם update {avatar:<url>, avatarSrc:{...}}; ומסמך activity אחד {who:'claude', text:'יצר N תמונות: ...', at}. לא נוגעים בשום שדה אחר.
 9. אם fal או הארטיפקט לא זמינים: עוצרים בלי לכתוב למסד.

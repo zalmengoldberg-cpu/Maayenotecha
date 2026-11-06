@@ -124,7 +124,7 @@ if icons:
     s = s[:v19s] + '<script>' + js + '</script>\n' + s[v19s:]
 # פקודת התור: אחרי הבקשות, שגרת התמונות
 sub1("ועדכן את הכרטיס המתאים באוסף items.`;",
-     "ועדכן את הכרטיס המתאים באוסף items. בסוף הרץ את שגרת התמונות של חדר הבקרה לפי הסקיל maayanotecha-staff-ui (references/fal-imagery.md, סעיף 4): כריכה ב-fal לכל כרטיס בלי thumb ובלי כריכת ספר אמיתית, ואייקון תלת-ממדי לכל סוכן בלי img. עד 12 תמונות בהרצה; אם יש יותר, רשום את הרשימה בפעילות וחכה לאישור.`;")
+     "ועדכן את הכרטיס המתאים באוסף items. בסוף הרץ את שגרת התמונות של חדר הבקרה לפי הסקיל maayanotecha-staff-ui (references/fal-imagery.md, סעיף 4): כריכה ב-fal לכל כרטיס בלי thumb ובלי כריכת ספר אמיתית, אייקון תלת-ממדי לכל סוכן בלי img, ואווטאר מאויר (מתכון E2) לכל אדם בלי avatar ובלי photo. עד 12 תמונות בהרצה; אם יש יותר, רשום את הרשימה בפעילות וחכה לאישור.`;")
 
 # ---------- 3ו. פוסט הפרשה השבועי (החלטה 6.11): נכנס כמשימה רק ביום שלישי של השבוע שלו ----------
 # עד אז הוא נעיצה: רק במפת התוכן בלוח, לא במשימות, בקנבן, בתשומת לב ובגאנט הפרויקטים
@@ -140,6 +140,15 @@ if tov:
     sub1("function coverSrc(it){const t=(it.title||'')+' '+(it.id||'');if(it.thumb)return {img:[it.thumb],art:!!it.thumbArt};",
          "function coverSrc(it){const t=(it.title||'')+' '+(it.id||'');if(it.channel==='weekly'||it.id==='weekly')return {img:['" + TOV + "'],logo:1};if(it.thumb)return {img:[it.thumb],art:!!it.thumbArt};")
 
+# אווטאר מ-fal (סגנון תלת-ממדי מאויר) כשאין תמונה אמיתית. תמונה שהועלתה תמיד קודמת
+sub1('p.photo?`<img src="${esc(p.photo)}" alt="">`:ini', '(p.photo||p.avatar)?`<img src="${esc(p.photo||p.avatar)}" alt="">`:ini')
+# רקעים חדים (fal) לכל הפלטפורמה, לצד הרקעים הקיימים. הקבצים בנכסי הארטיפקט (staff/walls/walls.json)
+import json as _json
+WALLS = _json.loads((B / 'walls' / 'walls.json').read_text(encoding='utf8'))
+WNAMES = [('lake','אגם בערפל'),('galilee','גבעות הגליל'),('desert','מדבר בזריחה'),('sea','ים בבוקר'),('bloom','פרח כחול'),('ribbon','סרט כחול-זהב'),('silk','משי פסטל'),('stones','אבנים באיזון')]
+sub1("const NAMES=[['mt-aurora','זוהר המעיין'],", "const NAMES=[" + ''.join(f"['ph-{k}','{n}']," for k,n in WNAMES) + "['mt-aurora','זוהר המעיין'],")
+s = s.replace("const NAMES=[['ph-lake'", "Object.assign(WALLS," + _json.dumps({f'ph-{k}|{m}': WALLS[k] for k,_ in WNAMES for m in ('light','dark')}) + ");\nconst NAMES=[['ph-lake'", 1)
+
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
 assert ds_old
@@ -149,7 +158,7 @@ s = s[:ds_old.start()] + '<script>' + ds_new + '</script>' + s[ds_old.end():]
 # ---------- 5. v21.js אחרי v19.js ----------
 v19 = re.search(r'<script>/\* ===== v19:.*?</script>', s, flags=re.S)
 assert v19
-v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge.webp'))
+v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge.webp')).replace('__WALLSJSON__', (B / 'walls' / 'walls.json').read_text(encoding='utf8').strip())
 s = s[:v19.end()] + '\n<script>' + v21js + '</script>' + s[v19.end():]
 
 OUT.write_text(s, encoding='utf8')

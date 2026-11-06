@@ -91,6 +91,18 @@ Natural skin texture, editorial quality, no text.
 ```
 1:1, 1K. חותכים ריבוע סביב הפנים (כולל כובע וזקן), 176px. מגוון גילאים ומראות שמתאים לקהל של מעיינותיך, לבוש צנוע ומכובד. **לעולם לא** לפי שם או תמונה של אדם אמיתי, ולא במקום תמונה של משתמש אמיתי – מי שאין לו תמונה מקבל `mono`.
 
+### E2 · אווטאר מאויר לאנשי הצוות (החלטה של זלמן, 6.11.2026)
+בכלים הפנימיים בלבד, כל אדם בלי תמונה אמיתית מקבל אווטאר **מאויר בתלת-ממד** (לא צילום, כדי שלא ייראה כתמונה של האדם). תמונה אמיתית שהועלתה (`photo`) תמיד קודמת. המראה נגזר רק מהתפקיד ומהמגדר הדקדוקי שכתוב בתפקיד, לא מהשם:
+```
+Premium stylized 3D character avatar icon, soft clay-like Pixar style render (clearly illustrated, not a photograph),
+head and shoulders, slight three-quarter view, friendly calm expression: [a Chassidic man in his thirties with a full
+dark beard, a black kippah, white shirt and dark jacket / a young religious Jewish woman, modest clothing with a high
+neckline and long sleeves ...], [פרט קטן מהתפקיד: מיקרופון למראיינת, משקפיים למפתח]. Soft diffused studio light.
+Centered, face fills the middle of the frame. Seamless flat solid background in a soft tint of the person's color.
+No text, no letters, no logos.
+```
+1:1, 1K. חותכים ריבוע סביב הפנים (17%–83% ברוחב, 2%–68% בגובה), 192px WebP. נשמר ב-`people/<id>`: `avatar` + `avatarSrc`. קלוד מקבל את הלהבה (`assistant-flame`).
+
 ### F · סט מצבים מיושר (איור חי שמשקף מצב – למשל שעון החול של "מדד העבודה")
 אותו אובייקט בכמה מצבים, **מיושרים בדיוק** כדי שאפשר יהיה לעבור ביניהם ב-crossfade.
 1. **מצב בסיס** – `text-to-image` לפי מתכון A, עם האובייקט והמצב הראשון:
@@ -123,9 +135,10 @@ Keep the thin glowing stream of grains falling through the neck. No text, no num
 |---|---|---|---|
 | כריכה לכרטיס (פרויקט, תוכן, משימה) | `items/<id>`: `thumb` = כתובת הנכס, `thumbArt: true` | A בפורמט 16:9, האובייקט במרכז (אין צד ריק לטקסט) | כשאין `thumb` |
 | אייקון לסוכן | `agents/<id>`: `img` = כתובת הנכס | B + הסרת רקע | כשאין `img` |
+| אווטאר לאדם | `people/<id>`: `avatar` = כתובת הנכס | E2 | כשאין `avatar` ואין `photo` |
 | אייקון מצב ריק לכל רשימה | בקוד (`dashboard/staff/icons/e-<id>.webp`) | B + הסרת רקע | חד-פעמי, לא בשגרה |
 
-**לא מקבלים תמונה מ-fal:** אירועים (`kind: event`), פריטים קבועים (`recurring`), ו**כל מה ששייך לפוסט הפרשה השבועי** (`channel: weekly` והפרויקט `weekly`): הכריכה שלהם היא לוגו "תובנה בהשראת הפרשה" מהגרפיקה של הפוסט, שמובנה בקוד של הדשבורד. גם לא כרטיס שכבר מוצגת בו כריכת ספר אמיתית: הכותרת או המזהה תואמים ל-`תניא|פיצול אישיות|tanya|החדשים|קמפיין|סרטונים ליריד`. כריכות ספרים, אנשים, לוגואים ואייקוני ממשק אף פעם לא מ-fal (סעיף 1).
+**לא מקבלים תמונה מ-fal:** אירועים (`kind: event`), פריטים קבועים (`recurring`), ו**כל מה ששייך לפוסט הפרשה השבועי** (`channel: weekly` והפרויקט `weekly`): הכריכה שלהם היא לוגו "תובנה בהשראת הפרשה" מהגרפיקה של הפוסט, שמובנה בקוד של הדשבורד. גם לא כרטיס שכבר מוצגת בו כריכת ספר אמיתית: הכותרת או המזהה תואמים ל-`תניא|פיצול אישיות|tanya|החדשים|קמפיין|סרטונים ליריד`. כריכות ספרים, לוגואים ואייקוני ממשק אף פעם לא מ-fal (סעיף 1). אנשים: רק אווטאר מאויר לפי E2, אף פעם לא צילום.
 
 ### נושא התמונה
 אובייקט אחד מעולם המותג שמתאר את הכרטיס, בלי טקסט ובלי אנשים. נגזר מהכותרת, מהערוץ ומההערות:
@@ -133,12 +146,14 @@ Keep the thin glowing stream of grains falling through the neck. No text, no num
 - **סוכן:** החפץ של התחום שלו (פוסט פרשה: ספר פתוח; רעיונות: נורה; מדיה: מצלמה; ניוזלטר: מעטפה; אתר: מסך עם ספרים; נתונים: גרף).
 
 ### צעדים
-1. **איסוף:** `ArtifactData` list על `items` ועל `agents` בארטיפקט של חדר הבקרה (https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z). מסננים לפי הטבלה.
+1. **איסוף:** `ArtifactData` list על `items`, על `agents` ועל `people` בארטיפקט של חדר הבקרה (https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z). מסננים לפי הטבלה.
 2. **מגבלה:** עד 12 תמונות בהרצה. אם יש יותר, לא מייצרים. רושמים באוסף `activity` רשומה אחת: `{who:'claude', text:'מחכות N תמונות לאישור: ...', at}` עם רשימת הכרטיסים, ומחכים לאישור של זלמן בצ'אט.
 3. **ייצור:** `recommend_model` → `submit_jobs` (עד 8 בכל קריאה) → `wait_for_jobs`. לאייקונים: הסרת רקע (`fal-ai/birefnet/v2`, `output_format: "png"`).
 4. **בדיקה:** `inspect_images` לכל תמונה: אין טקסט, אין אנשים, אין עיוותים, צבעים מהפלטה. תמונה שנכשלה מריצים שוב, פעם אחת.
 5. **שמירה:** ממירים ל-WebP (כריכה ברוחב 1280, אייקון 192×192), ומעלים כנכס לארטיפקט: `Artifact` publish עם `url` של חדר הבקרה, `asset: true` ו-`file_path`. **לא מפרסמים את הדף עצמו.**
-6. **חיבור:** `ArtifactData` update: לכרטיס `{thumb:<url של הנכס>, thumbArt:true, thumbSrc:{endpoint, prompt}}`, לסוכן `{img:<url>, imgSrc:{endpoint, prompt}}`. לא נוגעים בשום שדה אחר.
+6. **חיבור:** `ArtifactData` update: לכרטיס `{thumb:<url של הנכס>, thumbArt:true, thumbSrc:{endpoint, prompt}}`, לסוכן `{img:<url>, imgSrc:{endpoint, prompt}}`, לאדם `{avatar:<url>, avatarSrc:{endpoint, recipe:'E2'}}`. לא נוגעים בשום שדה אחר.
 7. **תיעוד:** רשומה אחת באוסף `activity`: `{who:'claude', text:'יצר N תמונות: ...', at}`.
+
+**הורדה:** התמונות של fal נמצאות ב-`v3b.fal.media`. בסביבה שמאפשרת את הכתובת הזו (בסביבת הענן של זלמן: מותר מ-6.11) מורידים את הקובץ המלא; אחרת רק תצוגה מקדימה של 768px דרך `inspect_images`, שמספיקה לכריכות ולאייקונים אבל לא לרקעים.
 
 **אם fal או הארטיפקט לא זמינים בסשן:** עוצרים ולא כותבים כלום למסד.
