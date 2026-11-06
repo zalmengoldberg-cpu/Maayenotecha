@@ -1181,7 +1181,7 @@ new MutationObserver(()=>{planBanner();stChipDrawer()}).observe(document.getElem
 /* ---- monday-style status labels: click to change, editable names & colors ---- */
 const DEF_COL={idea:'#8B91A9',todo:'#3F5499',doing:'#F2911C',review:'#6A55A8',scheduled:'#2B727C',done:'#2E8566'};
 const UI=()=>(S.agents&&S.agents._ui)||{};
-function stColor(st){return (UI().statusColors||{})[st]||DEF_COL[st]||'#A9B1C2'}
+function stColor(st){return (UI().statusColors21||{})[st]||DEF_COL[st]||'#A9B1C2'}
 function applyUI(){const u=UI();if(u.statusLabels)Object.entries(u.statusLabels).forEach(([k,v])=>{if(v&&STATUS[k]!==undefined)STATUS[k]=v});let css='';ORDER.forEach(st=>{css+=`.stl.st-${st}{--stc:${stColor(st)}}`});let el=document.getElementById('stCss');if(!el){el=document.createElement('style');el.id='stCss';document.head.appendChild(el)}el.textContent=css}
 window.stChip=function(it){if(!it||!it.id)return'';const st=it.status||'todo';return `<button type="button" class="stl st-${st}" data-stmenu="${esc(it.id)}" title="לחץ לשינוי סטטוס">${esc(STATUS[st]||st)}</button>`};
 function decorate(){
@@ -1197,7 +1197,7 @@ document.addEventListener('click',e=>{
   const s=e.target.closest('[data-stset]');if(s){e.preventDefault();e.stopPropagation();const [id,st]=s.dataset.stset.split('|');closeMenu();const it=S.items[id];if(it&&it.status!==st){saveItem(id,{status:st});log(`שינה סטטוס של "${it.title}" ל${STATUS[st]}`,id);toast(`"${it.title}" → ${STATUS[st]}`)}return}
   if(e.target.closest('[data-stedit]')){e.stopPropagation();closeMenu();openModal(`<h3 style="margin:0 0 4px">עריכת תגיות סטטוס</h3><p class="muted" style="margin:0 0 14px">שם וצבע לכל שלב. השינוי נשמר לכל הצוות.</p><div class="stedit">${ORDER.map(st=>`<label class="ste-r"><input type="color" value="${stColor(st)}" data-stc="${st}" aria-label="צבע"><input type="text" value="${esc(STATUS[st])}" data-stn="${st}" maxlength="24" aria-label="שם"></label>`).join('')}</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" class="btn pri" data-stsave="1">שמור</button><button type="button" class="btn ghost" data-mclose>ביטול</button></div>`);return}
   if(e.target.closest('[data-stsave]')){const lab={},col={};document.querySelectorAll('[data-stn]').forEach(i=>lab[i.dataset.stn]=i.value.trim()||STATUS[i.dataset.stn]);document.querySelectorAll('[data-stc]').forEach(i=>col[i.dataset.stc]=i.value);
-    S.db.collection('agents').doc('_ui').set({...UI(),statusLabels:lab,statusColors:col}).then(()=>{toast('התגיות עודכנו לכל הצוות')}).catch(err=>toast('אין הרשאה לשמור: '+err.message));Object.assign(STATUS,lab);if(S.agents){S.agents._ui={...UI(),statusLabels:lab,statusColors:col}}applyUI();closeModal();renderAll();return}
+    S.db.collection('agents').doc('_ui').set({...UI(),statusLabels:lab,statusColors21:col}).then(()=>{toast('התגיות עודכנו לכל הצוות')}).catch(err=>toast('אין הרשאה לשמור: '+err.message));Object.assign(STATUS,lab);if(S.agents){S.agents._ui={...UI(),statusLabels:lab,statusColors21:col}}applyUI();closeModal();renderAll();return}
   if(!e.target.closest('#stMenu'))closeMenu();
 },true);
 /* ---- hooks ---- */

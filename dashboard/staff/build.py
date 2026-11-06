@@ -82,6 +82,12 @@ for v in DONE_VIEWS:
 sub1("F_COL={idea:'#A9B1C2',todo:'#579BFC',doing:'#FDAB3D',review:'#A25DDC',scheduled:'#00A9C7',done:'#00C875'};",
      "F_COL={idea:'#8B91A9',todo:'#3F5499',doing:'#F2911C',review:'#6A55A8',scheduled:'#2B727C',done:'#2E8566'};")
 
+# ---------- 3ג1ב. צבעי תגיות שנשמרו בגרסאות הקודמות לא דורסים את הסקיל ----------
+# v21 קורא וכותב רק statusColors21. statusColors הישן נשאר במסד בלי שינוי ובלי השפעה.
+sub1("function stColor(st){return (UI().statusColors||{})[st]", "function stColor(st){return (UI().statusColors21||{})[st]")
+s = s.replace("statusLabels:lab,statusColors:col}", "statusLabels:lab,statusColors21:col}")
+assert s.count("statusColors21:col}") == 2 and "statusColors:col" not in s
+
 # ---------- 3ג2. צבעי הערוצים בלוח (CH_COL ומקרא הלוח) מהפלטה של הסקיל ----------
 sub1("const CH_COL={video:'#E89A2C',post:'#5B6BD6',weekly:'#2A4F95',newsletter:'#1C86A3',site:'#7B4AA8',brand:'#7B4AA8',data:'#4C5B53',admin:'#88958D',event:'#16294D'};",
      "const CH_COL={video:'#F2911C',post:'#6476B6',weekly:'#3F5499',newsletter:'#4A8BAA',site:'#A9865C',brand:'#A9865C',data:'#2E8566',admin:'#626A88',event:'#141A33'};")
