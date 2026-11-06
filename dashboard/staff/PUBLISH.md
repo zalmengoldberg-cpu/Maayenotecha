@@ -8,3 +8,12 @@
 5. **מריצים את שגרת התמונות** לפי `references/fal-imagery.md` סעיף 4 (עד 12 לבד; מעל – רשימה ואישור).
 6. **יוצרים משימה מתוזמנת יומית** לשגרת התמונות (החלטה 6.11), עם הנוסח של סעיף 4.
 7. **מעלים מחדש את הסקיל** `maayanotecha-staff-ui.zip` ל-claude.ai, כדי שכל סשן יכיר את השגרה.
+
+## סטטוס (6.11.2026)
+- [x] 1. גרסה חיה נקראה ונשמרה: `backups/v20_published_2026-11-06.html` (זהה ל-`v20_out.html`).
+- [x] 2. v21 פורסם לאותו קישור (גרסה 21). היכולות נשמרו: assets, db, room, sample, user.
+- [ ] 3. בדיקה בארטיפקט החי – זלמן (נוכחות, "שאל את קלוד", תמונות `img/`).
+- [x] 4. נמחקו `par-vayetze`, `par-vayeshev`, `par-miketz`. **`par-vayishlach` לא נמחק:** סומן "תקוע" ב-4.11, מחכה להחלטה של זלמן.
+- [x] 5. שגרת התמונות רצה: 5 כריכות (brand, ga, newsletter, site, workspace) ו-6 אייקוני סוכנים, הועלו כנכסים (`staff/live-assets/`) וחוברו במסד; רשומה ב-activity.
+- [~] 6. משימה מתוזמנת נוצרה (`trig_01XaCccra5iCavzLMycHhMhZ`, כל יום 05:47 שעון ישראל), **בלי קונקטור fal** – צריך להוסיף אותו ב-claude.ai (ראו `ROUTINE_PROMPT.md`).
+- [ ] 7. העלאת `maayanotecha-staff-ui.zip` ל-claude.ai – זלמן.
