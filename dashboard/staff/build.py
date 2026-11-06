@@ -69,9 +69,26 @@ sub1("const CV_PAL={weekly:['#142A5C','#2F63CF'],video:['#7A3A0E','#F2911C'],pos
 sub1("const SERIES=['#2A4F95','#5C7CC0','#B9C8E6','#E89A2C','#5B6BD6','#1C86A3','#D2443A','#88958D','#C9A27A'];",
      "const SERIES=['#3F5499','#6476B6','#C6CDE6','#F2911C','#4A8BAA','#2B727C','#B93B36','#8B91A9','#D2B899'];")
 
-# ---------- 3ג. בלי עיצוב inline ישן במבנה של תמונת מצב (מלבד צבעי המקרא) ----------
-i, j = s.index('<section class="view" id="v-today">'), s.index('<section class="view" id="v-tasks">')
-s = s[:i] + re.sub(r'(<(?!i\b)[a-z0-9]+\b[^>]*?)\s+style="[^"]*"', r'\1', s[i:j]) + s[j:]
+# ---------- 3ג. בלי עיצוב inline ישן במסכים שכבר עברו לסקיל (מלבד צבעי מקרא: <i> ו-.dot) ----------
+DONE_VIEWS = ['today', 'tasks']
+STYLE_RE = re.compile(r'(<(?!i\b)[a-z0-9]+\b(?:(?!class="dot")[^>])*?)\s+style="[^"]*"')
+for v in DONE_VIEWS:
+    i = s.index(f'<section class="view" id="v-{v}">')
+    j = s.index('</section>', s.index('<div class="tlay">', i) if v == 'tasks' else s.index('id="projGrid"', i))
+    s = s[:i] + STYLE_RE.sub(r'\1', s[i:j]) + s[j:]
+
+# ---------- 3ד. עיגולי פעולות מהירות בכל מסך (יומן ההחלטות), עם הפעולות של אותו מסך ----------
+def circles(name, buttons):
+    qa = ''.join(f'<button class="qa{" ai ai-mode" if ai else ""}" type="button" {attr}><span class="qi" data-icon="{ic}"></span>{lbl}</button>'
+                 for attr, ic, lbl, ai in buttons)
+    return (f'<section class="circles circles-page" data-circles="{name}" aria-label="פעולות מהירות">'
+            '<button class="circles-hide" type="button" data-circles-hide data-icon="eyeOff" data-icon-class="ico-sm">הסתרה</button>'
+            f'<div class="quick">{qa}</div></section>'
+            '<button class="circles-show" type="button" data-circles-show hidden>הצגת הקיצורים</button>')
+AI = ('data-pal="1"', 'sparkle', 'שאל את קלוד', True)
+tasks_head_end = s.index('<p class="muted"', s.index('<section class="view" id="v-tasks">'))
+s = s[:tasks_head_end] + circles('tasks', [('data-new="task"', 'check', 'משימה', False),
+                                           ('data-proxy="estAll"', 'clock', 'הערכת זמנים', False), AI]) + s[tasks_head_end:]
 
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)

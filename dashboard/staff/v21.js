@@ -21,6 +21,15 @@ function setDate(){const hd=$1('#hdate');if(hd){const d=new Date();hd.textConten
 function paintV21(){try{skillKpis();greet();setDate()}catch(e){console.error(e)}}
 const _ra=window.renderAll;window.renderAll=function(){const r=_ra.apply(this,arguments);paintV21();return r};
 
+/* עיגולים בכל מסך: הסתרה והצגה משותפות עם תמונת מצב (אותו מפתח, mt-circles) */
+function syncCircles(){const home=$1('#circles');if(!home)return;const off=home.hidden;
+  document.querySelectorAll('.circles-page').forEach(c=>{c.hidden=off;const sh=c.nextElementSibling;if(sh&&sh.matches('[data-circles-show]'))sh.hidden=!off})}
+document.addEventListener('click',e=>{const h=e.target.closest('[data-circles-hide]'),s=e.target.closest('[data-circles-show]');
+  if(h){$1('#circlesHide')?.click();syncCircles();s||h.closest('.circles-page')?.nextElementSibling?.focus()}
+  else if(s){$1('#circlesShow')?.click();syncCircles()}
+  else if(e.target.closest('#circlesHide,#circlesShow'))setTimeout(syncCircles)});
+syncCircles();
+
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();
 if(window.S&&S.loaded&&window.renderAll)renderAll();
