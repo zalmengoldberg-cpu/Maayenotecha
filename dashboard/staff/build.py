@@ -70,12 +70,20 @@ sub1("const SERIES=['#2A4F95','#5C7CC0','#B9C8E6','#E89A2C','#5B6BD6','#1C86A3',
      "const SERIES=['#3F5499','#6476B6','#C6CDE6','#F2911C','#4A8BAA','#2B727C','#B93B36','#8B91A9','#D2B899'];")
 
 # ---------- 3ג. בלי עיצוב inline ישן במסכים שכבר עברו לסקיל (מלבד צבעי מקרא: <i> ו-.dot) ----------
-DONE_VIEWS = ['today', 'tasks']
+DONE_VIEWS = ['today', 'tasks', 'calendar']
 STYLE_RE = re.compile(r'(<(?!i\b)[a-z0-9]+\b(?:(?!class="dot")[^>])*?)\s+style="[^"]*"')
 for v in DONE_VIEWS:
     i = s.index(f'<section class="view" id="v-{v}">')
-    j = s.index('</section>', s.index('<div class="tlay">', i) if v == 'tasks' else s.index('id="projGrid"', i))
+    j = s.find('<section class="view"', i + 10)
+    j = j if j > 0 else s.index('<div class="scrim"', i)
     s = s[:i] + STYLE_RE.sub(r'\1', s[i:j]) + s[j:]
+
+# ---------- 3ג2. צבעי הערוצים בלוח (CH_COL ומקרא הלוח) מהפלטה של הסקיל ----------
+sub1("const CH_COL={video:'#E89A2C',post:'#5B6BD6',weekly:'#2A4F95',newsletter:'#1C86A3',site:'#7B4AA8',brand:'#7B4AA8',data:'#4C5B53',admin:'#88958D',event:'#16294D'};",
+     "const CH_COL={video:'#F2911C',post:'#6476B6',weekly:'#3F5499',newsletter:'#4A8BAA',site:'#A9865C',brand:'#A9865C',data:'#2E8566',admin:'#626A88',event:'#141A33'};")
+for a, z in [('#2A4F95"></i>פוסט פרשה', '#3F5499"></i>פוסט פרשה'), ('#E89A2C"></i>סרטון', '#F2911C"></i>סרטון'), ('#5B6BD6"></i>פוסט<', '#6476B6"></i>פוסט<'),
+             ('#1C86A3"></i>ניוזלטר', '#4A8BAA"></i>ניוזלטר'), ('#7B4AA8"></i>אתר ומותג', '#A9865C"></i>אתר ומותג'), ('#123D2B"></i>אירוע', '#141A33"></i>אירוע')]:
+    sub1(a, z)
 
 # ---------- 3ד. עיגולי פעולות מהירות בכל מסך (יומן ההחלטות), עם הפעולות של אותו מסך ----------
 def circles(name, buttons):
@@ -89,6 +97,8 @@ AI = ('data-pal="1"', 'sparkle', 'שאל את קלוד', True)
 tasks_head_end = s.index('<p class="muted"', s.index('<section class="view" id="v-tasks">'))
 s = s[:tasks_head_end] + circles('tasks', [('data-new="task"', 'check', 'משימה', False),
                                            ('data-proxy="estAll"', 'clock', 'הערכת זמנים', False), AI]) + s[tasks_head_end:]
+cal_grid = s.index('<div class="calgrid">', s.index('<section class="view" id="v-calendar">'))
+s = s[:cal_grid] + circles('calendar', [('data-new="content"', 'image', 'תוכן', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[cal_grid:]
 
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
