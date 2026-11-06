@@ -233,7 +233,10 @@ button,input,select,textarea{font-family:inherit}
 #kpis .kpi .sub b{font-weight:var(--fw-medium);color:var(--ink-900)}
 #kpis .kpi .sub b.bad{color:var(--bad)}
 #kpis .kpi .dw{display:none}
-.kpi-dots{display:none}
+/* נקודות דפדוף לקרוסלה (מובייל בלבד), כמו בדוגמה של הסקיל */
+.kpi-dots{display:none;justify-content:center;gap:6px;margin-top:-4px}
+.kpi-dots i{width:6px;height:6px;border-radius:3px;background:rgba(20,26,51,.18);transition:all var(--t-base) var(--ease)}
+.kpi-dots i.on{width:18px;background:var(--royal)}
 
 /* שורה צפה: row-tile של הסקיל, לכל הרשימות של המסך */
 .att .ar,.plist .pr,.feed .fi,#bgList .row,.tday .ti .bx,.ldr{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-tile);
@@ -1125,6 +1128,7 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
   /* מדדים: קרוסלה כמו בסקיל, בלי פס נקודות */
   #kpis{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 8px;gap:12px}
   #kpis::-webkit-scrollbar{display:none}
+  #kpiPager{display:flex;grid-column:1/-1}
   #kpis>.kpi{flex:none;width:74%;scroll-snap-align:center}
   .att .ar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"ic tx go" "ic pl go"}
   .att .ar>.ai2{grid-area:ic}.att .ar>span:nth-child(2){grid-area:tx}.att .ar>.pill{grid-area:pl;justify-self:start}
