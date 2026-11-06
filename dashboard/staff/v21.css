@@ -32,6 +32,7 @@ button,input,select,textarea{font-family:inherit}
 #app .sidebar{position:sticky;top:16px;height:calc(100vh - 32px);z-index:30;--silk:url("__SILK__");
   display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none}
 #app .sidebar::-webkit-scrollbar{display:none}
+#app .sidebar .sb-nav{flex:none;overflow:visible}
 #app .sidebar .sb-foot{margin-top:auto;padding-top:12px}
 #app .sidebar .sb-item.sg{width:100%}
 #app .sidebar .sb-item .sg-v{font-style:normal;font-size:var(--fs-micro);color:var(--ink-300);margin-inline-start:auto}
@@ -963,6 +964,24 @@ textarea.msg{width:100%;min-height:110px;box-sizing:border-box;resize:vertical;f
 .ste-r input[type=color]::-webkit-color-swatch-wrapper{padding:0}
 .ste-r input[type=color]::-webkit-color-swatch{border:0;border-radius:50%}
 .ste-r input[type=text]{flex:1}
+/* מי אני / החלפת משתמש */
+.who-pick{display:grid;gap:6px}
+.who-b{display:flex;align-items:center;gap:12px;width:100%;min-height:0;padding:10px 12px;border:0;border-radius:var(--r-tile);cursor:pointer;text-align:right;
+  justify-content:flex-start;font:inherit;font-weight:inherit;color:var(--ink-900);background:var(--surface-2);box-shadow:none}
+.who-b:hover{background:var(--royal-50)}
+.who-b.on{background:var(--royal-50);box-shadow:inset 0 0 0 2px var(--royal)}
+.who-b>span:last-child{display:grid;line-height:1.3}
+.who-b b{font-size:var(--fs-small);font-weight:var(--fw-medium)}
+.who-b small{font-size:var(--fs-micro);color:var(--ink-500)}
+/* כרטיסים מוסתרים (סידור הלוח) */
+.hidpop{position:fixed;z-index:70;display:grid;gap:4px;width:280px;max-width:calc(100vw - 24px);max-height:70vh;overflow:auto;box-sizing:border-box;padding:10px;
+  border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--elev-3)}
+.hidpop .hp-h{padding:2px 6px 6px;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.hp-r{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:0;padding:8px 10px;border:0;border-radius:var(--r-sm);cursor:pointer;
+  font:inherit;font-size:var(--fs-caption);font-weight:var(--fw-regular);text-align:right;color:var(--ink-700);background:transparent;box-shadow:none}
+.hp-r:hover{background:var(--surface-2)}
+.hp-r em{font-style:normal;font-size:var(--fs-micro);font-weight:var(--fw-medium);color:var(--royal)}
+.hp-reset{min-height:0;height:var(--h-sm);margin-top:6px;padding:0 12px;font-size:var(--fs-caption)}
 /* בורר הרקעים */
 .bgpop{position:fixed;z-index:70;width:330px;max-width:calc(100vw - 24px);box-sizing:border-box;padding:12px;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--elev-3)}
 .bgpop .hp-h{margin-bottom:8px;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
