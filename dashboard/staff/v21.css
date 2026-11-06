@@ -716,6 +716,9 @@ html.dragging,html.dragging *{cursor:grabbing!important;user-select:none}
 .card.person{display:grid;gap:12px}
 .person .hd{display:flex;align-items:center;gap:12px;min-width:0}
 .person .hd .av.lg{--sz:48px;font-size:var(--fs-body)}
+.person .hd>[data-list]{cursor:pointer}
+.person .hd>div[data-list]:hover h3{color:var(--royal)}
+.person .hd>.av[data-list]:hover{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--royal-200)}
 .person .hd h3{margin:0;font-size:var(--fs-lead);font-weight:var(--fw-medium);color:var(--ink-900)}
 .person .hd .muted{font-size:var(--fs-caption)}
 .person .hd label.btn{min-height:0;height:var(--h-sm);padding:0 12px;font-size:var(--fs-caption);cursor:pointer}

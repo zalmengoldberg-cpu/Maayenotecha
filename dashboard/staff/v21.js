@@ -21,7 +21,10 @@ function setDate(){const hd=$1('#hdate');if(hd){const d=new Date();hd.textConten
 /* גאנט במובייל: עמודת השמות צרה יותר (הקוד קובע 220px בתוך הסגנון) */
 function ganttMobile(){const g=$1('#gantt');if(!g)return;const m=matchMedia('(max-width:760px)').matches;g.style.gridTemplateColumns=g.style.gridTemplateColumns.replace(/^\d+px/,m?'150px':'220px')}
 addEventListener('resize',ganttMobile);
-function paintV21(){try{skillKpis();greet();setDate();ganttMobile()}catch(e){console.error(e)}}
+/* מסך אנשים: לחיצה על השם או התמונה פותחת את "המשימות של X" (אותו חלון כמו "מי מחזיק מה"). אפיון 9.10, החלטה 6.11 */
+function peopleClick(){if(typeof S==='undefined'||!S.people)return;const ids=Object.keys(S.people);
+  document.querySelectorAll('#peopleGrid .person').forEach((c,i)=>{const id=ids[i];if(!id)return;c.querySelectorAll('.hd>.av,.hd>div').forEach(el=>{el.dataset.list='who:'+id;el.setAttribute('role','button');el.tabIndex=0;el.title='כל הפריטים של '+(S.people[id].name||'')})})}
+function paintV21(){try{skillKpis();greet();setDate();ganttMobile();peopleClick()}catch(e){console.error(e)}}
 const _ra=window.renderAll;window.renderAll=function(){const r=_ra.apply(this,arguments);paintV21();return r};
 
 /* עיגולים בכל מסך: הסתרה והצגה משותפות עם תמונת מצב (אותו מפתח, mt-circles) */
