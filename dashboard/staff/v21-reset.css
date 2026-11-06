@@ -1,5 +1,5 @@
 /* skin.css מלביש כל button ככפתור משני. רכיבי הסקיל שהם כפתורים מקבלים בחזרה מצב נקי
    (נטען בין skin ל-components: גובר על skin, והרכיב עצמו גובר עליו) */
 .mt-skin :where(button,[role=button]):where(.sb-item,.sb-logo,.sb-icon-btn,.sb-profile,.hcal-day,.hcal-nav,.hcal-nav *,.hcal-actions .btn-icon,.chip-float,.pulse-chip,.kebab,.fold-toggle,
-  .tour *,.qa,.st,.circles-hide,.circles-show,.more,.seg *,.pp-demo,.bc,.cardctl *,.topbar-logo,.att .ar,.kpi,.ldr,.fr,.dleg *,.pl *,.card.pc,.card,.agi,.cs-next,.uc,.bg-t,.fix,.lvl *,.slot *,.ste-r *,.agx-t,.agx-evr,.agp-p,.dn-row,.dn-agenda,.agx-seg *,.agx-nav *,.agx-plus,.art-hit,.person .hd>*){
+  .tour *,.qa,.st,.circles-hide,.circles-show,.more,.seg *,.pp-demo,.bc,.cardctl *,.topbar-logo,.att .ar,.kpi,.ldr,.fr,.dleg *,.pl *,.card.pc,.card,.agi,.cs-next,.uc,.bg-t,.fix,.lvl *,.slot *,.ste-r *,.agx-t,.agx-evr,.agp-p,.dn-row,.dn-agenda,.agx-seg *,.agx-nav *,.agx-plus,.art-hit,.person .hd>*,.brief-btn,.bc-row,.bc-go){
   min-height:0;padding:0;box-shadow:none;background:none;border-radius:0;justify-content:normal;align-items:normal;text-align:inherit;font-size:inherit;font-weight:inherit;color:inherit}

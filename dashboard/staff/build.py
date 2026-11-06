@@ -149,6 +149,15 @@ WNAMES = [('lake','אגם בערפל'),('galilee','גבעות הגליל'),('des
 sub1("const NAMES=[['mt-aurora','זוהר המעיין'],", "const NAMES=[" + ''.join(f"['ph-{k}','{n}']," for k,n in WNAMES) + "['mt-aurora','זוהר המעיין'],")
 s = s.replace("const NAMES=[['ph-lake'", "Object.assign(WALLS," + _json.dumps({f'ph-{k}|{m}': WALLS[k] for k,_ in WNAMES for m in ('light','dark')}) + ");\nconst NAMES=[['ph-lake'", 1)
 
+# שעון החול בלי משבצת: גרסאות שקופות (רקע הוסר ב-kit/matte.py) כדי שישתלב בכל רקע
+for _lv in ('calm','busy','urgent'):
+    _m = re.search(r'<img data-level="' + _lv + r'" alt="" src="data:image/webp;base64,[^"]+"', s)
+    assert _m, _lv
+    s = s[:_m.start()] + '<img data-level="' + _lv + '" alt="" src="' + uri(B / 'icons' / f'hero-{_lv}-a.webp') + '"' + s[_m.end():]
+# המדריך: הכפתור "מה מחכה לנו" הוחלף בכפתור הבריף
+sub1("{target:'[data-tour=cta]',tapTarget:'#startBtn',title:'מה מחכה לנו',text:'הכפתור הכהה עובר על הדברים שמחכים לך אחד אחרי השני. לידו סידור הלוח: גוררים ומסתירים כרטיסים.',",
+     "{target:'[data-tour=cta]',tapTarget:'#briefBtn',title:'הבריף',text:'בריף בוקר, צהריים או ערב לפי השעה. לחיצה פותחת כרטיסייה לכל נושא ואיפה הוא עומד, ומכל כרטיסייה ממשיכים לפתרון.',")
+
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
 assert ds_old
@@ -158,7 +167,7 @@ s = s[:ds_old.start()] + '<script>' + ds_new + '</script>' + s[ds_old.end():]
 # ---------- 5. v21.js אחרי v19.js ----------
 v19 = re.search(r'<script>/\* ===== v19:.*?</script>', s, flags=re.S)
 assert v19
-v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge.webp')).replace('__WALLSJSON__', (B / 'walls' / 'walls.json').read_text(encoding='utf8').strip())
+v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge-a.webp')).replace('__WALLSJSON__', (B / 'walls' / 'walls.json').read_text(encoding='utf8').strip())
 s = s[:v19.end()] + '\n<script>' + v21js + '</script>' + s[v19.end():]
 
 OUT.write_text(s, encoding='utf8')
