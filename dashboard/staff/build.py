@@ -149,7 +149,7 @@ s = s[:ds_old.start()] + '<script>' + ds_new + '</script>' + s[ds_old.end():]
 # ---------- 5. v21.js אחרי v19.js ----------
 v19 = re.search(r'<script>/\* ===== v19:.*?</script>', s, flags=re.S)
 assert v19
-v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg'))
+v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge.webp'))
 s = s[:v19.end()] + '\n<script>' + v21js + '</script>' + s[v19.end():]
 
 OUT.write_text(s, encoding='utf8')

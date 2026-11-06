@@ -1156,7 +1156,7 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
    ========================================================================== */
 /* פריסה: הירו + עמודה צדדית ("מה יש לנו היום" ומתחתיו הלוח). ההירו והכרטיסים נשארים במקום שלהם
    ב-DOM (סידור הלוח ממשיך לעבוד), רק נכנסים לאותו גריד */
-#v-today{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gutter);row-gap:var(--gutter);grid-auto-flow:row dense;align-items:start}
+#v-today.on{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gutter);row-gap:var(--gutter);grid-auto-flow:row dense;align-items:start}
 #v-today>.mtx-wrap,#v-today>.bento{display:contents}
 #v-today>.mtx-wrap>.hero{grid-column:1/-1;grid-row:1}
 #v-today #dayNow{grid-column:1/span 6;grid-row:2;align-self:stretch}
@@ -1165,7 +1165,6 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
   #v-today{row-gap:12px}
   #v-today #dayNow{grid-column:1/-1;grid-row:2}
   #v-today>.bento>#miniCal{grid-column:1/-1;grid-row:3}
-  .hero.meter-gauge .mgauge{top:44px;bottom:auto;height:150px;place-items:start center}.hero .mgauge svg{width:150px}.hero .mgauge .mg-read{display:none}
 }
 @media (min-width:1281px){
   #v-today>.mtx-wrap>.hero{grid-column:1/span 8;grid-row:1;align-self:stretch}
@@ -1207,9 +1206,6 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
 .dn-agenda:hover em{color:var(--royal)}
 /* הלוח שמתחת: רק החודש, פרטי היום עברו לאזור שמעליו */
 #miniCal .hcal-detail,#miniCal .hcal-events{display:none}
-#miniCal .hcal-nav{margin-top:-58px;padding:0 10px 10px;pointer-events:none;position:relative}
-#miniCal .hcal-nav .btn{pointer-events:auto;width:40px;height:40px;min-height:0}
-#miniCal .hcal-sheet{padding-bottom:62px}
 @media (min-width:1281px){#miniCal .hcal-day{height:54px}#miniCal .hcal-top{margin-bottom:10px}#miniCal .hcal-month{font-size:38px}}
 
 /* 2. תמונת פרויקט + אדם + פלטפורמה (כמו טבלת ההזמנות ותיבות הערוצים של הסקיל) */
@@ -1239,25 +1235,37 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
 .batt u{position:absolute;left:-4px;top:7px;width:3px;height:8px;border-radius:2px 0 0 2px;background:var(--ink-300)}
 .pulse-chip .ps-level{filter:none!important}
 
-/* 4. מד עם מחוגה במקום שעון החול */
-.mgauge{position:absolute;top:56px;bottom:0;left:0;width:52%;display:none;place-items:center;pointer-events:none}
-.mgauge svg{width:min(86%,250px);height:auto;filter:drop-shadow(0 18px 26px rgba(20,26,51,.22))}
-.mgauge .mg-ticks line{stroke:var(--ink-500);stroke-width:1}
-.mgauge .mg-ticks line.big{stroke:var(--ink-800);stroke-width:2}
-.mgauge .mg-ticks text{font:500 9px var(--font,Rubik);fill:var(--ink-700);text-anchor:middle}
-.mgauge .mg-load{font:700 8px var(--font,Rubik);fill:#C2412D;text-anchor:middle;letter-spacing:.02em}
-.mgauge .mg-needle{transform-origin:100px 100px;transform:rotate(var(--a,-120deg));transition:transform 1.4s cubic-bezier(.34,1.4,.5,1);filter:drop-shadow(0 2px 2px rgba(20,26,51,.35))}
-.mgauge .mg-read{position:absolute;left:50%;top:calc(50% + 34px);translate:-50% 0;display:grid;justify-items:center;line-height:1.1}
-.mgauge .mg-v{font-size:22px;font-weight:var(--fw-regular);color:var(--ink-900)}
-.mgauge .mg-l{font-size:var(--fs-caption);font-weight:var(--fw-medium)}
-.hero.meter-gauge .hero-art>img,.hero.meter-gauge>.hero-sparks{opacity:0!important;visibility:hidden}
-.hero.meter-gauge .mgauge{display:grid}
-.meter-tog{position:absolute;z-index:5;left:16px;bottom:14px;display:inline-flex;gap:2px;padding:3px;border-radius:var(--r-pill);background:rgba(255,255,255,.72);
-  box-shadow:0 0 0 1px rgba(255,255,255,.8),0 6px 16px -8px rgba(20,26,51,.3);backdrop-filter:blur(10px)}
-.meter-tog button{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:0;border-radius:var(--r-pill);background:none;cursor:pointer;
-  font:inherit;font-size:var(--fs-caption);color:var(--ink-500)}
-.meter-tog button[aria-pressed="true"]{background:var(--ink-900);color:#fff}
-@media (prefers-reduced-motion:reduce){.mgauge .mg-needle{transition:none}}
+/* 4. מד עם מחוגה: תמונה באותה שכבה ובאותו מקום כמו שעון החול, ומחוגה חיה מעליה */
+.hero-pulse .hero-art img.mg-img{opacity:0;object-position:4% 50%}
+.hero.meter-gauge .hero-art img[data-level]{opacity:0!important}
+.hero.meter-gauge .hero-art img.mg-img{opacity:.8}
+.hero.meter-none .hero-art img{opacity:0!important}
+.hero.meter-gauge>.hero-sparks,.hero.meter-none>.hero-sparks{opacity:0;visibility:hidden}
+.mgauge{position:absolute;display:block;pointer-events:none;opacity:0;transition:opacity 1.2s var(--ease)}
+.hero.meter-gauge .mgauge{opacity:1}
+.mgauge svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 3px 4px rgba(20,26,51,.22))}
+.mgauge .mg-needle{transform-origin:100px 100px;transform:rotate(var(--a,-132deg));transition:transform 1.6s cubic-bezier(.34,1.35,.5,1)}
+.mgauge .mg-wob{transform-origin:100px 100px;animation:mg-wob 3.6s ease-in-out infinite}
+@keyframes mg-wob{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+.mgauge .mg-glow{position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--mc,#F2911C) 55%,transparent) 0%,transparent 68%);
+  mix-blend-mode:screen;animation:mg-breathe 4.2s ease-in-out infinite}
+@keyframes mg-breathe{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.8;transform:scale(1.15)}}
+.mgauge .mg-read{position:absolute;left:50%;top:70%;translate:-50% 0;display:grid;justify-items:center;line-height:1.1;opacity:0;transition:opacity .35s var(--ease)}
+.mgauge .mg-v{font-size:20px;font-weight:var(--fw-regular);color:var(--ink-900)}
+.mgauge .mg-l{font-size:var(--fs-micro);font-weight:var(--fw-medium)}
+/* הבחירה: לחיצה על האובייקט עצמו */
+.art-hit{position:absolute;z-index:3;border:0;padding:0;margin:0;min-height:0;border-radius:50%;background:transparent!important;box-shadow:none!important;cursor:pointer}
+.art-hit:focus-visible{outline:2px solid var(--royal);outline-offset:-6px}
+.art-tip{position:absolute;left:50%;bottom:4%;translate:-50% 0;white-space:nowrap;padding:4px 10px;border-radius:var(--r-pill);font-size:var(--fs-micro);color:var(--ink-700);
+  background:rgba(255,255,255,.78);box-shadow:0 4px 12px -6px rgba(20,26,51,.3);opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
+.hero.meter-none .art-hit{border:1.5px dashed transparent;transition:border-color .3s}
+/* המדד, הסוללה והכיתובים צצים רק בריחוף או בנגיעה */
+.hero-pulse .pulse-chip{opacity:0;translate:0 -4px;transition:opacity .35s var(--ease),translate .35s var(--ease)}
+.hero-pulse:has(.art-hit:hover) .pulse-chip,.hero-pulse .pulse-chip:hover,.hero-pulse.peek .pulse-chip,.hero-pulse:has(.art-hit:focus-visible) .pulse-chip,.hero-pulse .pulse-chip:focus-visible,.hero-pulse .pulse-chip[aria-expanded="true"]{opacity:1;translate:0 0}
+.hero-pulse:has(.art-hit:hover) .mg-read,.hero-pulse:has(.pulse-chip:hover) .mg-read,.hero-pulse.peek .mg-read,.hero-pulse:has(.art-hit:focus-visible) .mg-read{opacity:1}
+.art-hit:hover .art-tip,.hero.peek .art-tip,.art-hit:focus-visible .art-tip{opacity:1}
+.hero.meter-none .art-hit:hover,.hero.meter-none.peek .art-hit{border-color:var(--ink-300)}
+@media (prefers-reduced-motion:reduce){.mgauge .mg-needle{transition:none}.mgauge .mg-wob,.mgauge .mg-glow{animation:none}}
 
 /* 5. התדריך: אותו צבע ומרקם, אזור פתוח בלי מסגרת */
 #v-today .brief8{border-radius:0;box-shadow:none;padding:40px 56px;margin:-14px -16px;
@@ -1304,13 +1312,44 @@ html.agp-open{overflow:hidden}
 .agp .ch-row .meta span{font-size:var(--fs-micro);color:var(--ink-400)}
 @media (max-width:900px){.agp-body{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:760px){
-  .mgauge{width:100%}
   .agp-in{padding:18px 16px 40px}
   .agp-t h2{font-size:26px}
   .agp .agenda-item{grid-template-columns:auto minmax(0,1fr) auto;row-gap:6px}
   .agp .agenda-item .tm{display:none}
   .agp .agenda-item .status{grid-column:2/-1;justify-self:start}
-  .meter-tog{left:10px;bottom:10px}.meter-tog button span{display:none}.meter-tog button{padding:0 10px}
   #v-today .brief8{padding:26px 20px}
   .daynow{padding:16px}
 }
+
+/* v22b: "מה יש לנו היום" מתחלף פריט אחרי פריט */
+.dn-list{position:relative;display:grid;grid-template-areas:"s";gap:0;min-height:62px}
+.dn-list>.dn-slide{grid-area:s;opacity:0;visibility:hidden;translate:0 6px;transition:opacity .7s var(--ease),translate .7s var(--ease),visibility 0s linear .7s}
+.dn-list>.dn-slide.on{opacity:1;visibility:visible;translate:0 0;transition:opacity .7s var(--ease) .15s,translate .7s var(--ease) .15s,visibility 0s}
+.dn-list>.dn-empty{grid-area:s}
+.dn-dots{display:flex;justify-content:center;gap:5px;margin-top:8px}
+.dn-dots i{width:5px;height:5px;border-radius:50%;background:var(--ink-200);transition:background .4s,width .4s}
+.dn-dots i.on{width:14px;border-radius:3px;background:var(--royal-400)}
+#miniCal .hcal-day .dot{display:none}
+#miniCal .hcal-day.mk::after{content:"";position:absolute;top:5px;left:50%;translate:-50% 0;width:38px;height:38px;border-radius:50%;pointer-events:none;
+  background:var(--mk);-webkit-mask:radial-gradient(circle,transparent 17.4px,#000 17.8px);mask:radial-gradient(circle,transparent 17.4px,#000 17.8px);opacity:.42}
+#miniCal .hcal-day.mk-c{--mk:#F2911C}
+#miniCal .hcal-day.mk-t{--mk:#3F5499}
+#miniCal .hcal-day.mk-ct{--mk:conic-gradient(#F2911C 0 50%,#3F5499 0 100%)}
+#miniCal .hcal-day[aria-pressed="true"].mk::after{opacity:0}
+#miniCal .hcal-sheet{padding-bottom:16px}
+.mk-legend{display:flex;justify-content:center;gap:14px;padding:8px 0 2px;font-size:var(--fs-micro);color:var(--ink-500)}
+.mk-legend span{display:inline-flex;align-items:center;gap:6px}
+.mk-legend i{width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--c);opacity:.8}
+
+/* v22b: גרירה */
+.drag-ghost{opacity:.92;transform:rotate(-1.5deg) scale(1.02);box-shadow:0 18px 40px -16px rgba(20,26,51,.45)!important;border-radius:var(--r-tile)}
+.drag-src{opacity:.35}
+html.dragging,html.dragging *{cursor:grabbing!important;user-select:none}
+#kanban .kc[data-open],#v-tasks .trow{touch-action:pan-y}
+#kanban .col.drop-over{background:var(--royal-50);box-shadow:inset 0 0 0 2px var(--royal-200);border-radius:var(--r-lg)}
+#v-tasks .lane.drop-over{box-shadow:inset 0 0 0 2px var(--royal-200);background:var(--royal-50)}
+#v-tasks .trow{cursor:grab}
+/* לוח השנה המלא: מספר התאריך מוסיף */
+#cal .d .top{cursor:pointer;border-radius:var(--r-sm)}
+#cal .d .top:hover{background:var(--royal-50)}
+#cal .d .top:hover .dn::after{content:" +";color:var(--royal);font-weight:var(--fw-medium)}

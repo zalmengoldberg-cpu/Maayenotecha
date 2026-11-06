@@ -74,23 +74,37 @@ function hebParts(d){try{const p={};new Intl.DateTimeFormat('en-u-ca-hebrew',{da
 function gem(n,q){return window.DS&&DS.gematria?DS.gematria(n,q):String(n)}
 function ensureDayNow(){let el=$1('#dayNow');if(el)return el;const hero=$1('#heroMt');if(!hero)return null;
   el=document.createElement('section');el.id='dayNow';el.className='card open-top daynow';el.setAttribute('aria-labelledby','dnH');el.dataset.tour='daynow';hero.after(el);return el}
+/* פריט אחד בכל פעם, מתחלף כל כמה שניות במעבר רך (עוצר בריחוף; בלי תנועה למי שביקש) */
+let dnIdx=0,dnTimer=0,dnSig='';
+function dnShow(i){const el=$1('#dayNow');if(!el)return;const rows=[...el.querySelectorAll('.dn-slide')];if(!rows.length)return;dnIdx=(i+rows.length)%rows.length;
+  rows.forEach((r,n)=>{r.classList.toggle('on',n===dnIdx);r.setAttribute('aria-hidden',String(n!==dnIdx));r.tabIndex=n===dnIdx&&r.dataset.open?0:-1});
+  el.querySelectorAll('.dn-dots i').forEach((d,n)=>d.classList.toggle('on',n===dnIdx))}
+function dnTick(){clearInterval(dnTimer);if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  dnTimer=setInterval(()=>{const el=$1('#dayNow');if(!el||el.matches(':hover,:focus-within')||document.hidden)return;dnShow(dnIdx+1)},4200)}
 function renderDayNow(){const el=ensureDayNow();if(!el||typeof S==='undefined'||!S.loaded)return;const today=iso(TODAY);const ds=dnSel||today;const d=parse(ds);const h=hebParts(d);
   const {par,ev}=dayList(ds);const nC=ev.filter(e=>TYPE22[e.type]?.g==='c').length,nT=ev.filter(e=>TYPE22[e.type]?.g==='t').length,nE=ev.filter(e=>TYPE22[e.type]?.g==='e').length;
   const cnt=[nT?`${nT} משימות ויעדים`:'',nC?`${nC} תוכן`:'',nE?`${nE} אירועים`:''].filter(Boolean).join(' · ')||'יום פנוי';
   const isT=ds===today;const ttl=isT?'מה יש לנו היום':d<TODAY?`מה היה לנו ביום ${HDOW[d.getDay()]}`:`מה יש לנו ביום ${HDOW[d.getDay()]}`;
   const order={t:0,c:1,e:2};const sorted=ev.slice().sort((a,b)=>(order[TYPE22[a.type]?.g]??3)-(order[TYPE22[b.type]?.g]??3)||evDone(a)-evDone(b));
-  const MAX=3,shown=sorted.slice(0,MAX),more=sorted.length-shown.length;
+  const sig=ds+'|'+sorted.map(e=>e.type+(e.it&&e.it.id)+e.label+evDone(e)).join(',');if(sig===dnSig&&el.firstChild)return;const same=dnSig.split('|')[0]===ds;dnSig=sig;if(!same)dnIdx=0;
   const empty=`<div class="empty dn-empty">${window.MT_IMG&&MT_IMG['e-dayPanel']?`<img class="icon-3d" src="${MT_IMG['e-dayPanel']}" alt="">`:''}<b>יום פנוי</b><span>אין משימות, תוכן או אירועים ביום הזה.</span></div>`;
   el.innerHTML=`<div class="card-head"><h3 id="dnH">${esc(ttl)}</h3>${isT?'':`<button type="button" class="link-sm dn-today" data-dntoday="1">חזרה להיום</button>`}</div>
     <div class="hcal-detail dn-detail"><div class="big"><b>${gem(h.day)}</b><span>${HDOW[d.getDay()]}</span></div>
       <span class="date">${esc(new Intl.DateTimeFormat('he-IL',{day:'numeric',month:'long',year:'numeric'}).format(d))}</span>
-      <span class="count">${esc(cnt)} · ${esc(gem(h.day,true)+' ב'+h.mon)}${par?' · '+esc(par.label):''}</span>
-      <span class="dn-act"><button class="btn btn-brand btn-sm" type="button" data-newday="${ds}">${DS.icon('plus','ico-sm')}הוסף</button></span></div>
-    <div class="dn-list">${shown.length?shown.map(e=>rowHtml(e,'row-tile dn-row')).join(''):empty}</div>
-    <button type="button" class="dn-agenda" data-agenda="${ds}"><span>${DS.icon('calendar','ico-sm')}על סדר היום</span><em>${more>0?`ועוד ${more}`:'הלו״ז המלא'}${DS.icon('chevL','ico-sm')}</em></button>`}
+      <span class="count">${esc(cnt)} · ${esc(gem(h.day,true)+' ב'+h.mon)}${par?' · '+esc(par.label):''}</span></div>
+    <div class="dn-list" aria-live="polite">${sorted.length?sorted.map(e=>rowHtml(e,'row-tile dn-row dn-slide')).join(''):empty}</div>
+    ${sorted.length>1?`<div class="dn-dots" aria-hidden="true">${sorted.map(()=>'<i></i>').join('')}</div>`:''}
+    <button type="button" class="dn-agenda" data-agenda="${ds}"><span>${DS.icon('calendar','ico-sm')}על סדר היום</span><em>${sorted.length>1?`${sorted.length} פריטים`:'הלו״ז המלא'}${DS.icon('chevL','ico-sm')}</em></button>`;
+  dnShow(dnIdx);dnTick()}
 /* הלוח שולט ביום שמוצג: כל בחירת יום בלוח (הוא מצייר את עצמו מחדש) מעדכנת את האזור */
-function wireCal(){const root=$1('#mtCal');if(!root||root._dn)return;root._dn=1;
-  new MutationObserver(()=>{const k=root.querySelector('.hcal-day[aria-pressed="true"]')?.dataset.k;if(k&&k!==(dnSel||iso(TODAY))){dnSel=k;renderDayNow()}}).observe(root,{childList:true})}
+/* הלוח הקטן בדף הבית: בלי הוספה ובלי חיצים, ועיגול עדין בימים שיש בהם משהו (זהב לתוכן, כחול למשימה/יעד) */
+function decorateCal(root){root.querySelectorAll('.hcal-actions,.hcal-nav').forEach(x=>x.remove());
+  root.querySelectorAll('.hcal-day[data-k]').forEach(b=>{const L=typeof dayEvents==='function'?dayEvents(b.dataset.k):[];
+    const c=L.some(e=>e.type==='pub'||e.type==='pin'),t=L.some(e=>e.type==='due'||e.type==='step'||e.type==='evt');
+    b.classList.toggle('mk',c||t);b.classList.toggle('mk-c',c&&!t);b.classList.toggle('mk-t',t&&!c);b.classList.toggle('mk-ct',c&&t)});
+  if(!root.querySelector('.mk-legend'))root.querySelector('.hcal-sheet')?.insertAdjacentHTML('beforeend','<div class="mk-legend" aria-hidden="true"><span><i style="--c:#F2911C"></i>תוכן</span><span><i style="--c:#3F5499"></i>משימה או יעד</span></div>')}
+function wireCal(){const root=$1('#mtCal');if(!root)return;decorateCal(root);if(root._dn)return;root._dn=1;
+  new MutationObserver(()=>{if(root._busy)return;root._busy=1;decorateCal(root);root._busy=0;const k=root.querySelector('.hcal-day[aria-pressed="true"]')?.dataset.k;if(k&&k!==(dnSel||iso(TODAY))){dnSel=k;renderDayNow()}}).observe(root,{childList:true})}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-dntoday]'))return;dnSel=null;const b=$1(`#mtCal .hcal-day[data-k="${iso(TODAY)}"]`);
   if(b)b.click();else{const c=$1('#miniCal');if(c){c.innerHTML='';window.renderMiniCal&&renderMiniCal();wireCal()}}renderDayNow()});
 
@@ -139,7 +153,7 @@ function dressRows(){if(typeof S==='undefined'||!S.loaded)return;
   document.querySelectorAll('#plist .pr[data-open]').forEach(r=>{if(r._d)return;const it=S.items&&S.items[r.dataset.open];if(!it)return;r._d=1;const pb=personBadge(it.owner,it);if(pb)r.querySelector('.stl-wrap')?.insertAdjacentHTML('beforebegin',pb)});
   document.querySelectorAll('#reps .ldr>.av').forEach(v=>{const w=document.createElement('span');w.className='avatar pa lg';v.replaceWith(w);w.append(v)})}
 
-/* ---- 3. מדד העבודה כסוללה (אותו ציון ואותו חלון "מה משפיע") ---- */
+/* ---- 3. מדד העבודה כסוללה (אותו ציון ואותו חלון "מה משפיע"). מופיע רק בריחוף או בנגיעה ---- */
 const BAT=[{c:'#2E8566',t:'רגוע'},{c:'#7FA35A',t:'סביר'},{c:'#F2911C',t:'עמוס'},{c:'#E06A1B',t:'לחוץ'},{c:'#C2412D',t:'עומס יתר'}];
 function meterScore(){const v=parseInt($1('#heroMt .ps-score')?.textContent,10);return isFinite(v)?Math.max(0,Math.min(100,v)):0}
 function stageOf(v){return Math.min(4,Math.floor(v/20))}
@@ -149,32 +163,83 @@ function battery(){const chip=$1('#heroMt .pulse-chip');if(!chip)return;const v=
   const lv=chip.querySelector('.ps-level');if(lv){lv.textContent=BAT[st].t;lv.style.color=BAT[st].c}
   const sc=chip.querySelector('.ps-score');if(sc&&!/%$/.test(sc.textContent))sc.textContent=v+'%';
   chip.setAttribute('aria-label',`מדד העבודה ${v} אחוז, ${BAT[st].t}. לחיצה מציגה מה משפיע`);
-  const g=$1('#meterGauge');if(g){g.style.setProperty('--a',(-120+v*2.4)+'deg');g.querySelector('.mg-v').textContent=v+'%';g.querySelector('.mg-l').textContent=BAT[st].t;g.querySelector('.mg-l').style.color=BAT[st].c}}
+  const g=$1('#meterGauge');if(g){g.style.setProperty('--a',(-132+v*2.64)+'deg');g.style.setProperty('--mc',BAT[st].c);g.querySelector('.mg-v').textContent=v+'%';const l=g.querySelector('.mg-l');l.textContent=BAT[st].t;l.style.color=BAT[st].c}}
 
-/* ---- 4. מד עם מחוגה במקום שעון החול, ובחירה ביניהם (נשמר בדפדפן) ---- */
-function arcPath(r,a0,a1){const p=a=>{const t=(a-90)*Math.PI/180;return [100+r*Math.cos(t),100+r*Math.sin(t)]};const [x0,y0]=p(a0),[x1,y1]=p(a1);return `M${x0.toFixed(2)} ${y0.toFixed(2)}A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`}
-function gaugeSvg(){const Z=[[0,40,'#2E8566'],[40,60,'#7FA35A'],[60,75,'#F2911C'],[75,88,'#E06A1B'],[88,100,'#C2412D']];const A=v=>-120+v*2.4;
-  let ticks='';for(let v=0;v<=100;v+=5){const big=v%20===0;const t=(A(v)-90)*Math.PI/180,r1=big?62:66,r2=72;ticks+=`<line x1="${(100+r1*Math.cos(t)).toFixed(2)}" y1="${(100+r1*Math.sin(t)).toFixed(2)}" x2="${(100+r2*Math.cos(t)).toFixed(2)}" y2="${(100+r2*Math.sin(t)).toFixed(2)}" class="${big?'big':''}"/>`;
-    if(big){const rn=52;ticks+=`<text x="${(100+rn*Math.cos(t)).toFixed(2)}" y="${(100+rn*Math.sin(t)+3).toFixed(2)}">${v}</text>`}}
-  return `<svg viewBox="0 0 200 200" role="img" aria-label="מד העומס"><defs><radialGradient id="mgFace" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".7" stop-color="#E9ECF4" stop-opacity=".75"/><stop offset="1" stop-color="#C9CEDD" stop-opacity=".6"/></radialGradient>
-    <linearGradient id="mgRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#B9BFD0"/></linearGradient><filter id="mgGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter></defs>
-    <circle cx="100" cy="100" r="92" fill="url(#mgFace)" stroke="url(#mgRim)" stroke-width="3"/>
-    <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(63,84,153,.12)" stroke-width="1"/>
-    ${Z.map(([a,b,c])=>`<path d="${arcPath(78,A(a),A(b)-.6)}" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="butt" opacity=".92"/>`).join('')}
-    <path d="${arcPath(78,A(75),A(100))}" stroke="#C2412D" stroke-width="9" fill="none" filter="url(#mgGlow)" opacity=".45"/>
-    <g class="mg-ticks">${ticks}</g>
-    <text class="mg-load" x="${(100+34*Math.cos((A(90)-90)*Math.PI/180)).toFixed(1)}" y="${(100+34*Math.sin((A(90)-90)*Math.PI/180)+3).toFixed(1)}">עומס</text>
-    <g class="mg-needle"><path d="M100 104 L97.6 100 L100 30 L102.4 100 Z" fill="#C2412D"/><path d="M100 104 L97.6 100 L100 30 Z" fill="#E0573F"/></g>
-    <circle cx="100" cy="100" r="9" fill="url(#mgRim)" stroke="#fff" stroke-width="2"/><circle cx="100" cy="100" r="3.5" fill="#1F2747"/></svg>`}
-function meterToggle(){const hero=$1('#heroMt');if(!hero||hero._mt)return;hero._mt=1;const art=hero.querySelector('.hero-art');if(!art)return;
-  const g=document.createElement('div');g.id='meterGauge';g.className='mgauge';g.setAttribute('aria-hidden','true');g.innerHTML=gaugeSvg()+'<div class="mg-read"><b class="mg-v num">0%</b><span class="mg-l"></span></div>';art.append(g);
-  const t=document.createElement('div');t.className='meter-tog';t.setAttribute('role','group');t.setAttribute('aria-label','תצוגת מדד העבודה');
-  t.innerHTML=`<button type="button" data-meter="glass" aria-label="שעון חול">${'<svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/></svg>'}<span>שעון חול</span></button><button type="button" data-meter="gauge" aria-label="מד">${'<svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4.5 17a8.5 8.5 0 1 1 15 0"/><path d="M12 14l4-5"/><circle cx="12" cy="14" r="1.4" fill="currentColor"/></svg>'}<span>מד</span></button>`;
-  hero.append(t);
-  const set=m=>{hero.classList.toggle('meter-gauge',m==='gauge');t.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.meter===m)));try{localStorage.setItem('mt-hero-meter',m)}catch(e){}};
-  let m='glass';try{m=localStorage.getItem('mt-hero-meter')||'glass'}catch(e){}set(m);
-  t.addEventListener('click',e=>{const b=e.target.closest('[data-meter]');if(b){e.stopPropagation();set(b.dataset.meter)}});
-  const sc=hero.querySelector('.ps-score');if(sc)new MutationObserver(()=>{if(!/%$/.test(sc.textContent))battery()}).observe(sc,{childList:true,characterData:true,subtree:true})}
+/* ---- 4. מד עם מחוגה: אותו סגנון ואותה שכבה כמו שעון החול (תמונה מ-fal באותה קומפוזיציה),
+   מחוגה חיה מעליה. החלפה בלחיצה על האובייקט עצמו: שעון חול → מד → בלי → שעון חול ---- */
+const GAUGE_IMG='__GAUGEIMG__';const HUB=[.2854,.4979],ARC_R=.2454;
+const MODES=['glass','gauge','none'],MODE_T={glass:'שעון חול',gauge:'מד',none:'בלי מדד'},MODE_NEXT={glass:'החלפה למד',gauge:'הסתרת המדד',none:'החזרת שעון החול'};
+function artMap(fx,fy){const art=$1('#heroMt .hero-art');const img=art&&art.querySelector('img.mg-img');if(!img)return null;
+  const r=img.getBoundingClientRect(),a=art.getBoundingClientRect(),cs=getComputedStyle(img),[px,py]=cs.objectPosition.split(' ').map(v=>parseFloat(v)/100);
+  const nw=img.naturalWidth||768,nh=img.naturalHeight||429,sc=Math.max(r.width/nw,r.height/nh),dw=nw*sc,dh=nh*sc;
+  return {x:r.left-a.left+(r.width-dw)*(isNaN(px)?.5:px)+fx*dw,y:r.top-a.top+(r.height-dh)*(isNaN(py)?.5:py)+fy*dh,dh}}
+function placeNeedle(){const g=$1('#meterGauge'),hit=$1('#heroMt .art-hit');const m=artMap(HUB[0],HUB[1]);if(!m)return;
+  if(g){const L=m.dh*ARC_R*1.02;g.style.cssText+=`;left:${m.x-L}px;top:${m.y-L}px;width:${2*L}px;height:${2*L}px`}
+  if(hit){const R=m.dh*.44;hit.style.cssText=`left:${m.x-R}px;top:${m.y-R}px;width:${2*R}px;height:${2*R}px`}}
+function meterToggle(){const hero=$1('#heroMt');if(!hero||hero._mt)return;const art=hero.querySelector('.hero-art');if(!art)return;hero._mt=1;
+  const im=document.createElement('img');im.className='mg-img';im.alt='';im.src=GAUGE_IMG;art.append(im);
+  const g=document.createElement('div');g.id='meterGauge';g.className='mgauge';g.setAttribute('aria-hidden','true');
+  g.innerHTML=`<i class="mg-glow"></i><svg viewBox="0 0 200 200"><defs><linearGradient id="mgN" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="var(--mc,#F2911C)" stop-opacity=".9"/><stop offset="1" stop-color="var(--mc,#F2911C)" stop-opacity=".35"/></linearGradient></defs>
+    <g class="mg-needle"><g class="mg-wob"><path d="M100 112 L96.6 100 L100 6 L103.4 100 Z" fill="url(#mgN)"/><path d="M100 6 L100 104" stroke="#fff" stroke-opacity=".7" stroke-width=".8"/></g></g>
+    <circle cx="100" cy="100" r="8" fill="rgba(255,255,255,.75)" stroke="#fff" stroke-width="1.5"/><circle cx="100" cy="100" r="3" fill="var(--mc,#F2911C)"/></svg>
+    <div class="mg-read"><b class="mg-v num">0%</b><span class="mg-l"></span></div>`;art.append(g);
+  const hit=document.createElement('button');hit.type='button';hit.className='art-hit';hero.append(hit);
+  const tip=document.createElement('span');tip.className='art-tip';tip.setAttribute('aria-hidden','true');hit.append(tip);
+  const set=m=>{MODES.forEach(x=>hero.classList.toggle('meter-'+x,x===m));hero.dataset.meter=m;const nx=MODES[(MODES.indexOf(m)+1)%3];
+    hit.setAttribute('aria-label',`תצוגת המדד: ${MODE_T[m]}. לחיצה: ${MODE_NEXT[m]}`);tip.textContent=MODE_NEXT[m];try{localStorage.setItem('mt-hero-meter',m)}catch(e){}};
+  let m='glass';try{m=localStorage.getItem('mt-hero-meter')||'glass'}catch(e){}if(!MODES.includes(m))m='glass';set(m);
+  let peekT=0;const peek=()=>{hero.classList.add('peek');clearTimeout(peekT);peekT=setTimeout(()=>hero.classList.remove('peek'),4500)};
+  let pt='mouse';hero.addEventListener('pointerdown',e=>{pt=e.pointerType},true);
+  hit.addEventListener('click',e=>{e.stopPropagation();if(pt==='touch'&&!hero.classList.contains('peek')){peek();return}set(MODES[(MODES.indexOf(hero.dataset.meter)+1)%3]);if(pt==='touch')peek()});
+  hero.addEventListener('click',e=>{if(pt==='touch'&&!e.target.closest('button,a,[role=button],.pulse-pop'))peek()});
+  const sc=hero.querySelector('.ps-score');if(sc)new MutationObserver(()=>{if(!/%$/.test(sc.textContent))battery()}).observe(sc,{childList:true,characterData:true,subtree:true});
+  im.addEventListener('load',placeNeedle);addEventListener('resize',placeNeedle);new ResizeObserver(placeNeedle).observe(art);placeNeedle()}
+
+/* ---- לוח השנה המלא: לחיצה על מספר התאריך מוסיפה לתאריך הזה ---- */
+function newOn(ds){const nb=document.createElement('button');nb.type='button';nb.hidden=true;nb.dataset.newday=ds;document.body.append(nb);nb.click();nb.remove()}
+document.addEventListener('click',e=>{const dn=e.target.closest('#cal .d[data-sel] .top');if(dn&&!e.target.closest('[data-open]')){e.stopPropagation();const ds=dn.closest('.d').dataset.sel;S.selDay=ds;newOn(ds);return}
+  const cc=e.target.closest('[data-ccday]');if(cc&&cc.getAttribute('aria-pressed')==='true'){e.stopPropagation();newOn(cc.dataset.ccday)}},true);
+
+/* ---- גרירה כללית (עכבר ומגע): קנבן ומשימות. ההעברה מעדכנת סטטוס ותיוגים, עם ביטול ---- */
+let dragSwallow=0;document.addEventListener('click',e=>{if(Date.now()<dragSwallow){e.stopPropagation();e.preventDefault()}},true);
+function pdrag(o){let st=null;
+  document.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('button,select,input,a,.check'))return;const el=e.target.closest(o.item);if(!el)return;st={el,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,t:e.pointerType,at:Date.now()}},true);
+  document.addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id)return;const dx=e.clientX-st.x,dy=e.clientY-st.y;
+    if(!st.on){if(st.t==='touch'&&Date.now()-st.at<280){if(Math.hypot(dx,dy)>8)st=null;return}if(Math.hypot(dx,dy)<6)return;st.on=true;
+      const r=st.el.getBoundingClientRect();const g=st.el.cloneNode(true);g.classList.add('drag-ghost');g.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:90;pointer-events:none`;
+      document.body.append(g);st.g=g;st.ox=e.clientX-r.left;st.oy=e.clientY-r.top;st.el.classList.add('drag-src');document.documentElement.classList.add('dragging')}
+    e.preventDefault();st.g.style.left=(e.clientX-st.ox)+'px';st.g.style.top=(e.clientY-st.oy)+'px';
+    const t=document.elementsFromPoint(e.clientX,e.clientY).map(x=>x.closest&&x.closest(o.target)).find(Boolean);document.querySelectorAll('.drop-over').forEach(x=>x!==t&&x.classList.remove('drop-over'));if(t)t.classList.add('drop-over');st.tg=t},{passive:false});
+  const end=e=>{if(!st||e.pointerId!==st.id)return;const s=st;st=null;if(!s.on)return;s.g.remove();s.el.classList.remove('drag-src');document.documentElement.classList.remove('dragging');
+    document.querySelectorAll('.drop-over').forEach(x=>x.classList.remove('drop-over'));dragSwallow=Date.now()+350;if(s.tg&&e.type==='pointerup')o.drop(s.el,s.tg,e)};
+  document.addEventListener('touchmove',e=>{if(st&&st.t==='touch'&&Date.now()-st.at>=280)e.preventDefault()},{passive:false});
+  document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
+/* קנבן: שינוי סטטוס + התיוגים שנגזרים ממנו */
+function statusPatch(it,to){const p={status:to},u={status:it.status||'todo'};
+  if(to==='review'&&!it.waitingOn){p.waitingOn='mendy';u.waitingOn=it.waitingOn||null}
+  if(it.status==='review'&&to!=='review'&&it.waitingOn==='mendy'){p.waitingOn=null;u.waitingOn='mendy'}
+  if(to==='done'){p.doneAt=new Date().toISOString();u.doneAt=it.doneAt||null;if(it.blocked&&it.blocked.on){p.blocked={...it.blocked,on:false};u.blocked=it.blocked}}
+  if(it.status==='done'&&to!=='done'){p.doneAt=null;u.doneAt=it.doneAt||null}
+  return [p,u]}
+pdrag({item:'#kanban .kc[data-open]',target:'#kanban .col[data-col]',drop(el,col){const id=el.dataset.open,it=S.items[id],to=col.dataset.col;if(!it||(it.status||'todo')===to)return;
+  const [p,u]=statusPatch(it,to);saveItem(id,p);if(to==='done')stamp();log(`העביר את "${it.title}" ל${STATUS[to]}`,id);
+  toastUndo(`"${it.title}" עבר ל${STATUS[to]}${p.waitingOn==='mendy'?' · ממתין למענדי':''}`,()=>saveItem(id,u))}});
+new MutationObserver(()=>document.querySelectorAll('#kanban [draggable="true"]').forEach(c=>c.setAttribute('draggable','false'))).observe(document.querySelector('#kanban')||document.body,{childList:true,subtree:true});
+/* משימות: עליי / קלוד ברקע / מחכה לאחרים */
+function rowKey(r){const st=r.querySelector('[data-step]');if(st)return{id:st.dataset.step,i:+st.dataset.i};const d=r.querySelector('[data-done]');return d?{id:d.dataset.done,i:null}:null}
+function applyLane(k,lane,who){const it=S.items[k.id];if(!it)return;const step=k.i!=null?(it.steps||[])[k.i]:null;const name=step?step.t:it.title;
+  if(step){const old={owner:step.owner||null,bg:!!step.bg};const np=lane==='bg'?{bg:true}:{owner:lane==='me'?ME():who,bg:false};setStep(k.id,k.i,np);toastUndo(`"${name}" הועבר`,()=>setStep(k.id,k.i,old))}
+  else{const old={owner:it.owner||null,claudeCan:!!it.claudeCan,blocked:it.blocked||null};const np=lane==='bg'?{claudeCan:true}:{owner:lane==='me'?ME():who,claudeCan:false};
+    if(lane==='me'&&it.blocked&&it.blocked.on)np.blocked={...it.blocked,on:false};saveItem(k.id,np);toastUndo(`"${name}" הועבר`,()=>saveItem(k.id,old))}
+  log(`העביר את "${name}" ל${lane==='me'?'עליי':lane==='bg'?'קלוד ברקע':'מחכה ל'+((P(who)||{}).name||'')}`,k.id)}
+function pickWho(x,y,cb){$1('#whoDrop')?.remove();const p=document.createElement('div');p.id='whoDrop';p.className='hidpop';
+  const ids=Object.keys(S.people||{}).filter(i=>i!==ME()&&i!=='claude');
+  p.innerHTML=`<div class="hp-h">על מי זה מחכה?</div>${ids.map(i=>`<button type="button" class="hp-r" data-who="${esc(i)}"><span style="display:flex;align-items:center;gap:8px">${av(i)}${esc(S.people[i].name||'')}</span><em>בחירה</em></button>`).join('')}`;
+  p.style.top=Math.min(y,innerHeight-60-ids.length*44)+'px';p.style.left=Math.max(8,Math.min(x-140,innerWidth-290))+'px';document.body.append(p);
+  const close=()=>{p.remove();document.removeEventListener('pointerdown',out,true)};const out=e=>{if(!p.contains(e.target))close()};setTimeout(()=>document.addEventListener('pointerdown',out,true));
+  p.addEventListener('click',e=>{const b=e.target.closest('[data-who]');if(b){close();cb(b.dataset.who)}})}
+pdrag({item:'#v-tasks .trow',target:'#v-tasks .lane',drop(el,lane,e){const k=rowKey(el);if(!k)return;const L=lane.querySelector('#laneMe')?'me':lane.querySelector('#laneBg')?'bg':lane.querySelector('#laneWait')?'wait':null;
+  if(!L||el.closest('.lane')===lane)return;if(L==='wait')pickWho(e.clientX,e.clientY,w=>applyLane(k,'wait',w));else applyLane(k,L)}});
 
 function paintV22(){try{renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery()}catch(e){console.error(e)}}
 const _ra22=window.renderAll;window.renderAll=function(){const r=_ra22.apply(this,arguments);paintV22();return r};
