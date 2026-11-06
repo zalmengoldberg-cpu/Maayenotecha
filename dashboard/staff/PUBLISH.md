@@ -23,3 +23,8 @@
 - נכסים שהועלו לפני הפרסום: 8 רקעים (`staff/walls/walls.json`) ו-6 אווטארים; במסד: `people/<id>.avatar`.
 - גיבוי: `dashboard/backups/v23_published_2026-11-06.html`.
 
+
+## גרסה 24 (6.11.2026) — פורסמה
+- בריף בשני מצבים (חלון מעל הכול / בשורה), כרטיסים מוצקים, דף בית בלי חורים, תזכורות והגדרות.
+- גיבוי: `dashboard/backups/v24_published_2026-11-06.html`.
+- חבילה לפרויקט התוכן: `handoff/content-project/`.

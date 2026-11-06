@@ -289,7 +289,7 @@ function heroTrim(){const hero=$1('#heroMt');if(!hero)return;hero.classList.add(
   let b=$1('#briefBtn');if(!b){b=document.createElement('button');b.type='button';b.id='briefBtn';b.className='brief-btn';b.dataset.tour='cta';b.setAttribute('aria-controls','briefDeck');
     hero.querySelector('#greet')?.after(b)}
   const bt=briefTime();const n=(S&&S.att||[]).length;const urgent=(S&&S.att||[]).filter(a=>a.type==='blocked'||a.type==='late').length;
-  b.setAttribute('aria-expanded',String(briefOpen));b.innerHTML=`<span class="bb-ic">${BRIEF_ICO[bt.k]}</span><span class="bb-tx"><b>${bt.t}</b><small>${n?`${n} דברים מחכים${urgent?` · ${urgent} דחופים`:''}`:'הכול רגוע'}</small></span><span class="bb-ch">${DS.icon('chevD','ico-sm')}</span>`}
+  b.setAttribute('aria-expanded',String(briefMode()==='modal'?!!$1('#briefModal:not([hidden])'):briefOpen));b.setAttribute('aria-haspopup',briefMode()==='modal'?'dialog':'false');b.innerHTML=`<span class="bb-ic">${BRIEF_ICO[bt.k]}</span><span class="bb-tx"><b>${bt.t}</b><small>${n?`${n} דברים מחכים${urgent?` · ${urgent} דחופים`:''}`:'הכול רגוע'}</small></span><span class="bb-ch">${DS.icon('chevD','ico-sm')}</span>`}
 function ensureDeck(){let d=$1('#briefDeck');if(d)return d;d=document.createElement('section');d.id='briefDeck';d.className='brief-deck';d.setAttribute('aria-label','בריף');($1('#dayNow')||$1('#heroMt')).after(d);return d}
 /* כרטיסיות הבריף בסגנון כרטיס מוצק: צבע אחד לכל נושא, שורת מטא, כותרת, מספר גדול, פס שלבים עם תוויות,
    לוח מידע בשלוש עמודות, אנשים ופעולה. אותן לחיצות כמו קודם */
@@ -303,7 +303,7 @@ function bCard(o){const bar=o.bar&&o.bar.length?`<div class="bc-steps">${o.bar.m
     ${o.big?`<div class="bc-big">${o.big}</div>`:''}${bar}${panel}${o.rows&&o.rows.length?`<div class="bc-rows">${o.rows.join('')}</div>`:''}${ppl}
     ${o.act?`<footer>${o.act}</footer>`:''}</article>`}
 function bRow(attrs,av_,title,sub){return `<button type="button" class="bc-row" ${attrs}>${av_||''}<span class="bc-rt"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="chev">‹</span></button>`}
-function renderDeck(){const d=ensureDeck();if(typeof S==='undefined'||!S.loaded)return;d.classList.toggle('open',briefOpen);if(!briefOpen){d.innerHTML='';return}
+function buildCards(){
   const att=S.att||[];const its=items();const cards=[];let i=1;const ico=n=>DS.icon(n,'ico-sm');const tnow=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
   const cnt=t=>att.filter(a=>a.type===t).length;const who=a=>(a.it.blocked&&a.it.blocked.who)||a.it.waitingOn||a.it.owner;
   const uniq=a=>[...new Set(a.filter(Boolean))];
@@ -342,8 +342,31 @@ function renderDeck(){const d=ensureDeck();if(typeof S==='undefined'||!S.loaded)
   cards.push(bCard({i:i++,color:'sage',icon:ico('sliders'),meta:'תמונת מצב',k:'הלוח שלך',big:`<span class="num">${hid}</span><em>מוסתרים</em>`,sub:'מחזירים כרטיס או מסדרים מחדש.',
     act:`${hid?`<button type="button" class="bc-go" data-bproxy="hiddenBtn">${DS.icon('eye','ico-sm')}המוסתרים</button>`:''}<button type="button" class="bc-go ghost" data-bproxy="arrangeBtn">${DS.icon('sliders','ico-sm')}סידור</button>`}));
   if(PREF('kpis','brief')==='brief'){const k=kpiCard();if(k)cards.unshift(k)}
-  d.innerHTML=`<div class="bd-track">${cards.join('')}</div>`}
-document.addEventListener('click',e=>{const b=e.target.closest('#briefBtn');if(b){briefOpen=!briefOpen;try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck();masonry();if(briefOpen)$1('#briefDeck')?.scrollIntoView({behavior:'smooth',block:'nearest'});return}
+  return cards}
+const briefMode=()=>PREF('briefmode','modal');
+function renderDeck(){const d=ensureDeck();if(typeof S==='undefined'||!S.loaded)return;const on=briefOpen&&briefMode()==='inline';d.classList.toggle('open',on);if(!on){d.innerHTML='';return}
+  d.innerHTML=`<div class="bd-track">${buildCards().join('')}</div>`}
+/* מצב "חלון מעל הכל": כרטיס אחד במרכז, הבא/הקודם, לחיצה בחוץ או Esc סוגרת */
+let bmIdx=0;
+function ensureBM(){let m=$1('#briefModal');if(m)return m;m=document.createElement('div');m.id='briefModal';m.className='bm';m.hidden=true;m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','בריף');document.body.append(m);return m}
+function renderBM(){const m=ensureBM();if(m.hidden)return;const cards=buildCards();if(!cards.length){closeBM();return}bmIdx=(bmIdx+cards.length)%cards.length;const bt=briefTime();
+  m.innerHTML=`<div class="bm-stage"><div class="bm-head"><span class="bm-t">${BRIEF_ICO[bt.k]}${bt.t}</span><span class="bm-n num">${bmIdx+1} / ${cards.length}</span></div>
+    <div class="bm-card">${cards[bmIdx].replace('<article class="bcard','<article class="bcard bm-c')}<button type="button" class="bm-x" data-bmclose="1" aria-label="סגירה">${DS.icon('plus','ico-sm')}</button></div>
+    <div class="bm-nav"><button type="button" class="bm-b" data-bmstep="-1" ${bmIdx===0?'disabled':''}>${DS.icon('chevR','ico-sm')}הקודם</button>
+      <span class="bm-dots" aria-hidden="true">${cards.map((_,n)=>`<i class="${n===bmIdx?'on':''}" data-bmgo="${n}"></i>`).join('')}</span>
+      ${bmIdx<cards.length-1?`<button type="button" class="bm-b pri" data-bmstep="1">הבא${DS.icon('chevL','ico-sm')}</button>`:`<button type="button" class="bm-b pri" data-bmclose="1">סיום${DS.icon('check','ico-sm')}</button>`}</div></div>`;
+  m.querySelector('[data-bmstep="1"],[data-bmclose]')?.focus({preventScroll:true})}
+function openBM(){const m=ensureBM();bmIdx=0;m.hidden=false;document.documentElement.classList.add('bm-open');renderBM();$1('#briefBtn')?.setAttribute('aria-expanded','true')}
+function closeBM(){const m=$1('#briefModal');if(!m||m.hidden)return;m.hidden=true;document.documentElement.classList.remove('bm-open');$1('#briefBtn')?.setAttribute('aria-expanded','false');$1('#briefBtn')?.focus({preventScroll:true})}
+document.addEventListener('click',e=>{const m=$1('#briefModal');if(!m||m.hidden||!m.contains(e.target))return;
+  if(e.target===m||e.target.classList.contains('bm-stage')||e.target.closest('[data-bmclose]')){e.stopPropagation();closeBM();return}
+  const st=e.target.closest('[data-bmstep]');if(st){e.stopPropagation();bmIdx+=+st.dataset.bmstep;renderBM();return}
+  const g=e.target.closest('[data-bmgo]');if(g){e.stopPropagation();bmIdx=+g.dataset.bmgo;renderBM();return}
+  if(e.target.closest('[data-open],[data-res],[data-list],[data-go],[data-bproxy],[data-send]'))setTimeout(closeBM,0)},true);
+document.addEventListener('keydown',e=>{const m=$1('#briefModal');if(!m||m.hidden)return;if(e.key==='Escape'){closeBM()}else if(e.key==='ArrowLeft'){bmIdx++;renderBM()}else if(e.key==='ArrowRight'&&bmIdx>0){bmIdx--;renderBM()}});
+{let sx=null;document.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('#briefModal .bm-card'))sx=e.clientX},true);
+ document.addEventListener('pointerup',e=>{if(sx==null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>60&&$1('#briefModal:not([hidden])')){bmIdx+=dx>0?1:-1;if(bmIdx<0)bmIdx=0;renderBM()}},true)}
+document.addEventListener('click',e=>{const b=e.target.closest('#briefBtn');if(b&&briefMode()==='modal'){openBM();return}if(b){briefOpen=!briefOpen;try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck();masonry();if(briefOpen)$1('#briefDeck')?.scrollIntoView({behavior:'smooth',block:'nearest'});return}
   const px=e.target.closest('[data-bproxy]');if(px){e.stopPropagation();const t=document.getElementById(px.dataset.bproxy);if(!t)return;const h=t.hidden;t.hidden=false;t.click();t.hidden=h;
     if(px.dataset.bproxy==='hiddenBtn'){const p=$1('#hidPop');if(p){const r=px.getBoundingClientRect();p.style.top=Math.min(innerHeight-300,r.bottom+8)+'px';p.style.right='auto';p.style.left=Math.max(8,Math.min(innerWidth-300,r.left))+'px'}}}},true);
 
@@ -428,7 +451,8 @@ function renderSet(){const el=ensureSet();if(el.hidden)return;const W=window.MT_
     <section class="st-sec"><h3>תצוגה</h3>
       <div class="st-row"><span><b>מדד העבודה</b><small>אפשר גם בלחיצה על השעון עצמו</small></span>${seg('meter',hero?.dataset.meter||'glass',[['glass','שעון חול'],['gauge','מד'],['none','בלי']])}</div>
       <div class="st-row"><span><b>המדדים</b><small>ימים ליריד, צעדים, שלבים, תקועים</small></span>${seg('kpis',PREF('kpis','brief'),[['brief','בתוך הבריף'],['card','חלון נפרד']])}</div>
-      <div class="st-row"><span><b>הבריף בפתיחה</b><small>פתוח או סגור כשנכנסים</small></span>${seg('brief',briefOpen?'open':'closed',[['open','פתוח'],['closed','סגור']])}</div>
+      <div class="st-row"><span><b>איך הבריף נפתח</b><small>כרטיס אחרי כרטיס מעל הכול, או בשורה מתחת לכפתור</small></span>${seg('briefmode',briefMode(),[['modal','חלון מעל הכול'],['inline','בשורה']])}</div>
+      <div class="st-row"><span><b>הבריף בשורה בפתיחה</b><small>במצב "בשורה": פתוח או סגור כשנכנסים</small></span>${seg('brief',briefOpen?'open':'closed',[['open','פתוח'],['closed','סגור']])}</div>
       <div class="st-row"><span><b>פתיחת כרטיס</b><small>חלון בצד או במרכז המסך</small></span>${seg('open',document.documentElement.classList.contains('open-center')?'center':'side',[['side','בצד'],['center','במרכז']])}</div>
       <div class="st-row"><span><b>החלפה אוטומטית</b><small>"מה יש לנו היום" והתזכורות עוברים פריט אחרי פריט</small></span>${seg('rotate',PREF('rotate','on'),[['on','פועל'],['off','כבוי']])}</div></section>
     <section class="st-sec"><h3>מה מופיע בתמונת מצב</h3><p>כרטיס כבוי לא נמחק, הוא רק מוסתר.</p><div class="st-cards">${cards.map(c=>`<label class="st-card"><input type="checkbox" data-setcard="${esc(c.dataset.cid)}" ${c.hidden?'':'checked'}><span>${esc(c.dataset.cname||c.dataset.cid)}</span></label>`).join('')}</div>
@@ -446,6 +470,7 @@ document.addEventListener('click',e=>{if(e.target.closest('#setBtn')){openSet();
     if(k==='brief'){briefOpen=val==='open';try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck()}
     if(k==='open'){const isC=document.documentElement.classList.contains('open-center');if((val==='center')!==isC)$1('#openModeT')?.click()}
     if(k==='rotate'){SETPREF('rotate',val);dnTick();remTick()}
+    if(k==='briefmode'){SETPREF('briefmode',val);heroTrim();renderDeck();masonry()}
     renderSet();return}
   const cd=e.target.closest('[data-setcard]');if(cd){const c=document.querySelector(`#v-today [data-arrange] > [data-cid="${CSS.escape(cd.dataset.setcard)}"]`);if(!c)return;
     if(cd.checked&&c.hidden){const u=document.createElement('button');u.dataset.unhide=c.dataset.cid;u.hidden=true;document.body.append(u);u.click();u.remove()}
@@ -480,7 +505,7 @@ addEventListener('resize',masonry);
   const b=document.querySelector('#v-today>.bento');if(b)new MutationObserver(()=>{watch();masonry()}).observe(b,{childList:true,attributes:true,attributeFilter:['hidden'],subtree:true});
   addEventListener('hashchange',()=>setTimeout(masonry,30));setTimeout(()=>{watch();masonry()},0)}
 
-function paintV22(){try{sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery();window.__masWatch&&__masWatch();masonry()}catch(e){console.error(e)}}
+function paintV22(){try{renderBM();sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery();window.__masWatch&&__masWatch();masonry()}catch(e){console.error(e)}}
 const _ra22=window.renderAll;window.renderAll=function(){const r=_ra22.apply(this,arguments);paintV22();return r};
 new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded)dressRows()}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
 

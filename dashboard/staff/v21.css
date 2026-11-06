@@ -1620,3 +1620,32 @@ html[data-wp^="ph-"] .brief-btn{background:rgba(255,255,255,.7)}
 @media (min-width:1281px){#v-today #briefDeck{grid-column:1/span 8;grid-row:2}}
 @media (max-width:1280px){#v-today #briefDeck{grid-column:1/-1;grid-row:2}#v-today:has(#briefDeck.open) #dayNow,#v-today:has(#briefDeck.open)>.bento>#miniCal{grid-row:3}}
 @media (max-width:760px){#v-today:has(#briefDeck.open) #dayNow{grid-row:3}#v-today:has(#briefDeck.open)>.bento>#miniCal{grid-row:4}}
+
+/* v22h: הבריף כחלון מעל הכול — כרטיס אחד במרכז, הבא/הקודם */
+html.bm-open{overflow:hidden}
+.bm{position:fixed;inset:0;z-index:78;display:grid;place-items:center;padding:20px;background:rgba(236,238,243,.35);-webkit-backdrop-filter:blur(18px) saturate(120%);backdrop-filter:blur(18px) saturate(120%);animation:bm-fade .25s ease both}
+.bm[hidden]{display:none}
+@keyframes bm-fade{from{opacity:0}to{opacity:1}}
+.bm-stage{display:grid;gap:14px;width:min(440px,100%);justify-items:stretch}
+.bm-head{display:flex;align-items:center;justify-content:space-between;color:var(--ink-700);font-size:var(--fs-small);font-weight:var(--fw-medium)}
+.bm-t{display:inline-flex;align-items:center;gap:8px}.bm-t .ico{width:18px;height:18px;color:var(--gold-600)}
+.bm-n{font-size:var(--fs-caption);color:var(--ink-500)}
+.bm-card{position:relative}
+.bm-card .bcard{min-height:420px;padding:26px 26px 22px;border-radius:28px;box-shadow:0 30px 60px -28px rgba(20,26,51,.55);animation:bm-in .45s cubic-bezier(.2,.9,.25,1.1) both}
+@keyframes bm-in{from{opacity:0;transform:translateY(14px) scale(.96) rotate(-1deg)}to{opacity:1;transform:none}}
+.bm-card .bc-title{font-size:28px}
+.bm-card .bc-big .num{font-size:60px}
+.bm-x{position:absolute;top:16px;left:16px;z-index:2;width:34px;height:34px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;min-height:0;padding:0;
+  background:rgba(255,255,255,.55);color:var(--ink-900);box-shadow:inset 0 0 0 1px rgba(20,26,51,.08)}
+.bm-x svg{transform:rotate(45deg)}
+.bm-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bm-b{display:inline-flex;align-items:center;gap:6px;height:42px;padding:0 18px;border:0;border-radius:var(--r-pill);cursor:pointer;font:inherit;font-size:var(--fs-small);font-weight:var(--fw-medium);min-height:0;
+  color:var(--ink-900);background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 8px 20px -12px rgba(20,26,51,.4)}
+.bm-b.pri{color:#fff;background:var(--ink-900)}
+.bm-b:disabled{opacity:.4;cursor:default}
+.bm-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.bm-dots i{width:7px;height:7px;border-radius:50%;background:rgba(20,26,51,.2);cursor:pointer;transition:width .25s,background .25s}
+.bm-dots i.on{width:20px;border-radius:4px;background:var(--ink-900)}
+@media (prefers-reduced-motion:reduce){.bm,.bm-card .bcard{animation:none}}
+@media (max-width:760px){.bm{padding:14px;place-items:end center}.bm-card .bcard{min-height:360px}.bm-b{height:40px;padding:0 14px}}
+.bm-card .bc-meta{padding-left:44px}
