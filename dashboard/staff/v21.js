@@ -434,7 +434,30 @@ function addCtlSafe(c){if(!c.querySelector(':scope>.cardctl')){const s=document.
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$1('#setPanel:not([hidden])'))closeSet()});
 new MutationObserver(()=>{if($1('#setPanel:not([hidden])'))renderSet()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-wp','class']});
 
-function paintV22(){try{sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery()}catch(e){console.error(e)}}
+/* ---- בלי שטחים ריקים בדף הבית: כל כרטיס תופס בדיוק את הגובה שלו (שורות של 4px, packing צפוף) ---- */
+const MROW=4,MGAP=16;let masRaf=0;
+function masonry(){cancelAnimationFrame(masRaf);masRaf=requestAnimationFrame(()=>{const g=$1('#v-today');if(!g)return;
+  const all=[...g.querySelectorAll(':scope>.mtx-wrap>*,:scope>.bento>*')];
+  const reset=()=>{g.classList.remove('mas');all.forEach(el=>{el.style.gridRowStart='';el.style.gridRowEnd=''})};
+  if(!g.classList.contains('on')||innerWidth<=760){reset();return}
+  g.classList.add('mas');
+  const vis=all.filter(el=>!el.hidden&&getComputedStyle(el).display!=='none'&&!el.classList.contains('arr-lift')&&el.getBoundingClientRect().height>0);
+  const span=el=>Math.max(1,Math.ceil((el.getBoundingClientRect().height+MGAP)/MROW));
+  const wide=innerWidth>1280;const hero=$1('#heroMt'),dn=$1('#dayNow'),deck=$1('#briefDeck.open'),cal=$1('#miniCal');
+  const S_=new Map(vis.map(el=>[el,span(el)]));
+  const put=(el,start)=>{if(!el||!S_.has(el))return 0;el.style.gridRowStart=start;el.style.gridRowEnd='span '+S_.get(el);return start+S_.get(el)};
+  let after=put(hero,1);
+  if(deck)after=put(deck,after);
+  if(wide){const a=put(dn,1);if(cal&&S_.has(cal))put(cal,a)}
+  else{const a=put(dn,after);if(cal&&S_.has(cal))put(cal,after);after=Math.max(a,cal&&S_.has(cal)?after+S_.get(cal):a)}
+  vis.forEach(el=>{if([hero,dn,deck,cal].includes(el))return;el.style.gridRowStart='';el.style.gridRowEnd='span '+S_.get(el)})})}
+addEventListener('resize',masonry);
+{const ro=new ResizeObserver(()=>masonry());const watch=()=>{document.querySelectorAll('#v-today>.mtx-wrap>*,#v-today>.bento>*').forEach(el=>{if(!el._mro){el._mro=1;ro.observe(el)}})};
+  new MutationObserver(()=>{watch();masonry()}).observe(document.querySelector('#v-today')||document.body,{childList:true,subtree:false});
+  const b=document.querySelector('#v-today>.bento');if(b)new MutationObserver(()=>{watch();masonry()}).observe(b,{childList:true,attributes:true,attributeFilter:['hidden'],subtree:true});
+  addEventListener('hashchange',()=>setTimeout(masonry,30));setTimeout(()=>{watch();masonry()},0)}
+
+function paintV22(){try{masonry();sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery()}catch(e){console.error(e)}}
 const _ra22=window.renderAll;window.renderAll=function(){const r=_ra22.apply(this,arguments);paintV22();return r};
 new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded)dressRows()}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
 

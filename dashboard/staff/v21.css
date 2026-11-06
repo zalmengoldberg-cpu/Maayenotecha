@@ -1485,7 +1485,7 @@ html[data-wp^="ph-"] #v-today .hero.hero-free .t-h1{text-shadow:0 1px 3px rgba(2
 .mk-more{font-size:var(--fs-micro);color:var(--ink-400)}
 
 /* המדדים בתוך הבריף (ברירת מחדל) */
-html.kpis-in-brief #v-today #kpis,html.kpis-in-brief #v-today #kpiPager,html.kpis-in-brief #v-today #kpiDots{display:none!important}
+html.kpis-in-brief #v-today #kpis,html.kpis-in-brief #v-today [data-cid="kpis"],html.kpis-in-brief #v-today #kpiPager,html.kpis-in-brief #v-today #kpiDots{display:none!important}
 .bcard.bk{min-width:300px}
 .bk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
 .bk-cell{display:grid;align-content:start;gap:2px;padding:10px 12px;border:0;border-radius:12px;cursor:pointer;font:inherit;text-align:right;min-height:0;color:#fff;
@@ -1594,3 +1594,7 @@ html.setp-open{overflow:hidden}
 .st-b{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border:0;border-radius:var(--r-pill);cursor:pointer;font:inherit;font-size:var(--fs-small);min-height:0;color:#fff;background:var(--ink-900)}
 .st-b.ghost{color:var(--ink-700);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)}
 @media (max-width:760px){.setp{padding:0;place-items:end stretch}.setp-in{border-radius:22px 22px 0 0;max-height:92vh;padding:18px 16px 26px}.setp-top{margin:-18px -16px 0;padding:16px}.st-row{flex-direction:column;align-items:stretch}.st-seg{align-self:flex-start;flex-wrap:wrap}}
+
+/* v22f: דף הבית בלי חורים — שורות של 4px, כל כרטיס בגובה שלו (הגבהים מחושבים ב-masonry() ב-v21.js) */
+#v-today.on.mas{grid-auto-rows:4px;row-gap:0;align-items:start}
+#v-today.mas>.mtx-wrap>*,#v-today.mas>.bento>*{align-self:start!important}
