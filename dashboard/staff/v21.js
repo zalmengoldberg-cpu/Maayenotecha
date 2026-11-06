@@ -79,7 +79,7 @@ let dnIdx=0,dnTimer=0,dnSig='';
 function dnShow(i){const el=$1('#dayNow');if(!el)return;const rows=[...el.querySelectorAll('.dn-slide')];if(!rows.length)return;dnIdx=(i+rows.length)%rows.length;
   rows.forEach((r,n)=>{r.classList.toggle('on',n===dnIdx);r.setAttribute('aria-hidden',String(n!==dnIdx));r.tabIndex=n===dnIdx&&r.dataset.open?0:-1});
   el.querySelectorAll('.dn-dots i').forEach((d,n)=>d.classList.toggle('on',n===dnIdx))}
-function dnTick(){clearInterval(dnTimer);if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+function dnTick(){clearInterval(dnTimer);if(matchMedia('(prefers-reduced-motion:reduce)').matches||PREF('rotate','on')==='off')return;
   dnTimer=setInterval(()=>{const el=$1('#dayNow');if(!el||el.matches(':hover,:focus-within')||document.hidden)return;dnShow(dnIdx+1)},4200)}
 function renderDayNow(){const el=ensureDayNow();if(!el||typeof S==='undefined'||!S.loaded)return;const today=iso(TODAY);const ds=dnSel||today;const d=parse(ds);const h=hebParts(d);
   const {par,ev}=dayList(ds);const nC=ev.filter(e=>TYPE22[e.type]?.g==='c').length,nT=ev.filter(e=>TYPE22[e.type]?.g==='t').length,nE=ev.filter(e=>TYPE22[e.type]?.g==='e').length;
@@ -99,10 +99,20 @@ function renderDayNow(){const el=ensureDayNow();if(!el||typeof S==='undefined'||
 /* הלוח שולט ביום שמוצג: כל בחירת יום בלוח (הוא מצייר את עצמו מחדש) מעדכנת את האזור */
 /* הלוח הקטן בדף הבית: בלי הוספה ובלי חיצים, ועיגול עדין בימים שיש בהם משהו (זהב לתוכן, כחול למשימה/יעד) */
 function decorateCal(root){root.querySelectorAll('.hcal-actions,.hcal-nav').forEach(x=>x.remove());
-  root.querySelectorAll('.hcal-day[data-k]').forEach(b=>{const L=typeof dayEvents==='function'?dayEvents(b.dataset.k):[];
-    const c=L.some(e=>e.type==='pub'||e.type==='pin'),t=L.some(e=>e.type==='due'||e.type==='step'||e.type==='evt');
-    b.classList.toggle('mk',c||t);b.classList.toggle('mk-c',c&&!t);b.classList.toggle('mk-t',t&&!c);b.classList.toggle('mk-ct',c&&t)});
-  if(!root.querySelector('.mk-legend'))root.querySelector('.hcal-sheet')?.insertAdjacentHTML('beforeend','<div class="mk-legend" aria-hidden="true"><span><i style="--c:#F2911C"></i>תוכן</span><span><i style="--c:#3F5499"></i>משימה או יעד</span></div>')}
+  root.querySelectorAll('.hcal-day[data-k]').forEach(b=>{const L=typeof dayEvents==='function'?dayEvents(b.dataset.k).filter(e=>e.type!=='par'&&e.type!=='rec'):[];
+    const c=L.filter(e=>e.type==='pub'||e.type==='pin'),t=L.filter(e=>e.type==='due'||e.type==='step'||e.type==='evt');
+    b.classList.toggle('mk',!!(c.length||t.length));b.querySelector('.mk-bars')?.remove();
+    if(c.length||t.length){b.insertAdjacentHTML('beforeend',`<span class="mk-bars" aria-hidden="true">${c.length?'<i class="c"></i>':''}${t.length?'<i class="t"></i>':''}</span>`);
+      b._mk=[...c.map(e=>['c',evTitle(e)]),...t.map(e=>['t',evTitle(e)])]}else b._mk=null});
+  if(!root.querySelector('.mk-legend'))root.querySelector('.hcal-sheet')?.insertAdjacentHTML('beforeend','<div class="mk-legend" aria-hidden="true"><span><i class="c"></i>תוכן</span><span><i class="t"></i>משימה או יעד</span></div>')}
+const MK_IC={c:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="M3.5 15l4.5-4 4 3.5 3-2.5 5.5 4.5"/><circle cx="15.5" cy="9.5" r="1.4"/></svg>',
+  t:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.3l2.5 2.5 5-5.3"/></svg>'};
+document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('#mtCal .hcal-day.mk');let tip=$1('#mkTip');
+  if(!b||!b._mk){if(tip&&!(e.target.closest&&e.target.closest('#mtCal .hcal-day.mk')))tip.hidden=true;return}
+  if(!tip){tip=document.createElement('div');tip.id='mkTip';tip.className='mk-tip';tip.setAttribute('role','tooltip');document.body.append(tip)}
+  tip.innerHTML=b._mk.slice(0,4).map(([k,t])=>`<div class="mk-tr ${k}"><span class="mk-ti">${MK_IC[k]}</span><span>${esc(t)}</span></div>`).join('')+(b._mk.length>4?`<div class="mk-more">ועוד ${b._mk.length-4}</div>`:'');
+  tip.hidden=false;const r=b.getBoundingClientRect();const w=Math.min(260,innerWidth-16);tip.style.width='max-content';tip.style.maxWidth=w+'px';const tw=tip.offsetWidth;
+  tip.style.left=Math.max(8,Math.min(innerWidth-tw-8,r.left+r.width/2-tw/2))+'px';tip.style.top=(r.bottom+6)+'px'});
 function wireCal(){const root=$1('#mtCal');if(!root)return;decorateCal(root);if(root._dn)return;root._dn=1;
   new MutationObserver(()=>{if(root._busy)return;root._busy=1;decorateCal(root);root._busy=0;const k=root.querySelector('.hcal-day[aria-pressed="true"]')?.dataset.k;if(k&&k!==(dnSel||iso(TODAY))){dnSel=k;renderDayNow()}}).observe(root,{childList:true})}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-dntoday]'))return;dnSel=null;const b=$1(`#mtCal .hcal-day[data-k="${iso(TODAY)}"]`);
@@ -212,7 +222,7 @@ function meterToggle(){const hero=$1('#heroMt');if(!hero||hero._mt)return;const 
   const tip=document.createElement('span');tip.className='art-tip';tip.setAttribute('aria-hidden','true');hit.append(tip);
   const set=m=>{MODES.forEach(x=>hero.classList.toggle('meter-'+x,x===m));hero.dataset.meter=m;const nx=MODES[(MODES.indexOf(m)+1)%3];
     hit.setAttribute('aria-label',`תצוגת המדד: ${MODE_T[m]}. לחיצה: ${MODE_NEXT[m]}`);tip.textContent=MODE_NEXT[m];try{localStorage.setItem('mt-hero-meter',m)}catch(e){}};
-  let m='glass';try{m=localStorage.getItem('mt-hero-meter')||'glass'}catch(e){}if(!MODES.includes(m))m='glass';set(m);
+  let m='glass';try{m=localStorage.getItem('mt-hero-meter')||'glass'}catch(e){}if(!MODES.includes(m))m='glass';set(m);hero._setMeter=set;
   let peekT=0;const peek=()=>{hero.classList.add('peek');clearTimeout(peekT);peekT=setTimeout(()=>hero.classList.remove('peek'),4500)};
   let pt='mouse';hero.addEventListener('pointerdown',e=>{pt=e.pointerType},true);
   hit.addEventListener('click',e=>{e.stopPropagation();if(pt==='touch'&&!hero.classList.contains('peek')){peek();return}set(MODES[(MODES.indexOf(hero.dataset.meter)+1)%3]);if(pt==='touch')peek()});
@@ -309,12 +319,122 @@ function renderDeck(){const d=ensureDeck();if(typeof S==='undefined'||!S.loaded)
   const hid=document.querySelectorAll('[data-arrange] > [data-cid][hidden]').length;
   cards.push(bCard({i:i++,k:'הלוח שלך',icon:ico('sliders'),pill:hid?`${hid} מוסתרים`:'',big:`<span class="num">${hid}</span><em>כרטיסים מוסתרים</em>`,sub:'אפשר להחזיר כרטיס או לסדר מחדש את תמונת המצב.',
     act:`${hid?`<button type="button" class="bc-go" data-bproxy="hiddenBtn">${DS.icon('eye','ico-sm')}הכרטיסים המוסתרים</button>`:''}<button type="button" class="bc-go ghost" data-bproxy="arrangeBtn">${DS.icon('sliders','ico-sm')}סידור הלוח</button>`}));
+  if(PREF('kpis','brief')==='brief'){const k=kpiCard();if(k)cards.unshift(k)}
   d.innerHTML=`<div class="bd-track">${cards.join('')}</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('#briefBtn');if(b){briefOpen=!briefOpen;try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck();if(briefOpen)$1('#briefDeck')?.scrollIntoView({behavior:'smooth',block:'nearest'});return}
   const px=e.target.closest('[data-bproxy]');if(px){e.stopPropagation();const t=document.getElementById(px.dataset.bproxy);if(!t)return;const h=t.hidden;t.hidden=false;t.click();t.hidden=h;
     if(px.dataset.bproxy==='hiddenBtn'){const p=$1('#hidPop');if(p){const r=px.getBoundingClientRect();p.style.top=Math.min(innerHeight-300,r.bottom+8)+'px';p.style.right='auto';p.style.left=Math.max(8,Math.min(innerWidth-300,r.left))+'px'}}}},true);
 
-function paintV22(){try{heroTrim();renderDeck();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery()}catch(e){console.error(e)}}
+/* ===================== v22e: מדדים בבריף, תזכורות, מה נעשה וקלוד בינתיים, הגדרות ===================== */
+const PREF=(k,d)=>{try{const v=localStorage.getItem('mt-pref-'+k);return v==null?d:v}catch(e){return d}};
+const SETPREF=(k,v)=>{try{localStorage.setItem('mt-pref-'+k,v)}catch(e){}};
+function applyPrefs(){document.documentElement.classList.toggle('kpis-in-brief',PREF('kpis','brief')==='brief')}
+applyPrefs();
+/* המדדים ככרטיסייה ראשונה בבריף (אותן לחיצות כמו בכרטיסי המדדים) */
+function kpiCard(){const ks=[...document.querySelectorAll('#kpis .kpi')];if(!ks.length)return'';
+  const cells=ks.map(k=>{const attrs=[...k.attributes].filter(a=>a.name.startsWith('data-')&&a.name!=='data-cid').map(a=>`${a.name}="${esc(a.value)}"`).join(' ');
+    return `<button type="button" class="bk-cell" ${attrs}><small>${esc(k.querySelector('.k2')?.textContent||'')}</small><b class="num">${esc(k.querySelector('.v')?.textContent||'')}</b><span>${k.querySelector('.sub')?.innerHTML||''}</span></button>`}).join('');
+  return `<article class="bcard bk" style="--i:0"><header><span class="bc-ic">${DS.icon('chart')}</span><span class="bc-k">המדדים</span></header><div class="bk-grid">${cells}</div></article>`}
+
+/* ---- תזכורות: בדף הבית, פריט אחרי פריט, הוספה, והתראה ליד המדד כשמגיע הזמן ---- */
+let remIdx=0,remTimer=0,remSig='',remForm=false;
+function myReminders(){return items().filter(i=>i.remindAt&&i.status!=='done').sort((a,b)=>a.remindAt.localeCompare(b.remindAt))}
+function remWhen(r){const d=new Date(r.remindAt);const ds=iso(d);const t=d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});return (ds===iso(TODAY)?'היום':fmt(ds))+' · '+t}
+function autoNext(){if(typeof units!=='function')return null;const U=units(false).filter(u=>!u.done&&!u.bg&&(u.owner===ME()||!u.owner));if(typeof sortUnits==='function')U.sort(sortUnits);return U[0]||null}
+function ensureRem(){let c=$1('#rem22');if(c)return c;const bento=$1('#v-today>.bento');const att=$1('#attCard');if(!bento)return null;
+  c=document.createElement('div');c.id='rem22';c.className='card pane s4 rem22';c.dataset.cid='rem22';c.dataset.cname='תזכורות';(att||bento.lastElementChild).after(c);
+  const old=$1('#remind');if(old&&old.closest('[data-arrange]')){let h=$1('#mtHold');if(!h){h=document.createElement('div');h.id='mtHold';h.hidden=true;document.body.append(h)}h.append(old)}return c}
+function renderRem(){const c=ensureRem();if(!c||typeof S==='undefined'||!S.loaded)return;const R=myReminders();const nx=autoNext();
+  const slides=R.map(r=>({k:'r',h:`<div class="rm-s"><div class="rm-top"><span class="rm-pill ${new Date(r.remindAt)<=new Date()?'due':''}">${DS.icon('bell','ico-sm')}${esc(remWhen(r))}</span></div><div class="rm-big">${esc(r.title)}</div>${r.notes?`<div class="rm-meta">${esc(r.notes)}</div>`:''}
+      <div class="rm-act"><button type="button" class="rm-go" data-open="${esc(r.id)}">${DS.icon('arrowUpLeft','ico-sm')}פתיחה</button><button type="button" class="rm-o" data-remsnz="${esc(r.id)}|60">עוד שעה</button><button type="button" class="rm-o" data-done="${esc(r.id)}">בוצע</button></div></div>`}));
+  if(nx)slides.push({k:'a',h:`<div class="rm-s"><div class="rm-top"><span class="rm-pill auto">${DS.icon('sparkle','ico-sm')}הדבר הבא שלך</span><span class="rm-urg u${nx.urg}">${esc((typeof URG!=='undefined'&&URG[nx.urg])||'')}</span></div><div class="rm-big">${esc(nx.title)}</div>
+      <div class="rm-meta">${nx.parent?`<span>${esc(nx.parent)}</span>`:''}${nx.due?`<span>יעד: ${esc(rel(nx.due))}</span>`:''}${nx.est?`<span>${esc(fmtEst(nx.est,nx.estAI))}</span>`:''}</div>
+      <div class="rm-act"><button type="button" class="rm-go" data-open="${esc(nx.item.id)}">${DS.icon('arrowUpLeft','ico-sm')}התחל עכשיו</button>${nx.step?`<button type="button" class="rm-o" data-snooze="${esc(nx.key)}">דחה למחר</button>`:''}</div></div>`});
+  const sig=JSON.stringify([R.map(r=>r.id+r.remindAt+r.title),nx&&nx.key,remForm]);if(sig===remSig&&c.querySelector('.rm-head'))return;remSig=sig;
+  const tdy=iso(TODAY),inH=new Date(Date.now()+3600e3);const hh=String(inH.getHours()).padStart(2,'0')+':'+String(inH.getMinutes()).padStart(2,'0');
+  c.innerHTML=`<div class="rm-head"><h2>${DS.icon('bell','ico-sm')}תזכורות${R.length?`<span class="num">${R.length}</span>`:''}</h2><button type="button" class="rm-add" data-remnew="1" aria-expanded="${remForm}">${DS.icon('plus','ico-sm')}תזכורת</button></div>
+    ${remForm?`<form class="rm-form" id="remForm"><input name="t" required placeholder="על מה להזכיר?" aria-label="על מה להזכיר" autocomplete="off"><div class="rm-fr"><input type="date" name="d" value="${tdy}" aria-label="תאריך"><input type="time" name="h" value="${hh}" aria-label="שעה"></div><div class="rm-fr"><button type="submit" class="rm-go">שמירה</button><button type="button" class="rm-o" data-remnew="0">ביטול</button></div></form>`:''}
+    <div class="rm-list" aria-live="polite">${slides.map(x=>x.h).join('')||'<div class="empty">אין תזכורות. אפשר להוסיף מ"+ תזכורת".</div>'}</div>${slides.length>1?`<div class="dn-dots rm-dots" aria-hidden="true">${slides.map(()=>'<i></i>').join('')}</div>`:''}`;
+  if(remForm)c.querySelector('#remForm input[name=t]')?.focus();remShow(remIdx);remTick()}
+function remShow(i){const c=$1('#rem22');if(!c)return;const s=[...c.querySelectorAll('.rm-s')];if(!s.length)return;remIdx=(i+s.length)%s.length;s.forEach((x,n)=>{x.classList.toggle('on',n===remIdx);x.setAttribute('aria-hidden',String(n!==remIdx))});c.querySelectorAll('.rm-dots i').forEach((d,n)=>d.classList.toggle('on',n===remIdx))}
+function remTick(){clearInterval(remTimer);if(matchMedia('(prefers-reduced-motion:reduce)').matches||PREF('rotate','on')==='off')return;remTimer=setInterval(()=>{const c=$1('#rem22');if(!c||c.matches(':hover,:focus-within')||remForm||document.hidden)return;remShow(remIdx+1)},5200)}
+async function addReminder(t,d,h){const id='rem-'+uid();const at=d+'T'+(h||'09:00');const doc={kind:'task',title:t,status:'todo',owner:ME(),due:d,remindAt:at,priority:2,createdAt:now(),updatedAt:now()};
+  S.items[id]=doc;remForm=false;renderAll();toast('התזכורת נשמרה · '+remWhen(doc));try{await S.db.collection('items').doc(id).set(doc)}catch(e){toast('השמירה נכשלה: '+(e.message||e.code))}log(`הוסיף תזכורת "${t}" ל${remWhen(doc)}`,id)}
+document.addEventListener('click',e=>{const n=e.target.closest('[data-remnew]');if(n){remForm=n.dataset.remnew==='1'?!remForm:false;remSig='';renderRem();return}
+  const z=e.target.closest('[data-remsnz]');if(z){const [id,m]=z.dataset.remsnz.split('|');const it=S.items[id];if(!it)return;const d=new Date(Math.max(Date.now(),new Date(it.remindAt).getTime())+(+m)*60e3);const old=it.remindAt;
+    const v=iso(d)+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');saveItem(id,{remindAt:v});toastUndo(`"${it.title}" נדחה ל${remWhen({remindAt:v})}`,()=>saveItem(id,{remindAt:old}));remNotif();return}});
+document.addEventListener('submit',e=>{if(e.target.id!=='remForm')return;e.preventDefault();const f=e.target;const t=f.t.value.trim();if(!t)return;addReminder(t,f.d.value||iso(TODAY),f.h.value)});
+/* התראה ליד המדד */
+let remSeen=new Set();try{remSeen=new Set(JSON.parse(localStorage.getItem('mt-rem-seen')||'[]'))}catch(e){}
+function remNotif(){if(typeof S==='undefined'||!S.loaded)return;const hero=$1('#heroMt');if(!hero)return;const nowD=new Date();
+  const due=myReminders().filter(r=>{const t=new Date(r.remindAt);return t<=nowD&&nowD-t<36e6&&!remSeen.has(r.id+'@'+r.remindAt)});
+  let n=$1('#remNotif');if(!due.length){n?.remove();return}const r=due[due.length-1];
+  if(!n){n=document.createElement('div');n.id='remNotif';n.className='rem-notif';n.setAttribute('role','alert');hero.append(n)}
+  const key=r.id+'@'+r.remindAt;if(n.dataset.k!==key&&!n.dataset.k)toast('⏰ '+r.title);n.dataset.k=key;
+  n.innerHTML=`<span class="rn-ic">${DS.icon('bell')}</span><span class="rn-tx"><small>תזכורת · ${esc(remWhen(r))}${due.length>1?` · ועוד ${due.length-1}`:''}</small><b>${esc(r.title)}</b></span>
+    <span class="rn-act"><button type="button" data-open="${esc(r.id)}" data-remack="${esc(key)}">פתיחה</button><button type="button" data-remsnz="${esc(r.id)}|10">עוד 10 דק׳</button><button type="button" class="rn-x" data-remack="${esc(key)}" aria-label="סגירה">${DS.icon('plus','ico-sm')}</button></span>`}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-remack]');if(!a)return;remSeen.add(a.dataset.remack);try{localStorage.setItem('mt-rem-seen',JSON.stringify([...remSeen].slice(-200)))}catch(x){}const n=$1('#remNotif');if(n)n.dataset.k='';setTimeout(remNotif,0)});
+setInterval(remNotif,20000);
+
+/* ---- למטה בדף הבית: מה כבר נעשה, ומה אפשר לתת לקלוד בינתיים (קטנים) ---- */
+function ensureBottom(){const bento=$1('#v-today>.bento');if(!bento||$1('#bottom22'))return;const w=document.createElement('div');w.id='bottom22';w.className='s12 bottom-row';w.dataset.cid='bottom22';w.dataset.cname='מה נעשה וקלוד בינתיים';
+  w.innerHTML='<div class="card pane bottom22" id="done22"></div><div class="card pane bottom22" id="claude22"></div>';bento.append(w)}
+let doneMore=false;
+function renderBottom(){ensureBottom();if(typeof S==='undefined'||!S.loaded)return;const d=$1('#done22'),c=$1('#claude22');
+  if(d&&typeof feedList==='function'){const f=feedList();const L=f.slice(0,doneMore?14:5);
+    d.innerHTML=`<div class="b2-head"><h2>${DS.icon('check','ico-sm')}מה כבר נעשה</h2><span class="b2-n">${f.length?`${f.length} פעולות`:''}</span></div>
+      <div class="b2-list">${L.map(x=>`<div class="b2-row" ${x.id?`data-open="${esc(x.id)}" role="button" tabindex="0"`:''}><span class="avatar pa">${av(x.who)}</span><span class="b2-t">${x.html}</span><small>${esc(tsRel(x.at))}</small></div>`).join('')||'<div class="empty">עוד אין פעילות. כל סימון "בוצע" יופיע כאן.</div>'}</div>
+      ${f.length>5?`<button type="button" class="b2-more" data-donemore="1">${doneMore?'פחות':'עוד '+Math.min(9,f.length-5)}</button>`:''}`}
+  if(c&&typeof units==='function'){const bg=units(false).filter(u=>!u.done&&(u.bg||u.item.claudeCan));const waiting=bg.filter(u=>!inQueue(u.key));
+    c.innerHTML=`<div class="b2-head"><h2><span class="b2-flame">${DS.icon('sparkle','ico-sm')}</span>קלוד יכול בינתיים</h2>${waiting.length>1?`<button type="button" class="b2-all" data-bproxy="sendAllBg">שלח הכול (${waiting.length})</button>`:''}</div>
+      <div class="b2-list">${bg.slice(0,4).map(u=>`<div class="b2-row" data-open="${esc(u.item.id)}" role="button" tabindex="0">${thumbOf(u.item)||'<span class="th22 none"></span>'}<span class="b2-t"><b>${esc(u.title)}</b><small>${esc(u.parent||'')}${u.est?' · '+esc(fmtEst(u.est,u.estAI)):''}</small></span><button type="button" class="b2-send ${inQueue(u.key)?'on':''}" data-send="${esc(u.key)}">${inQueue(u.key)?'בתור':'לקלוד'}</button></div>`).join('')||'<div class="empty">אין כרגע משהו שקלוד יכול להכין. סמן שלב "לקלוד" כדי שיופיע כאן.</div>'}</div>
+      ${bg.length>4?`<a class="b2-more" href="#agents">עוד ${bg.length-4} בקלוד וסוכנים</a>`:''}`}}
+document.addEventListener('click',e=>{if(e.target.closest('[data-donemore]')){doneMore=!doneMore;renderBottom()}});
+
+/* ---- הגדרות: רקעים, תצוגות והסתרות במקום אחד ---- */
+const WTHUMB=__WALLTHUMBS__;
+function sideSettings(){const nav=$1('#app .sb-nav');if(!nav||$1('#setBtn'))return;const b=document.createElement('button');b.type='button';b.className='sb-item';b.id='setBtn';
+  b.innerHTML=`<span class="i">${DS.icon('settings','ico-sm')}</span><span class="lbl">הגדרות</span>`;const after=nav.querySelector('.sg[data-proxy="arrangeBtn"]')||$1('#tourBtn');(after||nav.lastElementChild).before(b)}
+function ensureSet(){let el=$1('#setPanel');if(el)return el;el=document.createElement('section');el.id='setPanel';el.className='setp';el.hidden=true;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-labelledby','setH');document.body.append(el);return el}
+function seg(name,val,opts){return `<div class="st-seg" role="radiogroup" aria-label="${esc(name)}">${opts.map(([v,t])=>`<button type="button" role="radio" aria-checked="${v===val}" data-setv="${esc(name)}|${esc(v)}">${esc(t)}</button>`).join('')}</div>`}
+function renderSet(){const el=ensureSet();if(el.hidden)return;const W=window.MT_WALLDATA;const cur=W?W.get():'';const hero=$1('#heroMt');
+  const walls=W?W.NAMES.map(([k,n])=>{const sk=document.documentElement.dataset.skin==='light'?'light':'dark';const ph=k.startsWith('ph-');const src=ph?WTHUMB[k.slice(3)]:W.WALLS[k+'|'+sk];
+    return `<button type="button" class="st-wall ${k===cur?'on':''}" data-setwall="${esc(k)}" aria-pressed="${k===cur}"><span style="background-image:url(&quot;${src}&quot;)"></span><em>${esc(n)}</em></button>`}).join(''):'';
+  const cards=[...document.querySelectorAll('#v-today [data-arrange] > [data-cid]')].filter(c=>c.dataset.cid!=='brief8');
+  el.innerHTML=`<div class="setp-in"><header class="setp-top"><h2 id="setH">${DS.icon('settings')}הגדרות</h2><button type="button" class="setp-x" data-setclose="1" aria-label="סגירה">${DS.icon('plus')}</button></header>
+    <section class="st-sec"><h3>רקע</h3><p>לכל הפלטפורמה וגם ל"על סדר היום". הבחירה נשמרת בדפדפן הזה.</p><div class="st-walls">${walls}</div></section>
+    <section class="st-sec"><h3>תצוגה</h3>
+      <div class="st-row"><span><b>מדד העבודה</b><small>אפשר גם בלחיצה על השעון עצמו</small></span>${seg('meter',hero?.dataset.meter||'glass',[['glass','שעון חול'],['gauge','מד'],['none','בלי']])}</div>
+      <div class="st-row"><span><b>המדדים</b><small>ימים ליריד, צעדים, שלבים, תקועים</small></span>${seg('kpis',PREF('kpis','brief'),[['brief','בתוך הבריף'],['card','חלון נפרד']])}</div>
+      <div class="st-row"><span><b>הבריף בפתיחה</b><small>פתוח או סגור כשנכנסים</small></span>${seg('brief',briefOpen?'open':'closed',[['open','פתוח'],['closed','סגור']])}</div>
+      <div class="st-row"><span><b>פתיחת כרטיס</b><small>חלון בצד או במרכז המסך</small></span>${seg('open',document.documentElement.classList.contains('open-center')?'center':'side',[['side','בצד'],['center','במרכז']])}</div>
+      <div class="st-row"><span><b>החלפה אוטומטית</b><small>"מה יש לנו היום" והתזכורות עוברים פריט אחרי פריט</small></span>${seg('rotate',PREF('rotate','on'),[['on','פועל'],['off','כבוי']])}</div></section>
+    <section class="st-sec"><h3>מה מופיע בתמונת מצב</h3><p>כרטיס כבוי לא נמחק, הוא רק מוסתר.</p><div class="st-cards">${cards.map(c=>`<label class="st-card"><input type="checkbox" data-setcard="${esc(c.dataset.cid)}" ${c.hidden?'':'checked'}><span>${esc(c.dataset.cname||c.dataset.cid)}</span></label>`).join('')}</div>
+      <div class="st-btns"><button type="button" class="st-b" data-setarr="1">${DS.icon('sliders','ico-sm')}סידור הלוח בגרירה</button><button type="button" class="st-b ghost" data-resetlayout="1">איפוס הסידור</button></div></section>
+    <section class="st-sec"><h3>עזרה</h3><div class="st-btns"><button type="button" class="st-b ghost" data-settour="1">${DS.icon('help','ico-sm')}מדריך למערכת</button></div></section></div>`}
+function openSet(){const el=ensureSet();el.hidden=false;document.documentElement.classList.add('setp-open');renderSet();el.querySelector('.setp-x')?.focus()}
+function closeSet(){const el=$1('#setPanel');if(!el||el.hidden)return;el.hidden=true;document.documentElement.classList.remove('setp-open');$1('#setBtn')?.focus()}
+document.addEventListener('click',e=>{if(e.target.closest('#setBtn')){openSet();return}
+  if(!e.target.closest('#setPanel'))return;
+  if(e.target.closest('[data-setclose]')||e.target===$1('#setPanel')){closeSet();return}
+  const w=e.target.closest('[data-setwall]');if(w&&window.MT_WALLDATA){MT_WALLDATA.apply(w.dataset.setwall);renderSet();return}
+  const v=e.target.closest('[data-setv]');if(v){const [k,val]=v.dataset.setv.split('|');
+    if(k==='meter')$1('#heroMt')?._setMeter?.(val);
+    if(k==='kpis'){SETPREF('kpis',val);applyPrefs();renderDeck()}
+    if(k==='brief'){briefOpen=val==='open';try{localStorage.setItem('mt-brief-open',briefOpen?'1':'0')}catch(x){}heroTrim();renderDeck()}
+    if(k==='open'){const isC=document.documentElement.classList.contains('open-center');if((val==='center')!==isC)$1('#openModeT')?.click()}
+    if(k==='rotate'){SETPREF('rotate',val);dnTick();remTick()}
+    renderSet();return}
+  const cd=e.target.closest('[data-setcard]');if(cd){const c=document.querySelector(`#v-today [data-arrange] > [data-cid="${CSS.escape(cd.dataset.setcard)}"]`);if(!c)return;
+    if(cd.checked&&c.hidden){const u=document.createElement('button');u.dataset.unhide=c.dataset.cid;u.hidden=true;document.body.append(u);u.click();u.remove()}
+    else if(!cd.checked&&!c.hidden){addCtlSafe(c);c.querySelector(':scope>.cardctl .cc-hide')?.click()}setTimeout(renderSet,50);return}
+  if(e.target.closest('[data-setarr]')){closeSet();location.hash='#today';const b=$1('#arrangeBtn');if(b){const h=b.hidden;b.hidden=false;b.click();b.hidden=h}return}
+  if(e.target.closest('[data-settour]')){closeSet();$1('#tourBtn')?.click()}},true);
+function addCtlSafe(c){if(!c.querySelector(':scope>.cardctl')){const s=document.querySelector('#v-today [data-cid] > .cardctl');if(s)c.prepend(s.cloneNode(true))}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$1('#setPanel:not([hidden])'))closeSet()});
+new MutationObserver(()=>{if($1('#setPanel:not([hidden])'))renderSet()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-wp','class']});
+
+function paintV22(){try{sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery()}catch(e){console.error(e)}}
 const _ra22=window.renderAll;window.renderAll=function(){const r=_ra22.apply(this,arguments);paintV22();return r};
 new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded)dressRows()}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
 

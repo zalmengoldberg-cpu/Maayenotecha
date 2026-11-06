@@ -158,6 +158,11 @@ for _lv in ('calm','busy','urgent'):
 sub1("{target:'[data-tour=cta]',tapTarget:'#startBtn',title:'מה מחכה לנו',text:'הכפתור הכהה עובר על הדברים שמחכים לך אחד אחרי השני. לידו סידור הלוח: גוררים ומסתירים כרטיסים.',",
      "{target:'[data-tour=cta]',tapTarget:'#briefBtn',title:'הבריף',text:'בריף בוקר, צהריים או ערב לפי השעה. לחיצה פותחת כרטיסייה לכל נושא ואיפה הוא עומד, ומכל כרטיסייה ממשיכים לפתרון.',")
 
+# מסך ההגדרות קורא את רשימת הרקעים ומחיל רקע דרך אותו קוד של הבורר
+sub1("apply(get());\nnew MutationObserver(()=>apply(get()))", "apply(get());window.MT_WALLDATA={WALLS,NAMES,get:()=>get(),apply:k=>{try{localStorage.setItem('mt-bg2-'+sk(),k)}catch(x){}apply(k)}};\nnew MutationObserver(()=>apply(get()))")
+# תמונות קטנות של הרקעים לבורר ולמסך ההגדרות
+THUMBS = {k: uri(B / 'walls' / f'thumb-{k}.webp') for k in WALLS}
+
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
 assert ds_old
@@ -167,7 +172,7 @@ s = s[:ds_old.start()] + '<script>' + ds_new + '</script>' + s[ds_old.end():]
 # ---------- 5. v21.js אחרי v19.js ----------
 v19 = re.search(r'<script>/\* ===== v19:.*?</script>', s, flags=re.S)
 assert v19
-v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge-a.webp')).replace('__WALLSJSON__', (B / 'walls' / 'walls.json').read_text(encoding='utf8').strip())
+v21js = (B / 'v21.js').read_text(encoding='utf8').replace('__SITEICON__', uri(ref.parent / 'assets' / 'logos' / 'maayanotecha-icon.svg')).replace('__GAUGEIMG__', uri(B / 'icons' / 'meter-gauge-a.webp')).replace('__WALLSJSON__', (B / 'walls' / 'walls.json').read_text(encoding='utf8').strip()).replace('__WALLTHUMBS__', _json.dumps(THUMBS))
 s = s[:v19.end()] + '\n<script>' + v21js + '</script>' + s[v19.end():]
 
 OUT.write_text(s, encoding='utf8')
