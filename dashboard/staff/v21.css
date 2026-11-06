@@ -1018,6 +1018,10 @@ textarea.msg{width:100%;min-height:110px;box-sizing:border-box;resize:vertical;f
 .pal .ans .acts8{display:flex;flex-wrap:wrap;gap:6px}
 .pal .ans .src{font-size:var(--fs-micro);color:var(--ink-400)}
 
+/* הוסר מהממשק (החלטה של זלמן 6.11, אחרי הפרסום): השבבים בהירו, עיגולי הפעולות המהירות והסטוריז, בכל המסכים.
+   האלמנטים נשארים מוסתרים במבנה כי הקוד הישן (v19) מצפה להם */
+#heroVis,#circles,#circlesShow,.circles-page,[data-circles-show]{display:none!important}
+
 /* ==========================================================================
    התנהגות (מגירה, חלון, חיפוש, הודעה, סידור הלוח) – מראה מהסקיל
    ========================================================================== */

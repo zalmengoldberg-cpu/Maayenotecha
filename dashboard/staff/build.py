@@ -95,7 +95,7 @@ for a, z in [('#2A4F95"></i>פוסט פרשה', '#3F5499"></i>פוסט פרשה'
              ('#1C86A3"></i>ניוזלטר', '#4A8BAA"></i>ניוזלטר'), ('#7B4AA8"></i>אתר ומותג', '#A9865C"></i>אתר ומותג'), ('#123D2B"></i>אירוע', '#141A33"></i>אירוע')]:
     sub1(a, z)
 
-# ---------- 3ד. עיגולי פעולות מהירות בכל מסך (יומן ההחלטות), עם הפעולות של אותו מסך ----------
+# ---------- 3ד. עיגולי פעולות מהירות: הוסרו מכל המסכים (החלטה 6.11, אחרי הפרסום). הפונקציה circles() נשארת לשימוש עתידי ----------
 def circles(name, buttons):
     qa = ''.join(f'<button class="qa{" ai ai-mode" if ai else ""}" type="button" {attr}><span class="qi" data-icon="{ic}"></span>{lbl}</button>'
                  for attr, ic, lbl, ai in buttons)
@@ -104,21 +104,8 @@ def circles(name, buttons):
             f'<div class="quick">{qa}</div></section>'
             '<button class="circles-show" type="button" data-circles-show hidden>הצגת הקיצורים</button>')
 AI = ('data-pal="1"', 'sparkle', 'שאל את קלוד', True)
-tasks_head_end = s.index('<p class="muted"', s.index('<section class="view" id="v-tasks">'))
-s = s[:tasks_head_end] + circles('tasks', [('data-new="task"', 'check', 'משימה', False),
-                                           ('data-proxy="estAll"', 'clock', 'הערכת זמנים', False), AI]) + s[tasks_head_end:]
 sub1('<span><i style="background:var(--gold)"></i>היום</span>', '<span><i style="background:var(--royal)"></i>היום</span>')
 sub1('<span><i style="background:color-mix(in srgb,var(--plum) 30%,transparent)"></i>יריד החסידות</span>', '<span><i style="background:var(--gold-100)"></i>יריד החסידות</span>')
-gw = s.index('<div class="gwrap"', s.index('<section class="view" id="v-gantt">'))
-s = s[:gw] + circles('gantt', [('data-new="project"', 'box', 'פרויקט', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[gw:]
-ab = s.index('<div class="agban"', s.index('<section class="view" id="v-agents">'))
-s = s[:ab] + circles('agents', [('data-proxy="promoBtn"', 'send', 'שלח הכול לתור', False), ('data-proxy="copyRun"', 'quote', 'העתק פקודה', False), AI]) + s[ab:]
-pg = s.index('<div class="people"', s.index('<section class="view" id="v-people">'))
-s = s[:pg] + circles('people', [('data-proxy="addPerson"', 'users', 'איש קשר', False), AI]) + s[pg:]
-kan = s.index('<div class="kanban"', s.index('<section class="view" id="v-board">'))
-s = s[:kan] + circles('board', [('data-new="content"', 'image', 'תוכן', False), ('data-new="project"', 'box', 'פרויקט', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[kan:]
-cal_grid = s.index('<div class="calgrid">', s.index('<section class="view" id="v-calendar">'))
-s = s[:cal_grid] + circles('calendar', [('data-new="content"', 'image', 'תוכן', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[cal_grid:]
 
 # ---------- 3ה. תמונות מ-fal (החלטה 6.11): כריכה מאוירת, אייקון לסוכן, אייקון מצב ריק לכל רשימה ----------
 # כריכה שנוצרה ב-fal (thumbArt) מוצגת כאיור מלא ולא כספר על רקע מטושטש

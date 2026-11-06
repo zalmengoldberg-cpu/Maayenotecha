@@ -39,7 +39,8 @@ document.addEventListener('click',e=>{const h=e.target.closest('[data-circles-hi
   if(h){$1('#circlesHide')?.click();syncCircles();s||h.closest('.circles-page')?.nextElementSibling?.focus()}
   else if(s){$1('#circlesShow')?.click();syncCircles()}
   else if(e.target.closest('#circlesHide,#circlesShow'))setTimeout(syncCircles)});
-syncCircles();
+/* העיגולים והסטוריז הוסרו (6.11): מסמנים כמוסתרים כדי שהמדריך ידלג על השלבים שלהם */
+{const c=$1('#circles');if(c)c.hidden=true}
 
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();
