@@ -17,3 +17,9 @@
 - [x] 5. שגרת התמונות רצה: 5 כריכות (brand, ga, newsletter, site, workspace) ו-6 אייקוני סוכנים, הועלו כנכסים (`staff/live-assets/`) וחוברו במסד; רשומה ב-activity.
 - [~] 6. משימה מתוזמנת נוצרה (`trig_01XaCccra5iCavzLMycHhMhZ`, כל יום 05:47 שעון ישראל), **בלי קונקטור fal** – צריך להוסיף אותו ב-claude.ai (ראו `ROUTINE_PROMPT.md`).
 - [ ] 7. העלאת `maayanotecha-staff-ui.zip` ל-claude.ai – זלמן.
+
+## גרסה 23 (6.11.2026) — פורסמה
+- אותו קישור: https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z (הרשאות לא שונו: db, user, room, assets, sample).
+- נכסים שהועלו לפני הפרסום: 8 רקעים (`staff/walls/walls.json`) ו-6 אווטארים; במסד: `people/<id>.avatar`.
+- גיבוי: `dashboard/backups/v23_published_2026-11-06.html`.
+
