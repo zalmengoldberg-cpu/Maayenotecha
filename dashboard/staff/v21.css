@@ -262,10 +262,31 @@ button,input,select,textarea{font-family:inherit}
 .plist .pr b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pq{flex:none;width:40px;height:48px;border-radius:var(--r-xs);overflow:hidden;display:grid;place-items:center}
 .pq.blk{box-shadow:0 0 0 2px var(--bad)}
-.cover{display:grid;place-items:center;width:100%;height:100%;background:linear-gradient(160deg,var(--a,var(--royal-200)),var(--b,var(--royal)));color:#fff}
-.cover svg{width:18px;height:18px}
-.cover img{width:100%;height:100%;object-fit:cover}
-.cover.haslogo img,.cover img.logo{object-fit:contain;padding:4px;box-sizing:border-box}
+/* כריכה (באפיון): גרדיאנט בצבע הערוץ מהפלטה של הסקיל, אייקון בצ'יפ זכוכית, או ספר אמיתי על רקע מטושטש */
+.thumb{position:relative;display:block;overflow:hidden;aspect-ratio:16/9;background:var(--navy-night)}
+.thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.cover{position:absolute;inset:0;overflow:hidden;color:#fff;background:linear-gradient(135deg,var(--a,var(--ink-800)) 0%,var(--b,var(--royal)) 100%)}
+.cover.gen::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 85% -15%,rgba(255,255,255,.32),transparent 55%),radial-gradient(70% 60% at 0% 110%,rgba(0,0,0,.25),transparent 60%)}
+.cv-ico{position:absolute;z-index:1;top:12px;right:12px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.cv-ico svg{width:16px;height:16px}
+.cv-t{position:absolute;z-index:1;right:14px;left:14px;bottom:10px;display:grid;gap:1px}
+.cv-t small{font-size:var(--fs-micro);opacity:.8}
+.cv-t b{font-size:var(--fs-lead);font-weight:var(--fw-medium);line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cover.photo .cv-bg{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;filter:blur(18px) saturate(1.3) brightness(.85)}
+.cover.photo .cv-fg{position:absolute;z-index:1;height:84%;width:auto;top:8%;left:50%;transform:translateX(-50%);border-radius:3px;object-fit:cover;
+  box-shadow:0 14px 28px -8px rgba(0,0,0,.5),0 2px 6px rgba(0,0,0,.2)}
+.cover.photo .cv-fan{position:absolute;inset:0;z-index:1}
+.cover.photo .cv-fan .cv-fg{transform:translateX(calc(-50% + var(--x))) rotate(var(--r))}
+.cover.photo .cv-fan .cv-fg:nth-child(2){z-index:2}
+.cover.photo.haslogo{background:radial-gradient(120% 120% at 70% 0%,color-mix(in srgb,var(--b) 60%,#fff),var(--a))}
+.cover.photo.haslogo .cv-fg.logo{height:auto;max-height:70%;max-width:74%;top:50%;transform:translate(-50%,-50%);box-shadow:none;border-radius:0;object-fit:contain;filter:drop-shadow(0 8px 18px rgba(0,0,0,.3))}
+.cover.mini{position:relative;inset:auto;display:grid;place-items:center;width:100%;height:100%;border-radius:inherit}
+.cover.mini svg{position:relative;z-index:1;width:46%;height:46%}
+.cover.mini .cv-fg{position:static;transform:none;width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none}
+.cover.mini.haslogo .cv-fg.logo{position:static;transform:none;width:86%;height:86%;object-fit:contain}
+.pc.blocked .thumb::after{content:"תקוע";position:absolute;z-index:2;top:12px;left:12px;height:22px;padding:0 10px;display:grid;place-items:center;border-radius:var(--r-pill);
+  font-size:var(--fs-micro);font-weight:var(--fw-medium);background:var(--bad);color:#fff}
 
 /* היום והימים הקרובים: agenda של הסקיל */
 #tday{display:grid;gap:6px}
@@ -348,8 +369,7 @@ button,input,select,textarea{font-family:inherit}
 /* כל הפרויקטים */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:var(--gutter)}
 .card.pc{padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
-.card.pc .thumb{height:120px;overflow:hidden}
-.card.pc .thumb>*{width:100%;height:100%}
+.card.pc .thumb{aspect-ratio:16/8}
 .card.pc .body{display:grid;gap:10px;padding:14px 16px 16px}
 .card.pc .tl{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .card.pc h3{margin:0;font-size:var(--fs-body);font-weight:var(--fw-medium);color:var(--ink-900);line-height:var(--lh-snug)}
@@ -624,6 +644,30 @@ html:not(.cal-clean) #calClean{display:none}
 .cg-pin.late{background:var(--bad)}
 
 /* ==========================================================================
+   קנבן: עמודה לכל סטטוס, כרטיס = card.pc עם כריכה
+   ========================================================================== */
+#v-board>.toolbar{margin:8px 0 var(--gutter)}
+#v-board>.toolbar h2{margin:0 0 0 auto;font-size:var(--fs-h3);font-weight:var(--fw-medium);color:var(--ink-900)}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(264px,1fr);gap:var(--gutter);overflow-x:auto;padding-bottom:12px;align-items:start;scrollbar-width:thin}
+.col{display:flex;flex-direction:column;gap:10px;min-height:220px;padding:12px;border-radius:var(--r-lg);background:var(--glass-1);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));
+  box-shadow:inset 0 0 0 1px var(--glass-edge),var(--elev-2);transition:box-shadow var(--t-fast)}
+.col.over{box-shadow:inset 0 0 0 2px var(--royal),0 0 0 4px var(--royal-100)}
+.col>h3{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;padding:2px 4px;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.col>h3 .chip{background:var(--royal-100);color:var(--royal)}
+.col .empty{padding:18px 10px;border-radius:var(--r-tile);box-shadow:inset 0 0 0 1.5px var(--line-strong);border:0}
+.kc{cursor:grab}
+.kc .body{gap:8px;padding:12px 14px 14px}
+.kc .thumb{aspect-ratio:16/7}
+.kc .cv-t b{font-size:var(--fs-body)}
+.kc h3{font-size:var(--fs-small)}
+.stl-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.kdates{display:inline-flex;gap:8px;font-size:var(--fs-micro);color:var(--ink-400)}
+.kdates span{display:inline-flex;align-items:center;gap:3px}
+.kdates svg{width:12px;height:12px}
+html.dragging,html.dragging *{cursor:grabbing!important;user-select:none}
+
+/* ==========================================================================
    התנהגות (מגירה, חלון, חיפוש, הודעה, סידור הלוח) – מראה מהסקיל
    ========================================================================== */
 .scrim{position:fixed;inset:0;z-index:40;background:rgba(20,26,51,.3);opacity:0;pointer-events:none;transition:opacity var(--t-base)}
@@ -683,6 +727,8 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
   html.sb-open .sb-scrim{opacity:1;pointer-events:auto}
 }
 @media (max-width:760px){
+  .kanban{grid-auto-columns:86%;scroll-snap-type:x mandatory;margin-inline:-16px;padding-inline:16px}
+  .kanban>*{scroll-snap-align:center}
   .calhead-act{width:100%}
   .cal{gap:3px}
   .cal .d{min-height:66px;padding:4px 3px;border-radius:var(--r-sm);overflow:hidden}
