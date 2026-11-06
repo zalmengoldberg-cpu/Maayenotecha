@@ -251,7 +251,7 @@ button,input,select,textarea{font-family:inherit}
 #attCard .att-note{margin-top:2px;font-size:var(--fs-micro);color:var(--ink-400)}
 #attCard .ch .muted{font-size:var(--fs-caption)}
 #attN{background:var(--bad-bg);color:var(--bad)}
-.att .ar{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto auto;align-items:center}
+.att .ar{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto auto auto;align-items:center}
 .att .ar>span:nth-child(2){min-width:0}
 .att .ar>span:nth-child(2) b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .att .ai2{width:34px;height:34px;border-radius:50%;display:grid;place-items:center}
@@ -1139,7 +1139,7 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
   #kpiPager{display:flex;grid-column:1/-1}
   #kpis>.kpi{flex:none;width:74%;scroll-snap-align:center}
   .att .ar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"ic tx go" "ic pl go"}
-  .att .ar>.ai2{grid-area:ic}.att .ar>span:nth-child(2){grid-area:tx}.att .ar>.pill{grid-area:pl;justify-self:start}
+  .att .ar>.ai2,.att .ar>.ai22{grid-area:ic}.att .ar>.avatar.pa{grid-area:pl;justify-self:end}.att .ar>span:nth-child(2){grid-area:tx}.att .ar>.pill{grid-area:pl;justify-self:start}
   .att .ar>.est,.att .ar>span:empty,.att .ar>.chev{display:none}
   .att .ar>.go{grid-area:go}
   .ch{flex-wrap:wrap}
@@ -1150,3 +1150,167 @@ html.arranging [data-arrange]>[data-cid]{outline:1.5px dashed var(--royal-200);o
   .drawer.on{transform:none}
 }
 @media (prefers-reduced-motion:reduce){.qa.ai .qi::before{animation:none}.drawer,.scrim{transition:none}}
+
+/* ==========================================================================
+   v22 (6.11) — תמונת מצב לפי הסימונים 1–4
+   ========================================================================== */
+/* פריסה: הירו + עמודה צדדית ("מה יש לנו היום" ומתחתיו הלוח). ההירו והכרטיסים נשארים במקום שלהם
+   ב-DOM (סידור הלוח ממשיך לעבוד), רק נכנסים לאותו גריד */
+#v-today{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gutter);row-gap:var(--gutter);grid-auto-flow:row dense;align-items:start}
+#v-today>.mtx-wrap,#v-today>.bento{display:contents}
+#v-today>.mtx-wrap>.hero{grid-column:1/-1;grid-row:1}
+#v-today #dayNow{grid-column:1/span 6;grid-row:2;align-self:stretch}
+#v-today>.bento>#miniCal{grid-column:7/span 6;grid-row:2}
+@media (max-width:760px){
+  #v-today{row-gap:12px}
+  #v-today #dayNow{grid-column:1/-1;grid-row:2}
+  #v-today>.bento>#miniCal{grid-column:1/-1;grid-row:3}
+  .hero.meter-gauge .mgauge{top:44px;bottom:auto;height:150px;place-items:start center}.hero .mgauge svg{width:150px}.hero .mgauge .mg-read{display:none}
+}
+@media (min-width:1281px){
+  #v-today>.mtx-wrap>.hero{grid-column:1/span 8;grid-row:1;align-self:stretch}
+  #v-today #dayNow{grid-column:9/span 4;grid-row:1;align-self:stretch}
+  #v-today>.bento>.s12{grid-column:1/span 8}
+  #v-today>.bento>.s8{grid-column:span 8}
+  #v-today>.bento>.s6{grid-column:span 4}
+  #v-today>.bento>.s5,#v-today>.bento>.s4,#v-today>.bento>.s3{grid-column:span 4}
+  #v-today>.bento>#miniCal{grid-column:9/span 4;grid-row:2/span 3}
+  #v-today>.bento>#projGrid,#v-today>.bento>#sendAllBg{grid-column:1/-1}
+  #v-today .hero-art{width:66%}
+  #v-today .hero-copy{max-width:400px}
+}
+#v-today #dayNow{margin:0}
+@media (max-width:1280px){#v-today #dayNow{margin-top:0}}
+
+/* 1. מה יש לנו היום — כרטיס פתוח (open-top) של הסקיל + פרטי היום של hcal */
+.daynow{display:grid;align-content:start;gap:4px;padding:var(--pad-card) 20px 14px}
+.daynow .card-head{margin-bottom:0}
+.daynow .card-head h3{font-size:var(--fs-h5,18px)}
+.daynow .dn-today{border:0;background:none;cursor:pointer;font:inherit}
+.daynow .dn-detail{padding:8px 0 4px;gap:2px 14px;grid-template-columns:auto minmax(0,1fr) auto}
+.daynow .dn-detail .big b{font-size:44px}
+.daynow .dn-detail .big span{font-size:var(--fs-small);margin-top:4px}
+.daynow .dn-detail .date{font-size:var(--fs-body);grid-column:2}
+.daynow .dn-detail .count{grid-column:2;font-size:var(--fs-caption);line-height:1.4}
+.daynow .dn-act{grid-row:1/span 2;grid-column:3;align-self:center}
+.dn-list{display:grid;gap:8px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line-strong)}
+.dn-row{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer;padding:8px 10px}
+.dn-row .bullet{width:4px;align-self:stretch;border-radius:4px;background:var(--c,var(--royal-400));flex:none}
+.dn-row .meta{flex:1;min-width:0}
+.dn-row.done .meta b{text-decoration:line-through;color:var(--ink-400)}
+.dn-empty{padding:10px 0}
+.dn-empty .icon-3d{width:64px;height:64px}
+.dn-agenda{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;padding:10px 4px 2px;border:0;background:none;cursor:pointer;font:inherit;
+  color:var(--royal);font-size:var(--fs-small);font-weight:var(--fw-medium)}
+.dn-agenda span,.dn-agenda em{display:inline-flex;align-items:center;gap:6px;font-style:normal}
+.dn-agenda em{color:var(--ink-500);font-size:var(--fs-caption);font-weight:var(--fw-regular)}
+.dn-agenda:hover em{color:var(--royal)}
+/* הלוח שמתחת: רק החודש, פרטי היום עברו לאזור שמעליו */
+#miniCal .hcal-detail,#miniCal .hcal-events{display:none}
+#miniCal .hcal-nav{margin-top:-58px;padding:0 10px 10px;pointer-events:none;position:relative}
+#miniCal .hcal-nav .btn{pointer-events:auto;width:40px;height:40px;min-height:0}
+#miniCal .hcal-sheet{padding-bottom:62px}
+@media (min-width:1281px){#miniCal .hcal-day{height:54px}#miniCal .hcal-top{margin-bottom:10px}#miniCal .hcal-month{font-size:38px}}
+
+/* 2. תמונת פרויקט + אדם + פלטפורמה (כמו טבלת ההזמנות ותיבות הערוצים של הסקיל) */
+.th22{width:36px;height:36px;flex:none;border-radius:10px;overflow:hidden;position:relative;display:block;box-shadow:0 4px 10px -4px rgba(20,26,51,.28)}
+.th22 .cover{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;min-height:0;aspect-ratio:auto}
+.th22 .cover .cv-t,.th22 .cover small{display:none}
+.th22 .cover .cv-ico{transform:scale(.7)}
+.th22.none{box-shadow:none;background:var(--surface-2)}
+.avatar.pa{--sz:32px;display:inline-grid;place-items:center}
+.avatar.pa.lg{--sz:40px}
+.avatar.pa>.av{width:100%;height:100%;margin:0;font-size:11px}
+.avatar.pa>.av img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.avatar.pa>.brand{position:absolute;bottom:-3px;left:-3px;--sz:16px;box-shadow:0 0 0 2px #fff}
+.brand.site img{width:76%;height:auto}
+#attList .ai22{position:relative;flex:none;display:block}
+#attList .ai22 .th22{width:40px;height:40px}
+#attList .ai22 .warn-dot{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--bad);color:#fff;box-shadow:0 0 0 2px #fff}
+#attList .ai22 .warn-dot svg{width:11px;height:11px}
+#v-today .brief8 .bc .avatar.pa>.brand{box-shadow:0 0 0 2px var(--navy-night)}
+
+/* 3. מדד העבודה כסוללה */
+.pulse-chip.has-batt{display:flex;align-items:center;gap:10px}
+.batt{position:relative;display:inline-grid;grid-template-columns:repeat(5,1fr);gap:2px;width:54px;height:22px;padding:3px;border-radius:6px;flex:none;
+  background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1.5px var(--ink-300),0 1px 0 #fff}
+.batt i{border-radius:2px;background:rgba(20,26,51,.08);transition:background .6s var(--ease)}
+.batt i.on{background:var(--c);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.batt u{position:absolute;left:-4px;top:7px;width:3px;height:8px;border-radius:2px 0 0 2px;background:var(--ink-300)}
+.pulse-chip .ps-level{filter:none!important}
+
+/* 4. מד עם מחוגה במקום שעון החול */
+.mgauge{position:absolute;top:56px;bottom:0;left:0;width:52%;display:none;place-items:center;pointer-events:none}
+.mgauge svg{width:min(86%,250px);height:auto;filter:drop-shadow(0 18px 26px rgba(20,26,51,.22))}
+.mgauge .mg-ticks line{stroke:var(--ink-500);stroke-width:1}
+.mgauge .mg-ticks line.big{stroke:var(--ink-800);stroke-width:2}
+.mgauge .mg-ticks text{font:500 9px var(--font,Rubik);fill:var(--ink-700);text-anchor:middle}
+.mgauge .mg-load{font:700 8px var(--font,Rubik);fill:#C2412D;text-anchor:middle;letter-spacing:.02em}
+.mgauge .mg-needle{transform-origin:100px 100px;transform:rotate(var(--a,-120deg));transition:transform 1.4s cubic-bezier(.34,1.4,.5,1);filter:drop-shadow(0 2px 2px rgba(20,26,51,.35))}
+.mgauge .mg-read{position:absolute;left:50%;top:calc(50% + 34px);translate:-50% 0;display:grid;justify-items:center;line-height:1.1}
+.mgauge .mg-v{font-size:22px;font-weight:var(--fw-regular);color:var(--ink-900)}
+.mgauge .mg-l{font-size:var(--fs-caption);font-weight:var(--fw-medium)}
+.hero.meter-gauge .hero-art>img,.hero.meter-gauge>.hero-sparks{opacity:0!important;visibility:hidden}
+.hero.meter-gauge .mgauge{display:grid}
+.meter-tog{position:absolute;z-index:5;left:16px;bottom:14px;display:inline-flex;gap:2px;padding:3px;border-radius:var(--r-pill);background:rgba(255,255,255,.72);
+  box-shadow:0 0 0 1px rgba(255,255,255,.8),0 6px 16px -8px rgba(20,26,51,.3);backdrop-filter:blur(10px)}
+.meter-tog button{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:0;border-radius:var(--r-pill);background:none;cursor:pointer;
+  font:inherit;font-size:var(--fs-caption);color:var(--ink-500)}
+.meter-tog button[aria-pressed="true"]{background:var(--ink-900);color:#fff}
+@media (prefers-reduced-motion:reduce){.mgauge .mg-needle{transition:none}}
+
+/* 5. התדריך: אותו צבע ומרקם, אזור פתוח בלי מסגרת */
+#v-today .brief8{border-radius:0;box-shadow:none;padding:40px 56px;margin:-14px -16px;
+  -webkit-mask-image:linear-gradient(to left,transparent 0,#000 12%,#000 88%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(to left,transparent 0,#000 12%,#000 88%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%);mask-composite:intersect}
+
+/* "על סדר היום": עמוד מלא */
+html.agp-open{overflow:hidden}
+.agp{position:fixed;inset:0;z-index:70;overflow:auto;background:var(--canvas);
+  background-image:radial-gradient(90% 60% at 80% 0%,rgba(63,84,153,.10),transparent 70%),radial-gradient(70% 50% at 0% 100%,rgba(242,145,28,.08),transparent 70%)}
+.agp[hidden]{display:none}
+.agp-in{max-width:1180px;margin:0 auto;padding:28px 24px 48px;display:grid;gap:20px}
+.agp-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.agp-t{display:grid;gap:4px}
+.agp-t h2{margin:0;font-size:var(--fs-h2,34px);font-weight:var(--fw-light);color:var(--ink-900)}
+.agp-act{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.agp-x svg{transform:rotate(45deg)}
+.agp-body{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.agp-main{display:grid;gap:18px}
+.agp-g h4{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-500)}
+.agp-g h4 .num{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 6px;border-radius:var(--r-pill);background:var(--royal-100);color:var(--royal);font-size:11px}
+.agp .agenda{gap:8px}
+.agp .agenda-item{grid-template-columns:72px auto minmax(0,1fr) auto auto;background:var(--surface);border-radius:var(--r-tile);padding:10px 14px;border-top:0!important;
+  box-shadow:0 1px 0 rgba(20,26,51,.04),0 8px 20px -14px rgba(20,26,51,.25);cursor:pointer}
+.agp .agenda-item .tm{direction:rtl;text-align:right;font-weight:var(--fw-medium)}
+.agp .agenda-item.done .meta b{text-decoration:line-through;color:var(--ink-400)}
+.agp .agenda-item .th22{width:40px;height:40px}
+.agp .status.review{background:#EEEAF7;color:#6A55A8}
+.agp-side{display:grid;gap:14px}
+.agp-side .card{padding:16px;display:grid;gap:10px}
+.agp-side h4{margin:0;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-700)}
+.agp-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.agp-sum div{display:grid;gap:2px;padding:10px 4px;border-radius:var(--r-tile);background:var(--surface-2)}
+.agp-sum b{font-size:22px;font-weight:var(--fw-regular);color:var(--ink-900)}
+.agp-sum span{font-size:var(--fs-micro);color:var(--ink-500)}
+.agp-p{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:var(--r-sm);cursor:pointer}
+.agp-p:hover{background:var(--surface-2)}
+.agp-p b{flex:1;font-size:var(--fs-small);font-weight:var(--fw-medium);color:var(--ink-900)}
+.agp-p .num{font-size:var(--fs-caption);color:var(--ink-500)}
+.agp-p .avatar>.av{width:100%;height:100%;margin:0}
+.agp .ch-row{display:flex;align-items:center;gap:10px}
+.agp .ch-row .meta{display:grid;line-height:1.3}
+.agp .ch-row .meta b{font-size:var(--fs-small);font-weight:var(--fw-medium)}
+.agp .ch-row .meta span{font-size:var(--fs-micro);color:var(--ink-400)}
+@media (max-width:900px){.agp-body{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){
+  .mgauge{width:100%}
+  .agp-in{padding:18px 16px 40px}
+  .agp-t h2{font-size:26px}
+  .agp .agenda-item{grid-template-columns:auto minmax(0,1fr) auto;row-gap:6px}
+  .agp .agenda-item .tm{display:none}
+  .agp .agenda-item .status{grid-column:2/-1;justify-self:start}
+  .meter-tog{left:10px;bottom:10px}.meter-tog button span{display:none}.meter-tog button{padding:0 10px}
+  #v-today .brief8{padding:26px 20px}
+  .daynow{padding:16px}
+}
