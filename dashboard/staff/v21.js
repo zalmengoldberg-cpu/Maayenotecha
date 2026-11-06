@@ -158,8 +158,8 @@ function renderAgenda(){const el=ensureAgenda();if(el.hidden||typeof S==='undefi
       <button type="button" class="agx-x" data-agclose="1" aria-label="סגירה">${DS.icon('plus')}</button></header>
     ${agTab==='day'?`<div class="agx-day">${dayView}</div>`:weekView}</div>`;
   const f=el.querySelector('#agFlt');if(f){f.addEventListener('input',()=>{agQ=f.value.trim();const pos=f.selectionStart;renderAgenda();const g=$1('#agFlt');if(g){g.focus();g.setSelectionRange(pos,pos)}})}}
-function openAgenda(ds){agDay=ds||dnSel||iso(TODAY);const el=ensureAgenda();el.hidden=false;document.documentElement.classList.add('agp-open');renderAgenda();el.querySelector('.agx-x')?.focus();if(location.hash!=='#agenda')history.pushState(null,'','#agenda')}
-function closeAgenda(back){const el=$1('#agendaPage');if(!el||el.hidden)return;el.hidden=true;document.documentElement.classList.remove('agp-open');if(back&&location.hash==='#agenda')history.back();$1('[data-agenda]')?.focus()}
+function openAgenda(ds){agDay=ds||dnSel||iso(TODAY);document.documentElement.classList.remove('sb-open');document.querySelectorAll('#app .sb-nav [aria-current]').forEach(x=>x.removeAttribute('aria-current'));$1('#sbAgenda')?.setAttribute('aria-current','page');const el=ensureAgenda();el.hidden=false;document.documentElement.classList.add('agp-open');renderAgenda();el.querySelector('.agx-x')?.focus();if(location.hash!=='#agenda')history.pushState(null,'','#agenda')}
+function closeAgenda(back){const el=$1('#agendaPage');if(!el||el.hidden)return;$1('#sbAgenda')?.removeAttribute('aria-current');setTimeout(()=>{const a=$1(`#app .sb-nav a[href="${location.hash&&location.hash!=='#agenda'?location.hash:'#today'}"]`);if(a&&!document.querySelector('#app .sb-nav [aria-current]'))a.setAttribute('aria-current','page')},60);el.hidden=true;document.documentElement.classList.remove('agp-open');if(back&&location.hash==='#agenda')history.back();$1('[data-agenda]')?.focus()}
 /* צירוף הצעה ליום: נותן לה את התאריך (שלב: יעד השלב; משימה: יעד) */
 function planOn(id,i,ds){const it=S.items[id];if(!it)return;if(i!==''&&i!=null){const st=(it.steps||[])[+i];if(!st)return;const old=st.due||null;setStep(id,+i,{due:ds});toastUndo(`"${st.t}" צורף ל${ds===iso(TODAY)?'היום':fmt(ds)}`,()=>setStep(id,+i,{due:old}))}
   else{const old=it.due||null;saveItem(id,{due:ds});toastUndo(`"${it.title}" צורף ל${ds===iso(TODAY)?'היום':fmt(ds)}`,()=>saveItem(id,{due:old}))}log(`צירף ל${fmt(ds)}: ${(i!==''&&i!=null)?(it.steps[+i]||{}).t:it.title}`,id)}
@@ -438,7 +438,9 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-donemore]')){do
 
 /* ---- הגדרות: רקעים, תצוגות והסתרות במקום אחד ---- */
 const WTHUMB=__WALLTHUMBS__;
-function sideSettings(){const nav=$1('#app .sb-nav');if(!nav||$1('#setBtn'))return;const b=document.createElement('button');b.type='button';b.className='sb-item';b.id='setBtn';
+function sideAgenda(){const t=$1('#app .sb-nav a[href="#today"]');if(!t||$1('#sbAgenda'))return;const b=document.createElement('button');b.type='button';b.className='sb-item';b.id='sbAgenda';b.dataset.agenda='';
+  b.innerHTML=`<span class="i">${DS.icon('clock','ico-sm')}</span><span class="lbl">על סדר היום</span>`;t.after(b)}
+function sideSettings(){sideAgenda();const nav=$1('#app .sb-nav');if(!nav||$1('#setBtn'))return;const b=document.createElement('button');b.type='button';b.className='sb-item';b.id='setBtn';
   b.innerHTML=`<span class="i">${DS.icon('settings','ico-sm')}</span><span class="lbl">הגדרות</span>`;const after=nav.querySelector('.sg[data-proxy="arrangeBtn"]')||$1('#tourBtn');(after||nav.lastElementChild).before(b)}
 function ensureSet(){let el=$1('#setPanel');if(el)return el;el=document.createElement('section');el.id='setPanel';el.className='setp';el.hidden=true;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-labelledby','setH');document.body.append(el);return el}
 function seg(name,val,opts){return `<div class="st-seg" role="radiogroup" aria-label="${esc(name)}">${opts.map(([v,t])=>`<button type="button" role="radio" aria-checked="${v===val}" data-setv="${esc(name)}|${esc(v)}">${esc(t)}</button>`).join('')}</div>`}
