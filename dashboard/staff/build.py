@@ -120,6 +120,25 @@ s = s[:kan] + circles('board', [('data-new="content"', 'image', 'תוכן', Fals
 cal_grid = s.index('<div class="calgrid">', s.index('<section class="view" id="v-calendar">'))
 s = s[:cal_grid] + circles('calendar', [('data-new="content"', 'image', 'תוכן', False), ('data-new="task"', 'check', 'משימה', False), AI]) + s[cal_grid:]
 
+# ---------- 3ה. תמונות מ-fal (החלטה 6.11): כריכה מאוירת, אייקון לסוכן, אייקון מצב ריק לכל רשימה ----------
+# כריכה שנוצרה ב-fal (thumbArt) מוצגת כאיור מלא ולא כספר על רקע מטושטש
+sub1("if(it.thumb)return {img:[it.thumb]};", "if(it.thumb)return {img:[it.thumb],art:!!it.thumbArt};")
+sub1('return `<div class="cover photo${src.logo?\' haslogo\':\'\'}', 'return `<div class="cover photo${src.logo?\' haslogo\':\'\'}${src.art?\' art\':\'\'}')
+# סוכן עם אייקון תלת-ממדי (agents/<id>.img) מציג אותו במקום האייקון הקווי
+sub1('<span class="ic">${ICON[a.icon]}</span>',
+     '<span class="ic${agCfg(a.id).img?\' has-img\':\'\'}">${agCfg(a.id).img?`<img src="${esc(agCfg(a.id).img)}" alt="">`:ICON[a.icon]}</span>')
+# מצב ריק: אייקון ייעודי לכל רשימה (e-<id>), ואם עוד לא נוצר – האייקון הכללי של היום
+sub1("const ic=IC[EMPTY_IC[k]||'tasks'];", "const ic=IC['e-'+k]||IC[EMPTY_IC[k]||'tasks'];")
+sub1("upcoming:'calendar',dayPanel:'calendar'};", "upcoming:'calendar',dayPanel:'calendar',kanban:'tasks',calClean:'calendar'};")
+icons = sorted((B / 'icons').glob('e-*.webp'))
+if icons:
+    js = 'Object.assign(window.MT_IMG=window.MT_IMG||{},{' + ','.join(f'"{p.stem}":"{uri(p)}"' for p in icons) + '});'
+    v19s = s.index('<script>/* ===== v19:')
+    s = s[:v19s] + '<script>' + js + '</script>\n' + s[v19s:]
+# פקודת התור: אחרי הבקשות, שגרת התמונות
+sub1("ועדכן את הכרטיס המתאים באוסף items.`;",
+     "ועדכן את הכרטיס המתאים באוסף items. בסוף הרץ את שגרת התמונות של חדר הבקרה לפי הסקיל maayanotecha-staff-ui (references/fal-imagery.md, סעיף 4): כריכה ב-fal לכל כרטיס בלי thumb ובלי כריכת ספר אמיתית, ואייקון תלת-ממדי לכל סוכן בלי img. עד 12 תמונות בהרצה; אם יש יותר, רשום את הרשימה בפעילות וחכה לאישור.`;")
+
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
 assert ds_old
