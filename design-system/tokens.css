@@ -1,0 +1,105 @@
+/* ==========================================================================
+   מעיינותיך · מערכת עיצוב לפלטפורמה — Design Tokens v1
+   --------------------------------------------------------------------------
+   מקורות:  צבעי המותג (references/design-tokens.md של מעיינותיך)
+            + הנדסה לאחור של: לוח שנה עברי נקי · סרגל צד כהה · דשבורד MediCore
+              · כרטיסי זכוכית CareNest.
+   עיקרון:  קנבס אפור-קריר שקט, משטחים לבנים/זכוכית, צבע מותג אחד פעיל (כחול
+            מלכותי) ונגיעת זהב אחת לכל מסך. עומק = שכבות, לא קישוטים.
+   ========================================================================== */
+
+@font-face{font-family:"Rubik Brand";font-weight:400;font-display:swap;src:url("assets/fonts/rubik-hebrew-400-normal.woff2") format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:"Rubik Brand";font-weight:500;font-display:swap;src:url("assets/fonts/rubik-hebrew-500-normal.woff2") format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:"Rubik Brand";font-weight:700;font-display:swap;src:url("assets/fonts/rubik-hebrew-700-normal.woff2") format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:"Rubik Brand";font-weight:800;font-display:swap;src:url("assets/fonts/rubik-hebrew-800-normal.woff2") format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:"Rubik Brand";font-weight:900;font-display:swap;src:url("assets/fonts/rubik-hebrew-900-normal.woff2") format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:"Rubik Brand";font-weight:500;font-display:swap;src:url("assets/fonts/rubik-latin-500-normal.woff2") format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:"Rubik Brand";font-weight:700;font-display:swap;src:url("assets/fonts/rubik-latin-700-normal.woff2") format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:"Rubik Brand";font-weight:900;font-display:swap;src:url("assets/fonts/rubik-latin-900-normal.woff2") format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+
+:root{
+  color-scheme:light;
+
+  /* ---------- צבע: דיו (טקסט וניטרלים, עם נטייה לכחול המותג) ---------- */
+  --ink-900:#141A33;   /* כותרות, מספרים גדולים */
+  --ink-800:#1F2747;   /* כפתור ראשי כהה (כמו "View appointments") */
+  --ink-700:#353D5E;   /* טקסט גוף */
+  --ink-500:#626A88;   /* טקסט משני */
+  --ink-400:#8B91A9;   /* תוויות, צירים */
+  --ink-300:#B7BBCB;   /* מספרים לועזיים בלוח השנה, placeholder */
+  --ink-200:#D9DCE5;
+  --line:rgba(20,26,51,.08);      /* קווי הפרדה */
+  --line-strong:rgba(20,26,51,.14);
+
+  /* ---------- צבע: משטחים ---------- */
+  --canvas:#ECEEF3;    /* רקע האפליקציה */
+  --canvas-2:#F3F1EC;  /* הקצה החם של גרדיאנט הערפל */
+  --surface:#FFFFFF;   /* כרטיס אטום */
+  --surface-2:#F6F7FA; /* שורה/אזור בתוך כרטיס */
+  --stage:#D1D4DD;     /* במת האיור בהירו – תואם בדיוק לרקע תמונת ה-fal */
+
+  /* ---------- צבע: מותג ---------- */
+  --royal:#3F5499;  --royal-600:#33468A;  --royal-400:#6476B6;
+  --royal-200:#C6CDE6;  --royal-100:#E4E8F4;  --royal-50:#F1F3FA;
+  --gold:#F2911C;   --gold-600:#C9730C;   --gold-100:#FCEBD3;  --gold-50:#FEF6EA;
+  --plum:#5E1542;   --plum-100:#F1E3EB;
+  --kraft:#D2B899;  --kraft-600:#A9865C;  --paper:#F5F2EB;
+  --navy-night:#121733; /* בסיס הסרגל הכהה */
+
+  /* ---------- צבע: סמנטי (נפרד מהאקסנט) ---------- */
+  --ok:#2E8566;     --ok-bg:#E2F2EA;
+  --warn:#B86A0A;   --warn-bg:#FCEFD9;
+  --bad:#B93B36;    --bad-bg:#F8E4E2;
+  --info:var(--royal); --info-bg:var(--royal-100);
+
+  /* ---------- טיפוגרפיה ---------- */
+  --font:"Rubik","Rubik Brand","Heebo","Arial Hebrew",Arial,sans-serif;
+  --fw-light:300; --fw-regular:400; --fw-medium:500; --fw-bold:700; --fw-heavy:800; --fw-black:900;
+  /* סולם: 11 · 12 · 13 · 14 · 16 · 20 · 26 · 34 · 44 · 64 */
+  --fs-micro:11px;  --fs-caption:12px; --fs-small:13px; --fs-body:14px; --fs-lead:16px;
+  --fs-h4:20px;     --fs-h3:26px;      --fs-h2:34px;    --fs-h1:44px;   --fs-display:64px;
+  --lh-tight:1.1; --lh-snug:1.3; --lh-body:1.6;
+  --track-label:.08em; /* תוויות קטנות כמו MENU / DISCOVERY */
+
+  /* ---------- מרווחים (בסיס 4) ---------- */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px; --s12:48px; --s16:64px;
+  --gutter:16px;  /* רווח בין כרטיסים בגריד */
+  --pad-card:20px;
+
+  /* ---------- רדיוסים ---------- */
+  --r-xs:6px; --r-sm:9px; --r-md:12px; --r-lg:14px; --r-xl:18px; --r-2xl:24px; --r-pill:999px;
+  --r-tile:10px; /* שורה צפה בתוך כרטיס */
+
+  /* ---------- גבהי פקדים (כל מה שבשורה העליונה = אותו גובה) ---------- */
+  --h-sm:30px; --h-md:38px; --h-lg:46px;
+
+  /* ---------- עומק: 4 רמות בלבד ---------- */
+  /* 0 – שטוח: בתוך כרטיס.  1 – פקד.  2 – כרטיס.  3 – צף (צ'יפ על איור, תפריט).  4 – מודאל */
+  --hl-top:inset 0 1px 0 rgba(255,255,255,.9);          /* "שפת אור" עליונה – הסוד של הפרמיום */
+  --elev-1:var(--hl-top),0 0 0 1px rgba(20,26,51,.07),0 1px 2px rgba(20,26,51,.06);
+  --elev-2:0 0 0 1px rgba(20,26,51,.05),0 1px 2px rgba(20,26,51,.04),0 8px 24px -10px rgba(20,26,51,.12);
+  --elev-3:var(--hl-top),0 0 0 1px rgba(255,255,255,.5),0 2px 6px rgba(20,26,51,.06),0 18px 40px -12px rgba(20,26,51,.22);
+  --elev-4:0 30px 80px -20px rgba(20,26,51,.35),0 0 0 1px rgba(20,26,51,.06);
+  --elev-primary:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.25),0 1px 2px rgba(20,26,51,.2),0 6px 14px -6px rgba(20,26,51,.45);
+
+  /* ---------- זכוכית: 3 רמות (CareNest) ---------- */
+  --glass-blur:22px;  --glass-sat:160%;
+  --glass-1:rgba(255,255,255,.56);  /* כרטיס על רקע ערפל */
+  --glass-2:rgba(255,255,255,.80);  /* שורה בתוך כרטיס זכוכית */
+  --glass-chip:rgba(255,255,255,.62);/* צ'יפ צף מעל איור */
+  --glass-edge:rgba(255,255,255,.72);/* גבול 1px בהיר */
+  --glass-dark:rgba(17,21,42,.70);   /* סרגל / כרטיס עוזר */
+  --glass-dark-edge:rgba(255,255,255,.09);
+  --glass-dark-row:rgba(255,255,255,.05);
+
+  /* ---------- תנועה ---------- */
+  --ease:cubic-bezier(.2,.8,.2,1); --ease-in-out:cubic-bezier(.65,0,.35,1);
+  --t-fast:140ms; --t-base:220ms; --t-slow:420ms;
+
+  /* ---------- פריסה ---------- */
+  --sidebar-w:276px; --sidebar-w-collapsed:84px; --content-max:1480px;
+}
+
+@media (prefers-reduced-motion:reduce){
+  :root{--t-fast:0ms;--t-base:0ms;--t-slow:0ms}
+}

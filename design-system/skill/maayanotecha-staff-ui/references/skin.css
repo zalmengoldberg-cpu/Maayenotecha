@@ -1,0 +1,83 @@
+/* ==========================================================================
+   מעיינותיך · skin.css — שכבת "הלבשה" על HTML קיים
+   --------------------------------------------------------------------------
+   מוסיפים class="mt-skin" ל-<body> (או לעטיפה הראשית) – וכל אלמנט רגיל
+   (כפתור, שדה, טבלה, כותרת, כרטיס) מקבל את מראה המערכת בלי לשנות מבנה,
+   טקסטים או פונקציונליות. דורש tokens.css לפניו.
+   ========================================================================== */
+
+.mt-skin{font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-body);color:var(--ink-700);
+  background:radial-gradient(60% 50% at 85% 0%,rgba(100,118,182,.16),transparent 70%),
+    radial-gradient(50% 45% at 10% 100%,rgba(242,145,28,.08),transparent 70%),
+    linear-gradient(180deg,var(--canvas) 0%,var(--canvas-2) 100%);
+  background-attachment:fixed;-webkit-font-smoothing:antialiased}
+.mt-skin :where(*),.mt-skin :where(*)::before,.mt-skin :where(*)::after{box-sizing:border-box}
+
+/* טיפוגרפיה */
+.mt-skin :where(:is(h1,h2,h3,h4,h5,h6)){font-family:var(--font);color:var(--ink-900);line-height:var(--lh-snug);text-wrap:balance;margin-block:0 .4em}
+.mt-skin :where(h1){font-size:clamp(30px,3.4vw,var(--fs-h1));font-weight:var(--fw-regular)}
+.mt-skin :where(h1 :is(b,strong)){font-weight:var(--fw-medium)}
+.mt-skin :where(h2){font-size:clamp(24px,2.6vw,var(--fs-h2));font-weight:var(--fw-medium)}
+.mt-skin :where(h3){font-size:var(--fs-h4);font-weight:var(--fw-medium)}
+.mt-skin :where(:is(h4,h5,h6)){font-size:var(--fs-body);font-weight:var(--fw-medium)}
+.mt-skin :where(p){color:var(--ink-500)}
+.mt-skin :where(small){font-size:var(--fs-caption);color:var(--ink-400)}
+.mt-skin :where(a){color:var(--royal);text-decoration:none}
+.mt-skin :where(a:hover){color:var(--royal-600)}
+.mt-skin :where(hr){border:0;height:1px;background:var(--line);margin:var(--s6) 0}
+.mt-skin :where(:focus-visible){outline:2px solid var(--royal-400);outline-offset:2px}
+
+/* כפתורים: ברירת מחדל = משני לבן; submit / .primary = כהה ראשי */
+.mt-skin :where(:is(button,input[type=button],input[type=submit],input[type=reset],.button,[role=button]):not(.mt-raw)){
+  font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--h-md);padding:0 16px;
+  border:0;border-radius:var(--r-pill);font-size:var(--fs-small);font-weight:var(--fw-medium);cursor:pointer;
+  background:var(--surface);color:var(--ink-900);box-shadow:var(--elev-1);
+  transition:transform var(--t-fast) var(--ease),box-shadow var(--t-base) var(--ease),background var(--t-base) var(--ease)}
+.mt-skin :where(:is(button,.button):not(.mt-raw):active){transform:translateY(1px)}
+.mt-skin :where(:is(button[type=submit],input[type=submit],.primary,.btn-primary,[data-variant=primary]):not(.mt-raw)){
+  background:linear-gradient(180deg,#2A335A,var(--ink-800));color:#fff;box-shadow:var(--elev-primary)}
+.mt-skin :where(:is(.secondary,[data-variant=ghost],.ghost):not(.mt-raw)){background:transparent;box-shadow:none;color:var(--ink-700)}
+.mt-skin :where(:is(.danger,[data-variant=danger]):not(.mt-raw)){background:var(--bad-bg);color:var(--bad);box-shadow:none}
+.mt-skin :where(:is(button,.button):disabled){opacity:.45;cursor:not-allowed}
+
+/* שדות */
+.mt-skin :where(:is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]):not([type=submit]):not([type=reset]),select,textarea):not(.mt-raw)){
+  font-family:inherit;font-size:var(--fs-small);color:var(--ink-900);min-height:var(--h-md);padding:8px 14px;width:100%;max-width:100%;
+  border:0;border-radius:var(--r-sm);background:var(--surface);box-shadow:var(--hl-top),0 0 0 1px var(--line-strong);outline:0;
+  transition:box-shadow var(--t-base) var(--ease)}
+.mt-skin :where(textarea){min-height:110px;line-height:var(--lh-body)}
+.mt-skin :where(input[type=search]){border-radius:var(--r-pill)}
+.mt-skin :where(:is(input,select,textarea))::placeholder{color:var(--ink-300)}
+.mt-skin :where(:is(input,select,textarea):focus){box-shadow:var(--hl-top),0 0 0 1px var(--royal-200),0 0 0 4px var(--royal-50)}
+.mt-skin :where(label){font-size:var(--fs-caption);font-weight:var(--fw-medium);color:var(--ink-500)}
+.mt-skin :where(:is(input[type=checkbox],input[type=radio],input[type=range])){accent-color:var(--royal)}
+
+/* טבלאות */
+.mt-skin :where(table:not(.mt-raw)){width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-small)}
+.mt-skin :where(table:not(.mt-raw) th){font-size:var(--fs-micro);font-weight:var(--fw-regular);color:var(--ink-400);text-align:start;padding:0 10px 10px;border:0;background:none}
+.mt-skin :where(table:not(.mt-raw) td){padding:12px 10px;border:0;border-top:1px solid var(--line);color:var(--ink-500);vertical-align:middle}
+.mt-skin :where(table:not(.mt-raw) tr:hover td){background:var(--surface-2)}
+
+/* כרטיסים: כל מה שהאפיון כבר קורא לו כרטיס/פאנל/מודול */
+.mt-skin :where(:is(.card,.panel,.box,.tile,.widget,[data-card]):not(.mt-raw)){background:var(--surface);border:0;border-radius:var(--r-lg);
+  box-shadow:var(--elev-2);padding:var(--pad-card)}
+.mt-skin :where(:is(.glass,[data-glass])){background:var(--glass-1);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));box-shadow:inset 0 0 0 1px var(--glass-edge),var(--hl-top),0 12px 32px -14px rgba(20,26,51,.16)}
+.mt-skin :where(dialog){border:0;border-radius:var(--r-xl);box-shadow:var(--elev-4);padding:var(--s6);color:var(--ink-700)}
+.mt-skin :where(dialog)::backdrop{background:rgba(20,26,51,.35);backdrop-filter:blur(4px)}
+
+/* ניווט: header עליון שקוף, aside/nav צדדי מקבל סרגל כהה רק אם האפיון מגדיר סרגל צד */
+.mt-skin > header:not(.mt-raw){background:transparent;border:0;box-shadow:none}
+.mt-skin :where(:is(aside.sidebar,.sidebar,[data-sidebar])){color:#C9CDE0}
+.mt-skin :where(nav a){color:inherit}
+
+/* תגים / סטטוסים שהאפיון כבר כולל */
+.mt-skin :where(:is(.badge,.chip,.pill,.tag):not(.mt-raw)){display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);
+  font-size:var(--fs-micro);font-weight:var(--fw-medium);background:var(--surface-2);color:var(--ink-500);border:0}
+.mt-skin :is(.success,.paid,.shipped,[data-status=success]):is(.badge,.chip,.pill,.tag,.status):is(*){background:var(--ok-bg);color:var(--ok)}
+.mt-skin :is(.warning,.pending,[data-status=warning]):is(.badge,.chip,.pill,.tag,.status):is(*){background:var(--warn-bg);color:var(--warn)}
+.mt-skin :is(.error,.failed,.returned,[data-status=error]):is(.badge,.chip,.pill,.tag,.status):is(*){background:var(--bad-bg);color:var(--bad)}
+
+/* ספרות */
+.mt-skin :where(:is(.price,.amount,.number,time,[data-num])){font-variant-numeric:tabular-nums}
+.mt-skin :where(label:has(> :is(input:not([type=checkbox]):not([type=radio]),select,textarea))){display:grid;gap:6px}
