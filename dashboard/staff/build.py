@@ -167,6 +167,10 @@ THUMBS = {k: uri(B / 'walls' / f'thumb-{k}.webp') for k in WALLS}
 sub1("const DEF={light:'mt-aurora',dark:'mt-aurora'};", "const DEF={light:'ph-lake',dark:'ph-lake'};try{if(!localStorage.getItem('mt-defbg-v24')){localStorage.setItem('mt-defbg-v24','1');localStorage.setItem('mt-bg2-light','ph-lake');localStorage.setItem('mt-bg2-dark','ph-lake')}}catch(e){}")
 sub1("setOpen(LS.get('mt-open','side'));", "setOpen((()=>{try{if(!localStorage.getItem('mt-def-v24')){localStorage.setItem('mt-def-v24','1');return 'center'}}catch(e){}return LS.get('mt-open','center')})());")
 
+# v26 (7.11): הבחירה המעוצבת (#selPop) נפתחת מחוץ לחלון הכרטיס – לחיצה בה לא נחשבת "לחיצה בחוץ"
+sub1("!t.closest('#drawer')&&!t.closest('#toast')", "!t.closest('#drawer')&&!t.closest('#selPop')&&!t.closest('#toast')")
+sub1("!t.closest('#modalHost .box')&&!t.closest('#toast')", "!t.closest('#modalHost .box')&&!t.closest('#selPop')&&!t.closest('#toast')")
+
 # ---------- 4. ds.js העדכני של הסקיל ----------
 ds_old = re.search(r'<script>/\* מעיינותיך · ds\.js.*?</script>', s, flags=re.S)
 assert ds_old

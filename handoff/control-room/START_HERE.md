@@ -64,8 +64,9 @@
 ## 3. המסד (collections) – מה יש ומה נוסף
 - **items:** `kind` (project/content/task/event/recurring), `channel`, `status` (idea→todo→doing→review→scheduled→done), `owner`, `waitingOn`, `priority`, `start`, `due`, `publishAt`, `steps[] {t, done, doneAt, owner, due, est, estSrc, bg}`, `blocked {on, since, who, why}`, `links`, `notes`, `platforms`, `thumb`, `thumbArt`, `thumbSrc`, `claudeCan`, `parent`, `rule`.
   - **נוסף:** `remindAt` (`YYYY-MM-DDTHH:MM`, תזכורת) ו-`pushPlanned` (= remindAt שכבר קיבל התראה לטלפון).
+  - **נוסף ב-7.11 (v26):** `files: [{name, url, type, size, at}]` – קבצים שצורפו לכרטיס (עולים לנכסי הארטיפקט).
 - **people:** `name, role, color, initials, photo, uid`. **נוסף:** `avatar` ו-`avatarSrc`.
-- **agents:** `<id>.img`, `_ui` (`statusLabels`, `statusColors21`), `_all`.
+- **agents:** `<id>.img`, `_ui` (`statusLabels`, `statusColors21`), `_all`, ו-`_links` (`list: [{label, url}]` – כרטיס "קישורים" של כל הצוות, נוסף ב-v26).
 - **activity:** `{at, who, text, itemId}`.
 - **inbox:** תור הבקשות לקלוד.
 - **מצב חי ידוע:**
@@ -79,6 +80,7 @@
   - `mt-brief-open`.
   - `mt-pref-kpis` (brief/card), `mt-pref-briefmode` (modal/inline), `mt-pref-rotate` (on/off).
   - `mt-layout-today2` (סידור והסתרה של כרטיסים).
+  - `mt-size-v26` (הגודל שנבחר לכל כרטיס בדף הבית: `{cid: {c: עמודות, h: גובה}}`).
   - `mt-rem-seen`.
   - `mt-staff-tour-v19b` (המדריך הושלם).
 
@@ -108,6 +110,7 @@
 - **דף הבית:** בלי שטחים ריקים (masonry, שורות של 4px).
 - **ברירות מחדל:** רקע "אגם בערפל", כרטיסים נפתחים במרכז.
 - **אנשים:** אווטארים מאוירים מ-fal. **רקעים:** 8 רקעים חדים מ-fal.
+- **v26 (7.11, מחכה לפרסום):** שינוי גודל לכרטיסים בדף הבית (גרירת הפינה); קישורים ככפתורי אייקון לפי המותג (בכרטיס, בשורות, וכרטיס "קישורים" חדש); אזור "קישורים, קבצים והערות" בכרטיס; חלונית בחירה מעוצבת במקום רשימת הדפדפן; "על סדר היום" עם הסרגל בצד; תיקון גלילה בחלון הכרטיס ותיקון הסרגל השקוף.
 
 ## 5. משימות מתוזמנות (claude.ai)
 | שם | מזהה | מתי | מצב |
@@ -130,6 +133,7 @@ cd dashboard && python3 kit/tests/prepare.py && cd kit/tests
 for h in today tasks calendar board gantt people agents; do for w in 1440 390; do node shotv.js $PWD/v21_mock.html $PWD/o.png $w 900 "#$h"; done; done
 node sec8.js $PWD/v21_mock.html ; node t23.js $PWD/v21_mock.html ; node agx.js ; node bm.js ; node e1.js
 ```
+- **ידוע (7.11):** `agx.js` (מהשלב של רקע "גליל") ו-`bc.js` נכשלים גם על v25 בלי שינוי. זה תלוי בנתונים או בשעה, ולא בקוד החדש. צריך לעדכן אותם.
 - **בסשן חדש:** קודם מורידים את המסד החי ל-`dashboard/db/<collection>/<id>.json` (ArtifactData list על items, people, activity, inbox, agents). הקבצים האלה לא נכנסים ל-commit.
 - **אחרי שינוי שצריך להגיע גם להדגמה:** `python3 dashboard/demo/build_demo.py`, ואז מפרסמים מחדש לקישור של ההדגמה. הבנייה נכשלת אם נשאר בקוד פרט אמיתי.
 

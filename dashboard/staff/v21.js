@@ -458,7 +458,7 @@ function renderSet(){const el=ensureSet();if(el.hidden)return;const W=window.MT_
       <div class="st-row"><span><b>פתיחת כרטיס</b><small>חלון בצד או במרכז המסך</small></span>${seg('open',document.documentElement.classList.contains('open-center')?'center':'side',[['side','בצד'],['center','במרכז']])}</div>
       <div class="st-row"><span><b>החלפה אוטומטית</b><small>"מה יש לנו היום" והתזכורות עוברים פריט אחרי פריט</small></span>${seg('rotate',PREF('rotate','on'),[['on','פועל'],['off','כבוי']])}</div></section>
     <section class="st-sec"><h3>מה מופיע בתמונת מצב</h3><p>כרטיס כבוי לא נמחק, הוא רק מוסתר.</p><div class="st-cards">${cards.map(c=>`<label class="st-card"><input type="checkbox" data-setcard="${esc(c.dataset.cid)}" ${c.hidden?'':'checked'}><span>${esc(c.dataset.cname||c.dataset.cid)}</span></label>`).join('')}</div>
-      <div class="st-btns"><button type="button" class="st-b" data-setarr="1">${DS.icon('sliders','ico-sm')}סידור הלוח בגרירה</button><button type="button" class="st-b ghost" data-resetlayout="1">איפוס הסידור</button></div></section>
+      <div class="st-btns"><button type="button" class="st-b" data-setarr="1">${DS.icon('sliders','ico-sm')}סידור הלוח בגרירה</button><button type="button" class="st-b ghost" data-resetlayout="1">איפוס הסידור</button><button type="button" class="st-b ghost" data-rzreset="1">החזרת הגדלים המקוריים</button></div><p class="st-tip">כדי לשנות גודל של כרטיס: גוררים את הפינה התחתונה שלו. לחיצה כפולה על הפינה מחזירה אותו לגודל המקורי.</p></section>
     <section class="st-sec"><h3>עזרה</h3><div class="st-btns"><button type="button" class="st-b ghost" data-settour="1">${DS.icon('help','ico-sm')}מדריך למערכת</button></div></section></div>`}
 function openSet(){const el=ensureSet();el.hidden=false;document.documentElement.classList.add('setp-open');renderSet();el.querySelector('.setp-x')?.focus()}
 function closeSet(){const el=$1('#setPanel');if(!el||el.hidden)return;el.hidden=true;document.documentElement.classList.remove('setp-open');$1('#setBtn')?.focus()}
@@ -510,6 +510,147 @@ addEventListener('resize',masonry);
 function paintV22(){try{renderBM();sideSettings();heroTrim();renderDeck();renderRem();renderBottom();remNotif();renderDayNow();wireCal();renderAgenda();dressRows();meterToggle();battery();window.__masWatch&&__masWatch();masonry()}catch(e){console.error(e)}}
 const _ra22=window.renderAll;window.renderAll=function(){const r=_ra22.apply(this,arguments);paintV22();return r};
 new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded)dressRows()}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
+
+/* ===================== v26 (7.11): בקשות זלמן =====================
+   1. שינוי גודל לכרטיסים בדף הבית (רוחב בעמודות + גובה), נשמר בדפדפן.
+   2. קישורים חיצוניים ככפתורי אייקון לפי המותג: בכרטיס, בשורות בדף הבית, וכרטיס "קישורים" לכל הצוות.
+   3. בתוך כרטיס: בחירה מעוצבת (במקום רשימת הדפדפן), ואזור אחד לקישורים, קבצים והערות.
+   4. "על סדר היום" עם הסרגל בצד. */
+
+/* ---- 1. שינוי גודל ---- */
+const RZK='mt-size-v26',RZ_W_LOCK=new Set(['miniCal','bottom22']);
+const rzGet=()=>{try{return JSON.parse(localStorage.getItem(RZK)||'{}')||{}}catch(e){return{}}};
+const rzSet=o=>{try{localStorage.setItem(RZK,JSON.stringify(o))}catch(e){}};
+function rzCards(){return [...document.querySelectorAll('#v-today>.bento>[data-cid]')].filter(c=>c.dataset.cid!=='brief8'&&c.dataset.cid!=='kpis')}
+function rzApply(){const big=innerWidth>760,o=rzGet();rzCards().forEach(c=>{const s=big?o[c.dataset.cid]:null;
+  const w=s&&s.c&&!RZ_W_LOCK.has(c.dataset.cid)?'span '+s.c:'';if(c.style.gridColumn!==w&&(w||c._rzw)){c.style.gridColumn=w;c._rzw=!!w}
+  const h=s&&s.h?s.h+'px':'';if(c.style.height!==h&&(h||c._rzh)){c.style.height=h;c._rzh=!!h}c.classList.toggle('rz-h',!!h)})}
+function rzHandles(){if(innerWidth<=760)return;rzCards().forEach(c=>{if(c.querySelector(':scope>.rz26'))return;const h=document.createElement('span');h.className='rz26';h.tabIndex=0;h.setAttribute('role','separator');
+  h.setAttribute('aria-label','שינוי גודל: '+(c.dataset.cname||'כרטיס'));h.title='גרירה משנה גודל · לחיצה כפולה מחזירה לגודל המקורי';c.append(h)})}
+function rzSave(c,patch){const o=rzGet();const k=c.dataset.cid;const n={...(o[k]||{}),...patch};Object.keys(n).forEach(x=>n[x]==null&&delete n[x]);if(Object.keys(n).length)o[k]=n;else delete o[k];rzSet(o);rzApply();masonry()}
+function rzGrid(){const vs=getComputedStyle($1('#v-today'));return{gap:parseFloat(vs.columnGap)||16,col:parseFloat(vs.gridTemplateColumns)||80}}
+document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.closest('.rz26');if(!h||e.button>0)return;e.preventDefault();e.stopPropagation();
+  const c=h.parentElement,G=rzGrid(),r=c.getBoundingClientRect(),x0=e.clientX,y0=e.clientY,lock=RZ_W_LOCK.has(c.dataset.cid);let cur=null;
+  c.classList.add('rz-on');document.documentElement.classList.add('rz-drag');try{h.setPointerCapture(e.pointerId)}catch(x){}
+  const mv=ev=>{const w=r.width+(x0-ev.clientX)*(document.dir==='ltr'?-1:1),hh=Math.max(140,Math.round((r.height+ev.clientY-y0)/4)*4);
+    const sp=Math.max(3,Math.min(12,Math.round((w+G.gap)/(G.col+G.gap))));cur={h:hh};if(!lock){cur.c=sp;c.style.gridColumn='span '+sp;c._rzw=1}
+    c.style.height=hh+'px';c._rzh=1;c.classList.add('rz-h')};
+  const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);h.removeEventListener('pointercancel',up);c.classList.remove('rz-on');document.documentElement.classList.remove('rz-drag');if(cur)rzSave(c,cur);else masonry()};
+  h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up)},true);
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.rz26')){e.preventDefault();e.stopPropagation()}},true);
+document.addEventListener('dblclick',e=>{const h=e.target.closest&&e.target.closest('.rz26');if(!h)return;e.preventDefault();rzSave(h.parentElement,{c:null,h:null});toast('הכרטיס חזר לגודל המקורי')},true);
+document.addEventListener('keydown',e=>{const h=e.target.closest&&e.target.closest('.rz26');if(!h)return;const c=h.parentElement,G=rzGrid(),r=c.getBoundingClientRect(),o=rzGet()[c.dataset.cid]||{};
+  const span=o.c||Math.max(3,Math.round((r.width+G.gap)/(G.col+G.gap)));const H=o.h||Math.round(r.height/4)*4;const grow=document.dir==='ltr'?'ArrowRight':'ArrowLeft',shrink=document.dir==='ltr'?'ArrowLeft':'ArrowRight';
+  let p=null;if(e.key===grow&&!RZ_W_LOCK.has(c.dataset.cid))p={c:Math.min(12,span+1)};else if(e.key===shrink&&!RZ_W_LOCK.has(c.dataset.cid))p={c:Math.max(3,span-1)};else if(e.key==='ArrowDown')p={h:H+20};else if(e.key==='ArrowUp')p={h:Math.max(140,H-20)};else if(e.key==='Enter'||e.key==='Delete')p={c:null,h:null};
+  if(p){e.preventDefault();rzSave(c,p);h.focus()}});
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-resetlayout],[data-rzreset]')){rzSet({});rzApply();masonry();if(e.target.closest('[data-rzreset]'))toast('כל הכרטיסים חזרו לגודל המקורי')}});
+addEventListener('resize',()=>{rzApply();rzHandles()});
+
+/* ---- 2. קישורים: זיהוי המותג לפי הכתובת ---- */
+const LK=[[/facebook\.com|fb\.me|fb\.com/,'facebook','פייסבוק'],[/instagram\.com|instagr\.am/,'instagram','אינסטגרם'],[/wa\.me|whatsapp\.com/,'whatsapp','וואטסאפ'],[/youtube\.com|youtu\.be/,'youtube','יוטיוב'],
+  [/^mailto:|mail\.google\./,'gmail','מייל'],[/drive\.google\.|docs\.google\.|sheets\.google\.|slides\.google\.|forms\.gle/,'google','דרייב'],[/(^|\/\/|\.)google\.com|\.google\./,'google','גוגל'],[/\/\/([a-z0-9-]+\.)*(maynotecha|maayanotecha|mayanotecha)/,'site','אתר'],
+  [/claude\.ai/,'claude','קלוד'],[/canva\.com/,'web','קנבה'],[/figma\.com/,'web','פיגמה'],[/notion\.(so|site)/,'web','נושן'],[/lovable\.(dev|app)/,'web','לאבבל'],[/tiktok\.com/,'web','טיקטוק'],[/t\.me|telegram/,'web','טלגרם'],[/linkedin\.com/,'web','לינקדאין'],[/(x|twitter)\.com/,'web','X']];
+function lkKind(u){const s=String(u||'').toLowerCase();const m=LK.find(([re])=>re.test(s));if(m)return{k:m[1],n:m[2]};let h='';try{h=new URL(s).hostname.replace(/^www\./,'')}catch(e){}return{k:'web',n:h||'קישור'}}
+function lkIcon(k,cls=''){if(['facebook','instagram','whatsapp','youtube','gmail','google','site'].includes(k))return brandBadge(k,cls);
+  return `<span class="brand lk-${k} ${cls}" role="img" aria-hidden="true">${DS.icon(k==='claude'?'flame':k==='file'?'attach':'arrowUpLeft')}</span>`}
+function lkUrl(u){u=String(u||'').trim();if(!u)return'';if(/^(https?:|mailto:)/i.test(u))return u;if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u))return 'mailto:'+u;return 'https://'+u}
+function lkOpen(u){try{window.open(u,'_blank','noopener')}catch(e){}}
+function lkMini(links,max=3){if(!links||!links.length)return'';const L=links.slice(0,max);
+  return `<span class="lk-mini">${L.map(l=>{const k=lkKind(l.url);return `<span class="lk-m" role="link" tabindex="0" data-lkgo="${esc(l.url)}" title="${esc((l.label||k.n)+' · '+l.url)}" aria-label="${esc(l.label||k.n)}">${lkIcon(k.k)}</span>`}).join('')}${links.length>max?`<span class="lk-more">+${links.length-max}</span>`:''}</span>`}
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-lkgo]');if(!g)return;e.preventDefault();e.stopPropagation();lkOpen(g.dataset.lkgo)},true);
+document.addEventListener('keydown',e=>{const g=e.target.closest&&e.target.closest('[data-lkgo]');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopPropagation();lkOpen(g.dataset.lkgo)}},true);
+/* בשורות של דף הבית ושל "על סדר היום": האייקונים של הקישורים של הכרטיס */
+function dressLinks(){if(typeof S==='undefined'||!S.loaded)return;
+  const put=(row,it,before)=>{if(!it||row.querySelector(':scope .lk-mini'))return;const h=lkMini(it.links);if(!h)return;const t=before&&row.querySelector(before);if(t)t.insertAdjacentHTML('beforebegin',h);else row.insertAdjacentHTML('beforeend',h)};
+  /* בשורות עם עמודות קבועות: האייקונים נכנסים לתא של הכותרת, בצד */
+  const inTitle=(row,it)=>{if(!it||row.querySelector('.lk-mini'))return;const h=lkMini(it.links);if(!h)return;const t=row.children[1];if(!t)return;const w=document.createElement('span');w.className='lk-tw';while(t.firstChild)w.append(t.firstChild);t.classList.add('lk-host');t.append(w);t.insertAdjacentHTML('beforeend',h)};
+  document.querySelectorAll('#plist .pr[data-open]').forEach(r=>inTitle(r,S.items[r.dataset.open]));
+  document.querySelectorAll('#attList .ar[data-res]').forEach(r=>{const a=(S.att||[])[+r.dataset.res];inTitle(r,a&&a.it)});
+  document.querySelectorAll('#agendaPage .agx-list .agx-card').forEach(r=>{const o=r.querySelector('[data-open]');put(r,o&&S.items[o.dataset.open],null)})}
+
+/* ---- כרטיס "קישורים" לכל הצוות (נשמר במסד: agents/_links) ---- */
+let glForm=false;
+function glList(){return ((typeof S!=='undefined'&&S.agents&&S.agents._links&&S.agents._links.list)||[]).filter(l=>l&&l.url)}
+async function glSave(list){if(!S.db){toast('אין חיבור לשמירה');return}const prev=S.agents._links;S.agents._links={...(prev||{}),list};renderLinksCard();
+  try{await S.db.collection('agents').doc('_links').set({list,updatedAt:now()})}catch(e){S.agents._links=prev;renderLinksCard();toast('השמירה נכשלה')}}
+function ensureLinksCard(){let c=$1('#links26');if(c)return c;const bento=$1('#v-today>.bento');if(!bento)return null;
+  c=document.createElement('div');c.id='links26';c.className='card pane s4 lk-card';c.dataset.cid='links26';c.dataset.cname='קישורים';const b=$1('#bottom22');if(b)b.before(c);else bento.append(c);return c}
+function renderLinksCard(){const c=ensureLinksCard();if(!c||typeof S==='undefined'||!S.loaded)return;const L=glList();const keep=c.querySelector(':scope>.rz26,:scope>.cardctl');
+  c.innerHTML=`<div class="card-head"><h3><span class="lk-hi">${DS.icon('arrowUpLeft','ico-sm')}</span>קישורים</h3><button type="button" class="rm-add lk-addbtn" data-gladd aria-expanded="${glForm}">${DS.icon('plus','ico-sm')}קישור</button></div>
+  ${glForm?`<form class="lk-gform" id="glForm"><input id="glUrl" dir="ltr" placeholder="כתובת: אתר, פייסבוק, אינסטגרם, דרייב..." required aria-label="כתובת"><input id="glName" placeholder="שם (לא חובה)" aria-label="שם"><div class="lk-gbtns"><button type="submit" class="btn btn-brand btn-sm">הוספה</button><button type="button" class="btn btn-ghost btn-sm" data-glcancel>ביטול</button></div></form>`:''}
+  ${L.length?`<div class="lk-tiles">${L.map((l,i)=>{const k=lkKind(l.url);return `<div class="lk-tile"><a href="${esc(l.url)}" target="_blank" rel="noopener" title="${esc(l.url)}">${lkIcon(k.k,'lg')}<span>${esc(l.label||k.n)}</span></a><button type="button" class="lk-tx" data-gldel="${i}" aria-label="הסרת ${esc(l.label||k.n)}">×</button></div>`}).join('')}</div>`
+   :glForm?'':`<div class="empty lk-empty"><b>אין עדיין קישורים</b><span>האתר, הרשתות החברתיות, תיקיות בדרייב – כל מה שהצוות פותח הרבה. כל קישור הופך לכפתור עם האייקון שלו.</span></div>`}`;
+  if(keep)c.append(keep);if(glForm)setTimeout(()=>$1('#glUrl')?.focus(),0)}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-gladd],[data-glcancel],[data-gldel]');if(!t||!t.closest('#links26'))return;e.preventDefault();
+  if(t.dataset.gladd!=null||t.dataset.glcancel!=null){glForm=t.dataset.gladd!=null?!glForm:false;renderLinksCard();return}
+  const i=+t.dataset.gldel;const L=glList();const gone=L[i];if(!gone)return;glSave(L.filter((_,j)=>j!==i));toastUndo('הקישור הוסר',()=>glSave(L))});
+document.addEventListener('submit',e=>{if(e.target.id!=='glForm')return;e.preventDefault();const u=lkUrl($1('#glUrl').value);if(!u)return;const n=$1('#glName').value.trim();glForm=false;glSave([...glList(),{label:n||lkKind(u).n,url:u}]);log&&log('הוסיף קישור לחדר: '+(n||lkKind(u).n))});
+
+/* ---- 3א. בחירה מעוצבת בתוך הכרטיס (במקום רשימת הדפדפן) ---- */
+const SEL_SCOPE='#drawer select, .modal select';
+function selKind(s){if(s.id==='fStatus')return'status';if(s.id==='fPri')return'pri';if(s.id==='fOwner'||s.id==='fWho'||s.dataset.sto!=null)return'person';if(s.dataset.se!=null)return'est';return'plain'}
+function stcOf(v){const t=document.createElement('span');t.className='stl st-'+v;t.style.display='none';document.body.append(t);const c=getComputedStyle(t).getPropertyValue('--stc').trim();t.remove();return c||'#A9B1C2'}
+function selDeco(k,v){if(k==='status')return `<i class="so-dot" style="background:${stcOf(v)}"></i>`;if(k==='pri')return `<i class="so-dot" style="background:${{1:'var(--bad)',2:'var(--gold)',3:'var(--ink-300)'}[v]||'var(--ink-300)'}"></i>`;
+  if(k==='person')return v&&typeof P==='function'&&P(v)?`<span class="so-av">${av(v)}</span>`:`<span class="so-av none">${DS.icon('users','ico-sm')}</span>`;if(k==='est')return `<span class="so-ic">${DS.icon('clock','ico-sm')}</span>`;return''}
+function selClose(back){const p=$1('#selPop');if(!p)return;const s=p._sel;p.remove();if(s){s.classList.remove('sel-open');if(back&&s.isConnected)s.focus({preventScroll:true})}}
+function selOpen(s){selClose();const k=selKind(s),r=s.getBoundingClientRect();const p=document.createElement('div');p.id='selPop';p.className='selpop';p.setAttribute('role','listbox');p.dir='rtl';
+  const lab=s.closest('label')?.childNodes[0]?.textContent?.trim()||s.getAttribute('aria-label')||'';if(lab)p.setAttribute('aria-label',lab);
+  p.innerHTML=[...s.options].map((o,i)=>`<button type="button" role="option" class="so ${o.selected?'on':''}" data-si="${i}" aria-selected="${o.selected}" tabindex="-1">${selDeco(k,o.value)}<span class="so-t">${esc(o.text)}</span>${o.selected?`<span class="so-ck">${DS.icon('check','ico-sm')}</span>`:''}</button>`).join('');
+  document.body.append(p);p._sel=s;s.classList.add('sel-open');
+  const W=Math.max(r.width,190),H=p.offsetHeight,vh=innerHeight,vw=innerWidth;let top=r.bottom+6;if(top+H>vh-10&&r.top-H-6>10)top=r.top-H-6;top=Math.max(10,Math.min(top,vh-H-10));
+  let left=r.right-W;left=Math.max(10,Math.min(left,vw-W-10));Object.assign(p.style,{top:top+'px',left:left+'px',width:W+'px'});(p.querySelector('.so.on')||p.querySelector('.so'))?.focus({preventScroll:true})}
+function selPick(b){const p=$1('#selPop');if(!p)return;const s=p._sel;const i=+b.dataset.si;selClose(true);if(!s||!s.isConnected||s.selectedIndex===i)return;s.selectedIndex=i;s.dispatchEvent(new Event('input',{bubbles:true}));s.dispatchEvent(new Event('change',{bubbles:true}))}
+document.addEventListener('pointerdown',e=>{const s=e.target.closest&&e.target.closest(SEL_SCOPE);if(s&&!s.disabled&&!s.multiple){e.preventDefault();if(s.classList.contains('sel-open'))selClose(true);else selOpen(s);return}
+  if(!(e.target.closest&&e.target.closest('#selPop')))selClose()},true);
+document.addEventListener('mousedown',e=>{if(e.target.closest&&e.target.closest(SEL_SCOPE))e.preventDefault()},true);
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#selPop .so');if(b){e.preventDefault();e.stopPropagation();selPick(b)}},true);
+document.addEventListener('keydown',e=>{const p=$1('#selPop');
+  if(p){const opts=[...p.querySelectorAll('.so')];const i=opts.indexOf(document.activeElement);
+    if(e.key==='Escape'||e.key==='Tab'){e.preventDefault();e.stopPropagation();selClose(true);return}
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopPropagation();const n=opts[(i+(e.key==='ArrowDown'?1:-1)+opts.length)%opts.length];n&&n.focus();return}
+    if(e.key==='Home'||e.key==='End'){e.preventDefault();opts[e.key==='Home'?0:opts.length-1]?.focus();return}
+    if((e.key==='Enter'||e.key===' ')&&i>=0){e.preventDefault();e.stopPropagation();selPick(opts[i]);return}return}
+  const s=e.target.closest&&e.target.closest(SEL_SCOPE);if(s&&['Enter',' ','ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();selOpen(s)}},true);
+addEventListener('scroll',e=>{const p=$1('#selPop');if(p&&!p.contains(e.target))selClose()},true);addEventListener('resize',()=>selClose());
+
+/* ---- 3ב. בתוך הכרטיס: אזור אחד לקישורים, קבצים והערות ---- */
+const FEXT=n=>{const m=String(n||'').match(/\.([a-z0-9]{1,5})$/i);return m?m[1].toUpperCase():'קובץ'};
+const FSIZE=b=>!b?'':b<1024*1024?Math.max(1,Math.round(b/1024))+' KB':(b/1024/1024).toFixed(1)+' MB';
+function matHtml(it){const L=it.links||[],F=it.files||[];
+  return `<section class="mat26" aria-label="קישורים, קבצים והערות">
+  <div class="mt-blk"><div class="mt-h"><span class="mt-hi">${DS.icon('arrowUpLeft','ico-sm')}</span><h3>קישורים</h3>${L.length?`<em class="num">${L.length}</em>`:''}</div>
+    ${L.length?`<div class="lk-grid">${L.map((l,i)=>{const k=lkKind(l.url);return `<div class="lk26"><a href="${esc(l.url)}" target="_blank" rel="noopener" title="${esc(l.url)}">${lkIcon(k.k)}<span class="lk-t"><b>${esc(l.label&&l.label!==l.url?l.label:k.n)}</b><small dir="ltr">${esc(String(l.url).replace(/^https?:\/\/(www\.)?/,'').replace(/^mailto:/,''))}</small></span></a><button type="button" class="lk-x" data-ldel="${i}" aria-label="הסרת הקישור">×</button></div>`}).join('')}</div>`:''}
+    <form class="add lk-add" id="addLink"><span class="lk-prev" aria-hidden="true">${lkIcon('web')}</span><input id="lUrl" dir="ltr" placeholder="הדבקת קישור: אתר, פייסבוק, דרייב..." aria-label="כתובת הקישור"><input id="lLabel" placeholder="שם (לא חובה)" aria-label="שם הקישור"><button class="btn btn-brand btn-sm" type="submit">הוספה</button></form></div>
+  <div class="mt-blk"><div class="mt-h"><span class="mt-hi">${DS.icon('attach','ico-sm')}</span><h3>קבצים</h3>${F.length?`<em class="num">${F.length}</em>`:''}</div>
+    ${F.length?`<div class="fl-grid">${F.map((f,i)=>{const img=/^image\//.test(f.type||'')||/\.(png|jpe?g|webp|gif|avif)$/i.test(f.name||'');return `<div class="fl26"><a href="${esc(f.url)}" target="_blank" rel="noopener" title="${esc(f.name||'')}"><span class="fl-th ${img?'img':''}">${img?`<img src="${esc(f.url)}" alt="" loading="lazy">`:`<b>${esc(FEXT(f.name))}</b>`}</span><span class="fl-t"><b>${esc(f.name||'קובץ')}</b><small>${esc([FSIZE(f.size),f.at?fmt(String(f.at).slice(0,10)):''].filter(Boolean).join(' · '))}</small></span></a><button type="button" class="lk-x" data-fdel="${i}" aria-label="הסרת הקובץ">×</button></div>`}).join('')}</div>`:''}
+    <label class="fl-drop" data-fldrop>${DS.icon('plus','ico-sm')}<span>גוררים קובץ לכאן או <u>בוחרים קובץ</u></span><input type="file" id="fileUp26" multiple hidden></label></div>
+  <div class="mt-blk mt-notes"><div class="mt-h"><span class="mt-hi">${DS.icon('quote','ico-sm')}</span><h3>הערות</h3></div></div></section>`}
+function enhanceDrawer(){const d=$1('#drawer');if(!d||typeof S==='undefined'||!S.open||S.mode!=='item')return;const it=S.items[S.open];if(!it||d.querySelector('.mat26'))return;
+  const ls=d.querySelector('.dr-body .links');const sec=ls&&ls.parentElement;const notes=d.querySelector('#fNotes')?.closest('label');if(!sec)return;
+  sec.insertAdjacentHTML('beforebegin',matHtml(it));const box=d.querySelector('.mat26 .mt-notes');sec.remove();
+  if(notes){notes.classList.add('nt26');[...notes.childNodes].forEach(n=>{if(n.nodeType===3)n.remove()});notes.setAttribute('aria-label','הערות');box.append(notes);const ta=notes.querySelector('textarea');ta.placeholder='מה חשוב לדעת על הכרטיס הזה? הקשר, החלטות, מה סוכם...';taFit(ta)}}
+function taFit(t){t.style.height='auto';t.style.height=Math.min(420,Math.max(110,t.scrollHeight+2))+'px'}
+document.addEventListener('input',e=>{if(e.target.id==='fNotes')taFit(e.target);if(e.target.id==='lUrl'){const p=$1('#drawer .lk-prev');if(p)p.innerHTML=lkIcon(e.target.value.trim()?lkKind(lkUrl(e.target.value)).k:'web')}});
+document.addEventListener('submit',e=>{if(e.target.id==='addLink'){const u=$1('#lUrl');if(u&&u.value.trim()&&!/^https?:\/\//i.test(u.value.trim()))u.value=lkUrl(u.value);const n=$1('#lLabel');if(u&&u.value.trim()&&n&&!n.value.trim())n.value=lkKind(u.value).n}},true);
+async function addFiles(list){const id=S.open;if(!id||!list||!list.length)return;if(!S.assets){toast('אין אפשרות להעלות קבצים בצפייה הזו');return}
+  const out=[];for(const f of list){try{toast('מעלה: '+f.name);const r=await S.assets.upload(f);if(r&&r.url)out.push({name:f.name,url:r.url,type:f.type||'',size:f.size||0,at:now()})}catch(e){toast('ההעלאה נכשלה: '+(e.message||e.code||f.name))}}
+  if(out.length){const it=S.items[id];await saveItem(id,{files:[...(it.files||[]),...out]});toast(out.length===1?'הקובץ נוסף':out.length+' קבצים נוספו');log&&log('צירף '+(out.length===1?'קובץ':out.length+' קבצים')+' ל"'+(it.title||'')+'"',id)}}
+document.addEventListener('change',e=>{if(e.target.id==='fileUp26'){addFiles([...e.target.files]);e.target.value=''}});
+document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('#drawer [data-fdel]');if(!x)return;e.preventDefault();const id=S.open,it=S.items[id];if(!it)return;const F=it.files||[];const i=+x.dataset.fdel;saveItem(id,{files:F.filter((_,j)=>j!==i)});toastUndo('הקובץ הוסר מהכרטיס',()=>saveItem(id,{files:F}))});
+['dragenter','dragover'].forEach(t=>document.addEventListener(t,e=>{const z=e.target.closest&&e.target.closest('[data-fldrop]');if(!z)return;e.preventDefault();z.classList.add('on')}));
+['dragleave','drop'].forEach(t=>document.addEventListener(t,e=>{const z=e.target.closest&&e.target.closest('[data-fldrop]');if(!z)return;e.preventDefault();z.classList.remove('on');if(t==='drop')addFiles([...(e.dataTransfer?.files||[])])}));
+{const d=$1('#drawer');if(d)new MutationObserver(()=>{enhanceDrawer();selClose()}).observe(d,{childList:true})}
+
+/* ---- 4. "על סדר היום" עם הסרגל בצד ---- */
+{const sb=$1('#app .sidebar');const setW=()=>{if(sb)document.documentElement.style.setProperty('--sbw',Math.round(sb.getBoundingClientRect().width)+'px')};
+  if(sb&&window.ResizeObserver)new ResizeObserver(setW).observe(sb);setW()}
+addEventListener('hashchange',()=>{if(location.hash!=='#agenda')closeAgenda(false)});
+
+function paintV26(){try{renderLinksCard();rzHandles();rzApply();dressLinks();enhanceDrawer();masonry()}catch(e){console.error(e)}}
+const _ra26=window.renderAll;window.renderAll=function(){const r=_ra26.apply(this,arguments);paintV26();return r};
+new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded){dressLinks();rzHandles()}}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
+{const a=$1('#agendaPage');if(a)new MutationObserver(()=>dressLinks()).observe(a,{childList:true,subtree:true})}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-agenda],[data-agtab],[data-agday]'))setTimeout(dressLinks,50)});
 
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();meterToggle();battery();
