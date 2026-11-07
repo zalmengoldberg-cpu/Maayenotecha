@@ -1,0 +1,4 @@
+const {chromium}=require('playwright');(async()=>{const [,,file,out,w,h,hash]=process.argv;const b=await chromium.launch();const p=await b.newPage({viewport:{width:+w,height:+h},deviceScaleFactor:1});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
+await p.addInitScript(()=>{try{localStorage.setItem('mt-staff-tour-v1','1');localStorage.setItem('mt-tour-done','1');localStorage.setItem('mt-staff-tour-v19b','1')}catch(e){}});
+await p.goto('file://'+file+(hash||''));await p.waitForTimeout(2500);await p.keyboard.press('Escape');await p.waitForTimeout(300);
+await p.screenshot({path:out,fullPage:true});console.log('overflow',await p.evaluate(()=>document.documentElement.scrollWidth-innerWidth),'errors',JSON.stringify(errs.filter(e=>!/fonts|ERR_|net::/.test(e)).slice(0,5)));await b.close()})();

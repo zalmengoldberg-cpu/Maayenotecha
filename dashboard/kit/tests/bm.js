@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');const SRV=require('./srvlib');(async()=>{const b=await chromium.launch();const errs=[];
+const p=await b.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});p.on('pageerror',e=>errs.push(e.message));await SRV(p);await p.addInitScript(()=>{localStorage.setItem('mt-staff-tour-v19b','1')});await p.goto('http://mock.local/');await p.waitForTimeout(2600);
+await p.click('#briefBtn');await p.waitForTimeout(700);await p.screenshot({path:'bm1.png'});
+await p.click('[data-bmstep="1"]');await p.waitForTimeout(600);await p.screenshot({path:'bm2.png'});console.log('idx',await p.evaluate(()=>document.querySelector('.bm-n').textContent));
+await p.mouse.click(60,450);await p.waitForTimeout(300);console.log('closed by outside',await p.evaluate(()=>document.querySelector('#briefModal').hidden));
+await p.click('#briefBtn');await p.waitForTimeout(500);await p.keyboard.press('ArrowLeft');await p.waitForTimeout(300);console.log('arrow',await p.evaluate(()=>document.querySelector('.bm-n').textContent));
+await p.keyboard.press('Escape');await p.waitForTimeout(200);console.log('esc',await p.evaluate(()=>document.querySelector('#briefModal').hidden));
+await p.click('#briefBtn');await p.waitForTimeout(500);await p.click('[data-bmstep="1"]');await p.waitForTimeout(400);await p.click('#briefModal .bc-row[data-res="0"]');await p.waitForTimeout(600);
+console.log('resolve from modal',await p.evaluate(()=>!!document.querySelector('#drawer.on .rs-h')),await p.evaluate(()=>document.querySelector('#briefModal').hidden));
+await p.keyboard.press('Escape');await p.waitForTimeout(300);
+await p.click('#setBtn');await p.waitForTimeout(400);await p.click('[data-setv="briefmode|inline"]');await p.keyboard.press('Escape');await p.waitForTimeout(300);await p.click('#briefBtn');await p.waitForTimeout(800);
+console.log('inline deck open',await p.evaluate(()=>document.querySelector('#briefDeck.open .bcard')?'yes':'no'));
+const m=await b.newPage({viewport:{width:390,height:844},deviceScaleFactor:2});await SRV(m);await m.addInitScript(()=>{localStorage.setItem('mt-staff-tour-v19b','1')});await m.goto('http://mock.local/');await m.waitForTimeout(2600);await m.click('#briefBtn');await m.waitForTimeout(700);await m.screenshot({path:'bm3.png'});
+console.log(errs);await b.close()})();
