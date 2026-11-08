@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8"><title>איך עובדים עם חדר הבקרה</title>
+<style>
+@font-face{font-family:R;font-weight:400;src:url(node_modules/@fontsource/rubik/files/rubik-hebrew-400-normal.woff2)}
+@font-face{font-family:R;font-weight:500;src:url(node_modules/@fontsource/rubik/files/rubik-hebrew-500-normal.woff2)}
+@font-face{font-family:R;font-weight:600;src:url(node_modules/@fontsource/rubik/files/rubik-hebrew-600-normal.woff2)}
+@font-face{font-family:R;font-weight:700;src:url(node_modules/@fontsource/rubik/files/rubik-hebrew-700-normal.woff2)}
+@font-face{font-family:R;font-weight:900;src:url(node_modules/@fontsource/rubik/files/rubik-hebrew-900-normal.woff2)}
+@font-face{font-family:L;font-weight:400;src:url(node_modules/@fontsource/rubik/files/rubik-latin-400-normal.woff2)}
+@font-face{font-family:L;font-weight:600;src:url(node_modules/@fontsource/rubik/files/rubik-latin-500-normal.woff2)}
+@font-face{font-family:L;font-weight:700;src:url(node_modules/@fontsource/rubik/files/rubik-latin-700-normal.woff2)}
+:root{--ink:#141A33;--ink8:#1F2747;--royal:#3F5499;--gold:#F2911C;--ok:#2E8566}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#DDE3EA}
+body{font-family:L,R,sans-serif}
+#stage{position:absolute;inset:0;overflow:hidden}
+#photo{position:absolute;left:50%;top:0;height:1920px;width:auto;transform:translateX(-50%);filter:saturate(1.05)}
+#mist{position:absolute;inset:0}
+#bg{position:absolute;inset:0}
+.scene{position:absolute;inset:0;visibility:hidden}
+#chip{position:absolute;top:84px;left:0;right:0;display:flex;justify-content:center;z-index:40}
+#chip div{display:flex;align-items:center;gap:14px;font-family:R;font-weight:600;font-size:30px;padding:10px 24px 10px 26px;border-radius:999px;background:rgba(255,255,255,.55);backdrop-filter:blur(14px);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7),0 10px 30px -14px rgba(20,26,51,.35)}
+#chip img{height:42px}
+.cap{position:absolute;top:196px;right:80px;left:80px;font-family:R;font-weight:600;font-size:84px;line-height:1.1;letter-spacing:-.025em;text-align:right;z-index:30}
+.cap .w{display:inline-block;transform-origin:50% 85%;white-space:pre}
+.L .cap{color:var(--ink);text-shadow:0 2px 24px rgba(255,255,255,.65)} .D .cap{color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.35)}
+.L .cap .k{color:var(--royal)} .D .cap .k{color:var(--gold)}
+.shot{position:absolute;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.65),0 50px 90px -40px rgba(20,26,51,.55),0 10px 24px -12px rgba(20,26,51,.25);will-change:transform}
+.D .shot{box-shadow:0 0 0 1.5px rgba(255,255,255,.25),0 60px 110px -30px rgba(0,0,0,.75)}
+.shot>img{display:block;width:100%;height:auto}
+.ov{position:absolute;pointer-events:none}
+.ring{border-radius:14px;box-shadow:0 0 0 4px rgba(242,145,28,.95),0 0 40px rgba(242,145,28,.55)}
+.ring.r{box-shadow:0 0 0 4px rgba(63,84,153,.95),0 0 36px rgba(63,84,153,.45)}
+.flip{display:grid;place-items:center;border-radius:999px;background:#2E8566;color:#fff;font-family:R;font-weight:600}
+.chk{border-radius:50%;background:#3F5499;display:grid;place-items:center}
+.chk svg{width:62%;height:62%;stroke:#fff;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.cur{position:absolute;width:60px;height:70px;z-index:35;pointer-events:none}
+.cur svg{position:absolute;left:0;top:0;width:48px;height:58px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));transform-origin:0 0}
+.cur i{position:absolute;left:-28px;top:-28px;width:56px;height:56px;border-radius:50%;background:rgba(63,84,153,.4)}
+.D .cur i{background:rgba(242,145,28,.5)}
+.lnode{position:absolute;width:280px;text-align:center;font-family:R;color:#fff}
+.lnode .av{width:170px;height:170px;border-radius:50%;margin:0 auto 18px;overflow:hidden;box-shadow:0 0 0 6px rgba(255,255,255,.95),0 22px 44px -10px rgba(0,0,0,.6);display:grid;place-items:center;font-size:84px}
+.lnode .av img{width:100%;height:100%;object-fit:cover}
+.lnode b{display:block;font-size:42px;font-weight:600}
+.lnode span{display:block;font-size:28px;color:#C3C8DD;margin-top:4px}
+svg.flow{position:absolute;inset:0;width:1080px;height:1920px;overflow:visible}
+svg.flow path{fill:none;stroke-linecap:round}
+.ill{position:absolute;z-index:25;pointer-events:none;filter:drop-shadow(0 30px 40px rgba(20,26,51,.35));will-change:transform}
+.D .ill{filter:drop-shadow(0 30px 50px rgba(0,0,0,.6)) drop-shadow(0 0 30px rgba(242,145,28,.25))}
+</style></head>
+<body>
+<div id="stage">
+<img id="photo" src="cap/5eb869ae8994ae95f3d5f55780d059c1.webp" alt="">
+<div id="mist"></div>
+<canvas id="bg" width="1080" height="1920"></canvas>
+<div id="chip"><div><img id="chipLogo" src="logo-navy.svg" alt=""><span id="chipTx">חדר הבקרה</span></div></div>
+
+<section class="scene L" id="s1"><div class="cap" data-cap="זה *חדר_הבקרה* שלנו."></div>
+ <div class="shot" id="view" style="left:40px;top:640px;width:1000px;border-radius:26px"><img src="cap/view.png" alt=""></div></section>
+
+<section class="scene L" id="s2"><div class="cap" data-cap="המחוג מראה *כמה_עמוס* היום."></div>
+ <div class="shot" id="hero" style="left:40px;top:700px;width:1000px;border-radius:30px"><img src="cap/hero.png" alt=""><div class="ov ring" id="briefRing" style="opacity:0"></div></div>
+ <div class="cur" id="cur2"><svg viewBox="0 0 30 36"><path d="M2 2 L2 30 L9 23 L14 34 L19 32 L14 21 L24 21 Z" fill="#fff" stroke="#141A33" stroke-width="2"/></svg><i></i></div><img class="ill" src="ill/gauge.png" data-t="0.5" data-out="" style="left:20px;top:1030px;width:270px" alt=""></section>
+
+<section class="scene L" id="s3"><div class="cap" data-cap="כל בוקר נפתח *בבריף.*"></div>
+ <div class="shot" id="brief" style="left:110px;top:600px;width:860px;border-radius:40px"><img src="cap/brief_card.png" alt=""></div>
+ <div class="cur" id="cur3"><svg viewBox="0 0 30 36"><path d="M2 2 L2 30 L9 23 L14 34 L19 32 L14 21 L24 21 Z" fill="#fff" stroke="#141A33" stroke-width="2"/></svg><i></i></div><img class="ill" src="ill/sun.png" data-t="0.6" data-out="" style="left:20px;top:470px;width:260px" alt=""></section>
+
+<section class="scene D" id="s4"><div class="cap" data-cap="*9* דברים מחכים. הכי דחוף למעלה."></div>
+ <div class="shot" id="att" style="left:70px;top:640px;width:940px;border-radius:36px"><img src="cap/att.png" alt=""><div class="ov ring" id="fixRing" style="opacity:0"></div></div>
+ <div class="shot" id="fix" style="left:90px;top:560px;width:900px;border-radius:30px;visibility:hidden"><img src="cap/fix_modal.png" alt=""></div>
+ <div class="cur" id="cur4"><svg viewBox="0 0 30 36"><path d="M2 2 L2 30 L9 23 L14 34 L19 32 L14 21 L24 21 Z" fill="#fff" stroke="#141A33" stroke-width="2"/></svg><i></i></div><img class="ill" src="ill/warn.png" data-t="0.5" data-out="2.2" style="left:14px;top:500px;width:240px" alt=""></section>
+
+<section class="scene L" id="s5"><div class="cap" data-cap="מה יש לנו היום — *בלוח_העברי.*"></div>
+ <div class="shot" id="day" style="left:190px;top:560px;width:700px;border-radius:30px"><img src="cap/daynow.png" alt=""></div>
+ <div class="shot" id="cal" style="left:190px;top:1040px;width:700px;border-radius:30px"><img src="cap/minical.png" alt=""></div><img class="ill" src="ill/cal.png" data-t="0.6" data-out="" style="left:16px;top:470px;width:250px" alt=""></section>
+
+<section class="scene L" id="s6"><div class="cap" data-cap="ומה עושים היום? *על_סדר_היום.*"></div>
+ <div class="shot" id="ag" style="left:40px;top:620px;width:1000px;border-radius:30px"><img src="cap/agenda_main.png" alt="">
+  <div class="ov chk" id="ck1" style="opacity:0"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+  <div class="ov chk" id="ck2" style="opacity:0"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+ <div class="cur" id="cur6"><svg viewBox="0 0 30 36"><path d="M2 2 L2 30 L9 23 L14 34 L19 32 L14 21 L24 21 Z" fill="#fff" stroke="#141A33" stroke-width="2"/></svg><i></i></div><img class="ill" src="ill/check.png" data-t="0.9" data-out="" style="left:24px;top:1360px;width:260px" alt=""></section>
+
+<section class="scene L" id="s7"><div class="cap" data-cap="והמערכת *מציעה* מה עוד להכניס."></div>
+ <div class="shot" id="sg" style="left:250px;top:560px;width:580px;border-radius:30px"><img src="cap/sugg.png" alt=""><div class="ov ring r" id="sgRing" style="opacity:0"></div><div class="ov chk" id="sgChk" style="opacity:0"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+ <div class="cur" id="cur7"><svg viewBox="0 0 30 36"><path d="M2 2 L2 30 L9 23 L14 34 L19 32 L14 21 L24 21 Z" fill="#fff" stroke="#141A33" stroke-width="2"/></svg><i></i></div></section>
+
+<section class="scene D" id="s8"><div class="cap" data-cap="משימה שקלוד יכול לעשות? *לקלוד.*"></div>
+ <div class="shot" id="cl" style="left:40px;top:700px;width:1000px;border-radius:34px"><img src="cap/claude.png" alt="">
+  <div class="ov flip qf" style="opacity:0">בתור ✓</div><div class="ov flip qf" style="opacity:0">בתור ✓</div><div class="ov flip qf" style="opacity:0">בתור ✓</div><div class="ov flip qf" style="opacity:0">בתור ✓</div>
+  <div class="ov ring" id="saRing" style="opacity:0;border-radius:999px"></div></div>
+ <div class="cur" id="cur8"><svg viewBox="0 0 30 36"><path d="M2 2 L2 30 L9 23 L14 34 L19 32 L14 21 L24 21 Z" fill="#fff" stroke="#141A33" stroke-width="2"/></svg><i></i></div><img class="ill" src="ill/spark.png" data-t="0.6" data-out="" style="left:820px;top:400px;width:220px" alt=""></section>
+
+<section class="scene D" id="s9"><div class="cap" data-cap="וכשהוא מסיים? זה מחכה *לאישור.*"></div>
+ <div class="shot" id="dn" style="left:40px;top:700px;width:1000px;border-radius:34px"><img src="cap/done.png" alt=""><div class="ov ring" id="dnRing" style="opacity:0"></div></div><img class="ill" src="ill/check.png" data-t="0.6" data-out="" style="left:30px;top:1150px;width:220px" alt=""></section>
+
+<section class="scene L" id="s10"><div class="cap" data-cap="וכל פרויקט זז *בקנבן.*"></div>
+ <div class="shot" id="kb" style="top:580px;height:1200px;border-radius:30px;right:auto"><img src="cap/board.png" alt="" style="height:100%;width:auto"></div><img class="ill" src="ill/kanban.png" data-t="0.8" data-out="" style="left:16px;top:1600px;width:300px" alt=""></section>
+
+<section class="scene L" id="s11"><div class="cap" data-cap="ורואים *מי_מחזיק_מה.*"></div>
+ <div class="shot" id="rp" style="left:50px;top:720px;width:980px;border-radius:36px"><img src="cap/reps.png" alt=""></div><img class="ill" src="ill/team.png" data-t="0.6" data-out="" style="left:30px;top:1290px;width:300px" alt=""></section>
+
+<section class="scene D" id="s12"><div class="cap" data-cap="אתם *מחליטים.* קלוד מכין. הצוות מאשר."></div>
+ <svg class="flow" id="flow"></svg>
+ <div class="lnode" id="n1" style="left:400px;top:640px"><div class="av"><img src="cap/0f15bf100e73db8b208368566f83eeb5.webp" alt=""></div><b>מחליטים</b><span>מה נכנס להיום</span></div>
+ <div class="lnode" id="n2" style="left:60px;top:1060px"><div class="av" style="background:#1A1F3A"><img src="cap/2c69a8ecbbf66f0ef213863c434d3c70.webp" alt=""></div><b>קלוד מכין</b><span>ברקע, לבד</span></div>
+ <div class="lnode" id="n3" style="left:740px;top:1060px"><div class="av"><img src="cap/f4e10f01a88f100caf547fdb227ec759.webp" alt=""></div><b>מענדי מאשר</b><span>בלחיצה</span></div>
+ <div class="lnode" id="n4" style="left:400px;top:1440px"><div class="av" style="background:#2E8566;color:#fff">✓</div><b>יוצא לדרך</b><span>ונרשם בדשבורד</span></div></section>
+
+<section class="scene L" id="s13"><div class="cap" data-cap="פותחים. רואים. *מתקדמים.*" style="top:1260px;text-align:center"></div>
+ <div style="position:absolute;top:640px;left:0;right:0;display:grid;justify-items:center;gap:26px" id="endLogo"><img src="logo-navy.svg" style="width:600px" alt=""><div style="font-family:R;font-weight:900;font-size:84px;color:var(--ink8);letter-spacing:-.02em">חדר הבקרה</div></div></section>
+</div>
+<script>
+const META=__META__;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,b)=>clamp((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3),eo5=x=>1-Math.pow(1-x,5),eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c1=1.6,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const lerp=(a,b,x)=>a+(b-a)*x;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const S=[
+ {id:'s1',a:0,b:4.4,bg:'L'},{id:'s2',a:4.4,b:7.8,bg:'L'},{id:'s3',a:7.8,b:11.2,bg:'L'},{id:'s4',a:11.2,b:16.0,bg:'D'},
+ {id:'s5',a:16.0,b:19.4,bg:'L'},{id:'s6',a:19.4,b:23.0,bg:'L'},{id:'s7',a:23.0,b:26.2,bg:'L'},{id:'s8',a:26.2,b:31.2,bg:'D'},
+ {id:'s9',a:31.2,b:34.8,bg:'D'},{id:'s10',a:34.8,b:40.2,bg:'L'},{id:'s11',a:40.2,b:43.4,bg:'L'},{id:'s12',a:43.4,b:48.0,bg:'D'},{id:'s13',a:48.0,b:51.5,bg:'L'}];
+const DUR=51.5;window.DUR=DUR;
+
+$$('.cap').forEach(c=>{const ws=c.dataset.cap.split(' ');c.innerHTML=ws.map(w=>{const k=w.startsWith('*');return `<span class="w${k?' k':''}">${w.replace(/\*/g,'').replace(/_/g,' ')}</span>`}).join(' ');c._k=ws.findIndex(w=>w.startsWith('*'))});
+function cap(sc,lt,start=0.15,step=0.14){const c=$('.cap',sc);if(!c)return;const ws=$$('.w',c),k=c._k,tk=start+k*step,pe=tk+0.55;
+ ws.forEach((w,i)=>{let ti=start+i*step;if(i>k)ti+=0.32;const x=P(lt,ti,ti+0.32);let tr=`translateY(${(1-eo5(x))*40}px)`,op=eo(x),bl=(1-eo(x))*10;
+  if(i===k)tr+=` scale(${lerp(2.2,1,eo5(P(lt,tk+0.12,pe)))})`;else if(lt>tk&&lt<pe+0.05&&i<k)op*=lerp(0.28,1,P(lt,pe-0.15,pe+0.05));
+  w.style.transform=tr;w.style.opacity=op;w.style.filter=bl>0.3?`blur(${bl}px)`:'none'})}
+function shotIn(el,lt,a=0.25,dy=140){const x=eo5(P(lt,a,a+0.65));el.style.transform=`translateY(${(1-x)*dy}px) scale(${0.93+0.07*x})`;el.style.opacity=clamp(x*1.6);return x}
+function cursor(el,lt,pts,clicks=[]){if(lt<pts[0][0]){el.style.opacity=0;return}el.style.opacity=P(lt,pts[0][0],pts[0][0]+0.15);
+ let x=pts[0][1],y=pts[0][2];for(let i=1;i<pts.length;i++)if(lt>=pts[i-1][0]){const f=eio(P(lt,pts[i-1][0],pts[i][0]));x=lerp(pts[i-1][1],pts[i][1],f);y=lerp(pts[i-1][2],pts[i][2],f)}
+ el.style.left=x+'px';el.style.top=y+'px';let sc=1,ring=0;clicks.forEach(c=>{const p=P(lt,c,c+0.4);if(p>0&&p<1)ring=p;const q=P(lt,c-0.06,c+0.12);if(q>0&&q<1)sc=1-0.18*Math.sin(Math.PI*q)});
+ el.querySelector('svg').style.transform=`scale(${sc})`;const i=el.querySelector('i');i.style.transform=`scale(${ring?0.3+ring*1.8:0})`;i.style.opacity=ring?1-ring:0}
+// position overlay inside shot from crop-space box (css px of capture)
+function place(ov,shot,cropW,b,pad=0){const s=shot.offsetWidth/cropW;ov.style.left=(b.x*s-pad)+'px';ov.style.top=(b.y*s-pad)+'px';ov.style.width=(b.w*s+pad*2)+'px';ov.style.height=(b.h*s+pad*2)+'px';return s}
+// page coords of a crop-space point (ignores transforms: computed from layout)
+function pt(shot,cropW,x,y){const s=shot.offsetWidth/cropW;return [shot.offsetLeft+x*s,shot.offsetTop+y*s]}
+
+// background
+const cv=$('#bg'),cx=cv.getContext('2d');const CELL=54,COLS=Math.ceil(1080/CELL),ROWS=Math.ceil(1920/CELL);
+let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+const cells=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)cells.push({c,r,a:rnd(),b:rnd(),ph:rnd()*6.28,tr:rnd()});
+function drawBg(t,mode){const L=mode==='L';cx.clearRect(0,0,1080,1920);
+ for(const k of cells){const yN=k.r/ROWS;const dens=L?Math.pow(yN,3)*0.5:0.08+Math.pow(yN,2)*0.3;if(k.a<dens){const tw=0.5+0.5*Math.sin(t*1.6+k.ph);const al=(L?0.10+0.16*k.b:0.05+0.16*k.b)*(0.5+0.5*tw);
+  cx.fillStyle=L?(k.b>0.8?`rgba(242,145,28,${al*0.8})`:`rgba(255,255,255,${al*2})`):(k.b>0.8?`rgba(242,145,28,${al*1.3})`:`rgba(140,160,235,${al})`);const s=CELL-6;cx.fillRect(k.c*CELL+3,k.r*CELL+3,s,s)}}}
+const mist=$('#mist');
+function setMode(m,t){if(m==='L'){mist.style.background='linear-gradient(180deg,rgba(243,244,248,.86) 0%,rgba(243,244,248,.45) 26%,rgba(243,244,248,.12) 55%,rgba(243,244,248,.25) 100%)';$('#photo').style.filter='saturate(1.05) blur(1px)'}
+ else{mist.style.background='linear-gradient(180deg,rgba(12,15,38,.90) 0%,rgba(15,19,48,.80) 50%,rgba(15,19,48,.88) 100%)';$('#photo').style.filter='saturate(.9) blur(3px)'}
+ $('#photo').style.transform=`translateX(-50%) scale(${1.04+0.02*Math.sin(t*0.12)})`}
+
+function upd(id,sc,lt){
+ switch(id){
+ case 's1':{cap(sc,lt,0.15);const v=$('#view');const x=shotIn(v,lt,0.5);
+  // camera push toward the hero (greeting+gauge) region
+  const z=eio(P(lt,2.6,4.4));const m=META.view.subs.hero;const s=1000/1440;const cxp=(m.x+m.w/2)*s,cyp=(m.y+m.h/2)*s;
+  v.style.transformOrigin=`${cxp}px ${cyp}px`;v.style.transform+=` scale(${1+z*0.55})`;break;}
+ case 's2':{cap(sc,lt,0.1);const h=$('#hero');shotIn(h,lt,0.05,80);const cw=META.hero.w;const bb=META.hero.subs.brief;
+  const r=$('#briefRing');place(r,h,cw,bb,6);r.style.borderRadius='999px';const g=P(lt,2.55,2.75);r.style.opacity=g*(1-P(lt,3.2,3.4));
+  const [bx,by]=pt(h,cw,bb.x+bb.w*0.45,bb.y+bb.h*0.55);cursor($('#cur2'),lt,[[1.4,620,1700],[2.3,bx,by],[3.4,bx,by]],[2.55]);
+  h.style.transformOrigin='30% 50%';h.style.transform+=` scale(${1+lt*0.02})`;break;}
+ case 's3':{cap(sc,lt,0.1);const b=$('#brief');const x=back(P(lt,0.1,0.7));b.style.transform=`scale(${0.4+0.6*Math.max(0,x)})`;b.style.opacity=clamp(P(lt,0.1,0.35));b.style.transformOrigin='70% 0%';
+  const s=860/460;const [nx,ny]=[b.offsetLeft+(540-490)*s,b.offsetTop+(671-170)*s];cursor($('#cur3'),lt,[[1.5,700,1780],[2.3,nx,ny],[3.4,nx,ny]],[2.5]);
+  const f=P(lt,2.5,2.9);b.style.transform+=` translateX(${-f*0}px)`;break;}
+ case 's4':{cap(sc,lt,0.1);const a=$('#att');shotIn(a,lt,0.1);const cw=META.att.w;const fb=META.att.subs.fix;
+  const r=$('#fixRing');place(r,a,cw,fb,6);r.style.borderRadius='999px';r.style.opacity=P(lt,2.0,2.2);
+  const [fx,fy]=pt(a,cw,fb.x+fb.w*0.5,fb.y+fb.h*0.55);cursor($('#cur4'),lt,[[1.1,800,1750],[1.85,fx,fy],[2.4,fx,fy]],[2.0]);
+  const m=$('#fix');if(lt>2.25){m.style.visibility='visible';const y=eo5(P(lt,2.25,2.85));m.style.transform=`translateY(${(1-y)*900}px)`;a.style.filter=`blur(${y*6}px)`;a.style.opacity=1-0.4*y;$('#cur4').style.opacity=1-P(lt,2.3,2.5)}else{m.style.visibility='hidden';a.style.filter='none'}
+  if(lt>2.9){m.style.transform+=` translateY(${-P(lt,2.9,4.8)*170}px)`}
+  break;}
+ case 's5':{cap(sc,lt,0.1);shotIn($('#day'),lt,0.1);shotIn($('#cal'),lt,0.35);break;}
+ case 's6':{cap(sc,lt,0.1);const g=$('#ag');shotIn(g,lt,0.1);const cw=890;const chs=META.agenda_full.checks.filter(c=>c.c.trim()==='check');
+  [['#ck1',0,1.7],['#ck2',1,2.5]].forEach(([sel,i,t])=>{const c=chs[i];const o=$(sel);place(o,g,cw,{x:c.x-410,y:c.y-15,w:c.w,h:c.h},2);const s=back(P(lt,t,t+0.3));o.style.opacity=lt>t?1:0;o.style.transform=`scale(${Math.max(0,s)})`});
+  const p1=pt(g,cw,chs[0].x-410+11,chs[0].y-15+13),p2=pt(g,cw,chs[1].x-410+11,chs[1].y-15+13);
+  {const z=eio(P(lt,0.9,1.6));g.style.transformOrigin='92% 62%';g.style.transform+=` scale(${1+0.32*z})`;}
+  cursor($('#cur6'),lt,[[1.0,700,1750],[1.55,p1[0],p1[1]],[2.2,p1[0],p1[1]],[2.4,p2[0],p2[1]],[3.4,p2[0]-40,p2[1]+120]],[1.7,2.5]);break;}
+ case 's7':{cap(sc,lt,0.1);const g=$('#sg');shotIn(g,lt,0.05);const cw=366;const pb={x:343-26-12,y:228-96-12,w:24,h:24};
+  const ring=$('#sgRing');place(ring,g,cw,{x:6,y:106,w:354,h:80},4);ring.style.opacity=P(lt,1.75,1.95);
+  const ck=$('#sgChk');place(ck,g,cw,pb,4);ck.style.opacity=lt>1.8?1:0;ck.style.transform=`scale(${Math.max(0,back(P(lt,1.8,2.1)))})`;
+  const [px,py]=pt(g,cw,pb.x+12,pb.y+14);cursor($('#cur7'),lt,[[0.9,800,1700],[1.55,px,py],[3.0,px,py]],[1.8]);break;}
+ case 's8':{cap(sc,lt,0.1);const c=$('#cl');shotIn(c,lt,0.1);const cw=META.claude.w;const S2=META.claude.subs;const keys=['b1','b2','b3','b4'];const sa={x:20,y:20,w:90,h:27};
+  const fl=$$('.qf',c);const s=c.offsetWidth/cw;
+  keys.forEach((k,i)=>{const o=fl[i];place(o,c,cw,S2[k],3);o.style.fontSize=(13*s)+'px';const t=i===0?2.0:3.25+(i-1)*0.15;const f=P(lt,t,t+0.22);o.style.opacity=lt>t?1:0;o.style.transform=`scaleY(${lt>t?Math.max(0.05,Math.sin(Math.PI/2*f)):0})`});
+  const r=$('#saRing');place(r,c,cw,sa,5);r.style.opacity=P(lt,3.05,3.2)*(1-P(lt,3.6,3.8));
+  const p1=pt(c,cw,S2.b1.x+S2.b1.w/2,S2.b1.y+S2.b1.h*0.6),p2=pt(c,cw,sa.x+sa.w/2,sa.y+sa.h*0.6);
+  cursor($('#cur8'),lt,[[1.2,600,1700],[1.85,p1[0],p1[1]],[2.6,p1[0],p1[1]],[2.95,p2[0],p2[1]],[4.2,p2[0],p2[1]]],[2.0,3.1]);break;}
+ case 's9':{cap(sc,lt,0.1);const d=$('#dn');shotIn(d,lt,0.1);const r1=META.done.subs.r1;const r=$('#dnRing');place(r,d,META.done.w,{x:16,y:r1.y-22,w:612,h:62},0);r.style.borderRadius='18px';
+  const g=P(lt,1.2,1.5);r.style.opacity=g;r.style.boxShadow=`0 0 0 ${4}px rgba(242,145,28,.95),0 0 ${30+20*Math.sin(lt*6)}px rgba(242,145,28,.5)`;break;}
+ case 's10':{cap(sc,lt,0.1);const k=$('#kb');const W=k.offsetWidth||1878;const x0=1080-W-40,x1=40;const p=eio(P(lt,0.9,5.0));
+  const e=eo5(P(lt,0.15,0.8));k.style.left=lerp(x1,x0,p)+'px';k.style.transform=`translateY(${(1-e)*160}px)`;k.style.opacity=clamp(e*1.6);break;}
+ case 's11':{cap(sc,lt,0.1);const r=$('#rp');shotIn(r,lt,0.1);r.style.transform+=` scale(${1+lt*0.012})`;break;}
+ case 's12':{cap(sc,lt,0.1,0.13);const nodes=['n1','n2','n3','n4'].map(i=>$('#'+i));const C=nodes.map(n=>[n.offsetLeft+140,n.offsetTop+85]);
+  const flow=$('#flow');if(!flow._b){const seg=[[0,1],[1,3],[3,2],[2,0]];flow.innerHTML=seg.map(([a,b])=>{const [x1,y1]=C[a],[x2,y2]=C[b];const mx=(x1+x2)/2+(y2-y1)*0.25,my=(y1+y2)/2-(x2-x1)*0.25;const d=`M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`;return `<g><path d="${d}" stroke="rgba(242,145,28,.45)" stroke-width="16" style="filter:blur(6px)"/><path d="${d}" stroke="#FFC97A" stroke-width="5"/></g>`}).join('')+'<circle id="fdot" r="14" fill="#FFF3DC" style="filter:drop-shadow(0 0 10px #F2911C)"/>';flow._b=1;flow._s=$$('g',flow).map(g=>{const p=g.querySelectorAll('path');const L=p[1].getTotalLength();p.forEach(x=>x.style.strokeDasharray=L);return{p,L,path:p[1]}})}
+  const order=[0,1,3,2];nodes.forEach((n,i)=>{const k=order.indexOf(i);const x=back(P(lt,0.9+k*0.45,1.3+k*0.45));n.style.transform=`scale(${Math.max(0,x)})`;n.style.opacity=clamp(x*2)});
+  flow._s.forEach((s,i)=>{const x=eo(P(lt,1.15+i*0.45,1.6+i*0.45));s.p.forEach(p=>p.style.strokeDashoffset=s.L*(1-x))});
+  const dot=$('#fdot');if(lt>3.0){const u=((lt-3.0)*0.9)%4;const si=Math.floor(u),f=u-si;const q=flow._s[si].path.getPointAtLength(flow._s[si].L*eio(f));dot.setAttribute('cx',q.x);dot.setAttribute('cy',q.y);dot.style.opacity=1}else dot.style.opacity=0;break;}
+ case 's13':{cap(sc,lt,0.9,0.16);const e=$('#endLogo');const x=eo5(P(lt,0.1,0.8));e.style.transform=`scale(${lerp(1.25,1,x)})`;e.style.opacity=x;e.style.filter=`blur(${(1-x)*12}px)`;break;}
+ }}
+function ills(sc,lt){$$('.ill',sc).forEach((im,k)=>{const t0=+im.dataset.t;const out=im.dataset.out?+im.dataset.out:1e9;const x=back(P(lt,t0,t0+0.6));const o=1-P(lt,out,out+0.3);im.style.opacity=clamp(P(lt,t0,t0+0.2))*o;im.style.transform='translateY('+(Math.sin(lt*2.1+k)*12)+'px) rotate('+(Math.sin(lt*1.3+k)*5-(1-Math.max(0,x))*25)+'deg) scale('+Math.max(0,x)+')'})}
+const TR=0.24;
+document.getElementById('stage').insertAdjacentHTML('beforeend','<canvas id="fxc" width="1080" height="1920" style="position:absolute;inset:0;z-index:60;pointer-events:none"></canvas>');
+window.seek=function(t){const cur=S.find(s=>t>=s.a&&t<s.b)||S[S.length-1];
+ S.forEach(s=>{const el=document.getElementById(s.id);if(s===cur){el.style.visibility='visible';el.style.display='block';upd(s.id,el,t-s.a);ills(el,t-s.a)}else el.style.display='none'});
+ setMode(cur.bg,t);drawBg(t,cur.bg);
+ const i=S.indexOf(cur),nx=S[i+1],pv=S[i-1];let cov=0,col=null;const C={L:'rgba(240,242,247,1)',D:'#0F1330'};
+ if(nx&&t>nx.a-TR){cov=eio(P(t,nx.a-TR,nx.a));col=C[nx.bg]}
+ if(pv&&t<cur.a+TR){cov=1-eio(P(t,cur.a,cur.a+TR));col=C[cur.bg]}
+ const L=cur.bg==='L';$('#chipLogo').src=L?'logo-navy.svg':'logo.svg';$('#chipTx').style.color=L?'#1F2747':'#E9EBF5';$('#chip div').style.background=L?'rgba(255,255,255,.55)':'rgba(255,255,255,.08)';
+ $('#chip').style.opacity=cur.id==='s13'?1-P(t,cur.a,cur.a+0.3):1;
+ const g=$('#fxc').getContext('2d');g.clearRect(0,0,1080,1920);if(cov>0){g.fillStyle=col;for(const k of cells)if(k.tr<cov)g.fillRect(k.c*CELL,k.r*CELL,CELL+1,CELL+1)}
+ const end=P(t,DUR-0.5,DUR);if(end>0){g.fillStyle=`rgba(240,242,247,${end})`;g.fillRect(0,0,1080,1920)}};
+Promise.all([document.fonts.ready,...[...document.images].map(i=>i.complete?1:new Promise(r=>i.onload=i.onerror=r))]).then(()=>{window.READY=true;seek(0)});
+</script></body></html>
