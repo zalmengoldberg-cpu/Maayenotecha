@@ -487,7 +487,7 @@ new MutationObserver(()=>{if($1('#setPanel:not([hidden])'))renderSet()}).observe
 const MROW=4,MGAP=16;let masRaf=0;
 function masonry(){cancelAnimationFrame(masRaf);masRaf=requestAnimationFrame(()=>{const g=$1('#v-today');if(!g)return;
   const all=[...g.querySelectorAll(':scope>.mtx-wrap>*,:scope>.bento>*')];
-  const reset=()=>{g.classList.remove('mas');all.forEach(el=>{el.style.gridRowStart='';el.style.gridRowEnd=''})};
+  const reset=()=>{g.classList.remove('mas');all.forEach(el=>{el.style.gridRowStart='';el.style.gridRowEnd='';if(el.closest('.bento'))el.style.gridColumn=''})};
   if(!g.classList.contains('on')||innerWidth<=760){reset();return}
   g.classList.add('mas');
   const vis=all.filter(el=>!el.hidden&&getComputedStyle(el).display!=='none'&&!el.classList.contains('arr-lift')&&el.getBoundingClientRect().height>0);
@@ -499,7 +499,20 @@ function masonry(){cancelAnimationFrame(masRaf);masRaf=requestAnimationFrame(()=
   if(deck)after=put(deck,after);
   if(wide){const a=put(dn,1);if(cal&&S_.has(cal))put(cal,a)}
   else{const a=put(dn,after);if(cal&&S_.has(cal))put(cal,after);after=Math.max(a,cal&&S_.has(cal)?after+S_.get(cal):a)}
-  vis.forEach(el=>{if([hero,dn,deck,cal].includes(el))return;el.style.gridRowStart='';el.style.gridRowEnd='span '+S_.get(el)})})}
+  /* v28: מיקום קבוע לכל כרטיס – עמודה שמורה (x) ושורה מחושבת, במקום שהדפדפן יבחר חור בכל טעינה */
+  const COLS=12,bot=new Array(COLS+2).fill(1);const num=v=>parseInt(v,10);
+  [hero,deck,dn,cal].forEach(el=>{if(!el||!S_.has(el))return;const cs=getComputedStyle(el);let st=num(cs.gridColumnStart)||1;const ce=cs.gridColumnEnd;const sm0=(cs.gridColumnStart+' '+ce).match(/span\s*(\d+)/);let en=sm0?st+num(sm0[1]):(num(ce)>0?num(ce):COLS+1);
+    const r0=num(el.style.gridRowStart)||1,r1=r0+S_.get(el);for(let c=st;c<en&&c<=COLS;c++)bot[c]=Math.max(bot[c],r1)});
+  const O=rzGet();let froze=false;
+  vis.forEach(el=>{if([hero,dn,deck,cal].includes(el))return;const k=el.dataset.cid,sv=(k&&O[k])||{};
+    el.style.gridColumn=sv.c&&!RZ_W_LOCK.has(k)?'span '+sv.c:'';const cs=getComputedStyle(el);
+    let full=cs.gridColumnStart==='1'&&(cs.gridColumnEnd==='-1');const sm=(cs.gridColumnStart+' '+cs.gridColumnEnd).match(/span\s*(\d+)/);let c=full?COLS:sm?num(sm[1]):(num(cs.gridColumnEnd)>num(cs.gridColumnStart)?num(cs.gridColumnEnd)-num(cs.gridColumnStart):1);
+    if(el._liveC)c=el._liveC;c=Math.max(1,Math.min(COLS,c));
+    const top=x=>{let m=1;for(let i=x;i<x+c;i++)m=Math.max(m,bot[i]);return m};
+    let x=full?1:(sv.x&&sv.x+c-1<=COLS?sv.x:(sv.x?COLS-c+1:0));
+    if(!x){let best=1,bv=Infinity;const cand=[];for(let i=1;i+c-1<=COLS;i+=c)cand.push(i);if(cand[cand.length-1]+c-1<COLS)cand.push(COLS-c+1);for(const i of cand){const t=top(i);if(t<bv){bv=t;best=i}}x=best;if(k&&!full&&!el._liveC){O[k]={...sv,x};froze=true}}
+    const r=top(x);el.style.gridColumn=x+' / span '+c;el.style.gridRowStart=r;el.style.gridRowEnd='span '+S_.get(el);for(let i=x;i<x+c;i++)bot[i]=r+S_.get(el)});
+  if(froze&&typeof S!=='undefined'&&S.loaded&&!document.documentElement.classList.contains('arranging'))rzSet(O)})}
 addEventListener('resize',masonry);
 {const ro=new ResizeObserver(()=>masonry());const watch=()=>{document.querySelectorAll('#v-today>.mtx-wrap>*,#v-today>.bento>*').forEach(el=>{if(!el._mro){el._mro=1;ro.observe(el)}})};
   [document.querySelector('#v-today'),document.querySelector('#v-today>.mtx-wrap')].filter(Boolean).forEach(n=>new MutationObserver(()=>{watch();masonry()}).observe(n,{childList:true,subtree:false}));
@@ -523,7 +536,7 @@ const rzGet=()=>{try{return JSON.parse(localStorage.getItem(RZK)||'{}')||{}}catc
 const rzSet=o=>{try{localStorage.setItem(RZK,JSON.stringify(o))}catch(e){}};
 function rzCards(){return [...document.querySelectorAll('#v-today>.bento>[data-cid]')].filter(c=>c.dataset.cid!=='brief8'&&c.dataset.cid!=='kpis')}
 function rzApply(){const big=innerWidth>760,o=rzGet();rzCards().forEach(c=>{const s=big?o[c.dataset.cid]:null;
-  const w=s&&s.c&&!RZ_W_LOCK.has(c.dataset.cid)?'span '+s.c:'';if(c.style.gridColumn!==w&&(w||c._rzw)){c.style.gridColumn=w;c._rzw=!!w}
+  if(!big&&c.style.gridColumn){c.style.gridColumn='';c._rzw=false}
   const h=s&&s.h?s.h+'px':'';if(c.style.height!==h&&(h||c._rzh)){c.style.height=h;c._rzh=!!h}c.classList.toggle('rz-h',!!h)})}
 function rzHandles(){if(innerWidth<=760)return;rzCards().forEach(c=>{if(c.querySelector(':scope>.rz26'))return;const h=document.createElement('span');h.className='rz26';h.tabIndex=0;h.setAttribute('role','separator');
   h.setAttribute('aria-label','שינוי גודל: '+(c.dataset.cname||'כרטיס'));h.title='גרירה משנה גודל · לחיצה כפולה מחזירה לגודל המקורי';c.append(h)})}
@@ -533,9 +546,9 @@ document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.c
   const c=h.parentElement,G=rzGrid(),r=c.getBoundingClientRect(),x0=e.clientX,y0=e.clientY,lock=RZ_W_LOCK.has(c.dataset.cid);let cur=null;
   c.classList.add('rz-on');document.documentElement.classList.add('rz-drag');try{h.setPointerCapture(e.pointerId)}catch(x){}
   const mv=ev=>{const w=r.width+(x0-ev.clientX)*(document.dir==='ltr'?-1:1),hh=Math.max(140,Math.round((r.height+ev.clientY-y0)/4)*4);
-    const sp=Math.max(3,Math.min(12,Math.round((w+G.gap)/(G.col+G.gap))));cur={h:hh};if(!lock){cur.c=sp;c.style.gridColumn='span '+sp;c._rzw=1}
+    const sp=Math.max(3,Math.min(12,Math.round((w+G.gap)/(G.col+G.gap))));cur={h:hh};if(!lock){cur.c=sp;c._liveC=sp;masonry()}
     c.style.height=hh+'px';c._rzh=1;c.classList.add('rz-h')};
-  const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);h.removeEventListener('pointercancel',up);c.classList.remove('rz-on');document.documentElement.classList.remove('rz-drag');if(cur)rzSave(c,cur);else masonry()};
+  const up=()=>{c._liveC=0;h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);h.removeEventListener('pointercancel',up);c.classList.remove('rz-on');document.documentElement.classList.remove('rz-drag');if(cur)rzSave(c,cur);else masonry()};
   h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up)},true);
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.rz26')){e.preventDefault();e.stopPropagation()}},true);
 document.addEventListener('dblclick',e=>{const h=e.target.closest&&e.target.closest('.rz26');if(!h)return;e.preventDefault();rzSave(h.parentElement,{c:null,h:null});toast('הכרטיס חזר לגודל המקורי')},true);
@@ -646,7 +659,13 @@ document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest
   if(sb&&window.ResizeObserver)new ResizeObserver(setW).observe(sb);setW()}
 addEventListener('hashchange',()=>{if(location.hash!=='#agenda')closeAgenda(false)});
 
-function paintV26(){try{renderLinksCard();rzHandles();rzApply();dressLinks();enhanceDrawer();masonry()}catch(e){console.error(e)}}
+/* v28: כרטיסים שנוצרים אחרי הטעינה (תזכורות, קישורים, השורה התחתונה) נכנסים לפי הסדר השמור, ולא תמיד לאותו מקום */
+function applyOrder(){if(document.documentElement.classList.contains('arranging'))return;const box=$1('#v-today>.bento');if(!box)return;let L=null;try{L=JSON.parse(localStorage.getItem('mt-layout-today2')||'null')}catch(e){}
+  if(!L||!Array.isArray(L.order))return;const kids=[...box.children].filter(c=>c.dataset&&c.dataset.cid);const by=Object.fromEntries(kids.map(c=>[c.dataset.cid,c]));
+  (L.hidden||[]).forEach(id=>{if(by[id]&&!by[id].hidden)by[id].hidden=true});
+  const cur=kids.map(c=>c.dataset.cid).filter(id=>L.order.includes(id)),want=L.order.filter(id=>by[id]);if(cur.join('|')===want.join('|'))return;
+  want.forEach(id=>box.appendChild(by[id]));kids.forEach(c=>{if(!L.order.includes(c.dataset.cid))box.appendChild(c)})}
+function paintV26(){try{renderLinksCard();applyOrder();rzHandles();rzApply();dressLinks();enhanceDrawer();masonry()}catch(e){console.error(e)}}
 const _ra26=window.renderAll;window.renderAll=function(){const r=_ra26.apply(this,arguments);paintV26();return r};
 new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded){dressLinks();rzHandles()}}).observe(document.querySelector('main')||document.body,{childList:true,subtree:true});
 {const a=$1('#agendaPage');if(a)new MutationObserver(()=>dressLinks()).observe(a,{childList:true,subtree:true})}
@@ -660,18 +679,22 @@ function pfLocal(){const o={};try{for(let i=0;i<localStorage.length;i++){const k
 let pfReady=false,pfT=0,pfApplying=false,pfOn=false;
 const pfId=()=>(typeof S!=='undefined'&&S.meV&&S.meV.id)||null;
 function pfSave(){if(!pfReady||pfApplying)return;clearTimeout(pfT);pfT=setTimeout(()=>{const id=pfId();if(!id||!S.db)return;const at=new Date().toISOString();
-  try{localStorage.setItem('mt-prefs-at',at)}catch(e){}S.db.collection('prefs').doc(id).set({v:pfLocal(),at,who:ME(),name:(S.meV&&S.meV.name)||''}).catch(()=>{})},1200)}
+  pfWrite(id,at)},800)}
+let pfLast=null;
+function pfWrite(id,at){const v=pfLocal();const hist=((pfLast&&pfLast.hist)||[]).slice(0,7);if(pfLast&&pfLast.v&&JSON.stringify(pfLast.v)!==JSON.stringify(v))hist.unshift({at:pfLast.at,v:pfLast.v});
+  try{localStorage.setItem('mt-prefs-at',at)}catch(e){}const doc={v,at,who:ME(),name:(S.meV&&S.meV.name)||'',hist:hist.slice(0,8)};pfLast=doc;S.db.collection('prefs').doc(id).set(doc).catch(()=>{})}
+function pfFlush(){if(!pfT||!pfReady)return;clearTimeout(pfT);pfT=0;const id=pfId();if(id&&S.db)pfWrite(id,new Date().toISOString())}
+addEventListener('pagehide',pfFlush);document.addEventListener('visibilitychange',()=>{if(document.hidden)pfFlush()});
 {const set0=Storage.prototype.setItem,rm0=Storage.prototype.removeItem;
-  Storage.prototype.setItem=function(k,v){set0.call(this,k,v);try{if(this===localStorage&&PK.test(k))pfSave()}catch(e){}};
+  Storage.prototype.setItem=function(k,v){let old=null;try{if(this===localStorage&&k==='mt-layout-today2')old=this.getItem(k)}catch(e){}set0.call(this,k,v);try{const ord=x=>{try{return JSON.stringify((JSON.parse(x||'{}').order)||[])}catch(e){return''}};if(this===localStorage&&k==='mt-layout-today2'&&!pfApplying&&old!=null&&ord(old)!==ord(v)){const o=JSON.parse(localStorage.getItem('mt-size-v26')||'{}');let ch=false;Object.values(o).forEach(z=>{if(z&&z.x){delete z.x;ch=true}});if(ch)set0.call(this,'mt-size-v26',JSON.stringify(o));setTimeout(()=>{try{masonry()}catch(x){}},60)}if(this===localStorage&&PK.test(k))pfSave()}catch(e){}};
   Storage.prototype.removeItem=function(k){rm0.call(this,k);try{if(this===localStorage&&PK.test(k))pfSave()}catch(e){}}}
 function pfStart(){if(pfOn)return;const id=pfId();if(!id||typeof S==='undefined'||!S.db)return;pfOn=true;let first=true;
-  S.db.collection('prefs').onSnapshot(s=>{const d=(s.docs||[]).find(x=>x.id===id);const r=d&&d.data();const wasFirst=first;first=false;
+  S.db.collection('prefs').onSnapshot(s=>{const d=(s.docs||[]).find(x=>x.id===id);const r=d&&d.data();const wasFirst=first;first=false;if(r)pfLast=r;
     if(!r||!r.v){pfReady=true;if(wasFirst)pfSave();return}
     let la='';try{la=localStorage.getItem('mt-prefs-at')||''}catch(e){}
     if(la&&String(r.at)<=la){pfReady=true;return}
     const cur=pfLocal();
-    /* דפדפן שעוד לא סונכרן אבל יש בו סידור משלו – הסידור שלו גובר ועולה למסד (שלא יידרס בברירות מחדל ממכשיר אחר) */
-    if(!la&&wasFirst&&Object.keys(cur).some(k=>/^mt-(layout-|size-v26)/.test(k))){pfReady=true;pfSave();return}const diff=Object.keys({...cur,...r.v}).some(k=>cur[k]!==r.v[k]);
+    const diff=Object.keys({...cur,...r.v}).some(k=>cur[k]!==r.v[k]);
     pfApplying=true;try{Object.keys(cur).forEach(k=>{if(!(k in r.v))localStorage.removeItem(k)});Object.entries(r.v).forEach(([k,v])=>{if(PK.test(k))localStorage.setItem(k,v)});localStorage.setItem('mt-prefs-at',String(r.at))}catch(e){}pfApplying=false;
     if(diff&&wasFirst){let done=false;try{done=!!sessionStorage.getItem('mt-prefs-rl-'+r.at);sessionStorage.setItem('mt-prefs-rl-'+r.at,'1')}catch(e){done=true}if(!done){location.reload();return}}
     pfReady=true},()=>{pfReady=true})}
