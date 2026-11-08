@@ -652,6 +652,39 @@ new MutationObserver(()=>{if(typeof S!=='undefined'&&S.loaded){dressLinks();rzHa
 {const a=$1('#agendaPage');if(a)new MutationObserver(()=>dressLinks()).observe(a,{childList:true,subtree:true})}
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-agenda],[data-agtab],[data-agday]'))setTimeout(dressLinks,50)});
 
+/* ===================== v27 (8.11): הסידור נשמר במסד, וכותרת הלוח הקטן פותחת את לוח השנה =====================
+   כל העדפות התצוגה (סידור והסתרה, גודל כרטיסים, רקע, פתיחת כרטיס, מד, בריף, סרגל מכווץ, תצוגת לוח) נשמרות
+   באוסף prefs, מסמך אחד לכל חשבון (S.meV.id). בכניסה ממכשיר אחר הסידור נטען משם. בפעם הראשונה – מה שיש בדפדפן עולה למסד. */
+const PK=/^mt-(layout-.+|size-v26|bg2-.+|open|hero-meter|brief-open|pref-.+|sbmini|fold-.+|calmode|calkind|cmap)$/;
+function pfLocal(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&PK.test(k))o[k]=localStorage.getItem(k)}}catch(e){}return o}
+let pfReady=false,pfT=0,pfApplying=false,pfOn=false;
+const pfId=()=>(typeof S!=='undefined'&&S.meV&&S.meV.id)||null;
+function pfSave(){if(!pfReady||pfApplying)return;clearTimeout(pfT);pfT=setTimeout(()=>{const id=pfId();if(!id||!S.db)return;const at=new Date().toISOString();
+  try{localStorage.setItem('mt-prefs-at',at)}catch(e){}S.db.collection('prefs').doc(id).set({v:pfLocal(),at,who:ME(),name:(S.meV&&S.meV.name)||''}).catch(()=>{})},1200)}
+{const set0=Storage.prototype.setItem,rm0=Storage.prototype.removeItem;
+  Storage.prototype.setItem=function(k,v){set0.call(this,k,v);try{if(this===localStorage&&PK.test(k))pfSave()}catch(e){}};
+  Storage.prototype.removeItem=function(k){rm0.call(this,k);try{if(this===localStorage&&PK.test(k))pfSave()}catch(e){}}}
+function pfStart(){if(pfOn)return;const id=pfId();if(!id||typeof S==='undefined'||!S.db)return;pfOn=true;let first=true;
+  S.db.collection('prefs').onSnapshot(s=>{const d=(s.docs||[]).find(x=>x.id===id);const r=d&&d.data();const wasFirst=first;first=false;
+    if(!r||!r.v){pfReady=true;if(wasFirst)pfSave();return}
+    let la='';try{la=localStorage.getItem('mt-prefs-at')||''}catch(e){}
+    if(la&&String(r.at)<=la){pfReady=true;return}
+    const cur=pfLocal();
+    /* דפדפן שעוד לא סונכרן אבל יש בו סידור משלו – הסידור שלו גובר ועולה למסד (שלא יידרס בברירות מחדל ממכשיר אחר) */
+    if(!la&&wasFirst&&Object.keys(cur).some(k=>/^mt-(layout-|size-v26)/.test(k))){pfReady=true;pfSave();return}const diff=Object.keys({...cur,...r.v}).some(k=>cur[k]!==r.v[k]);
+    pfApplying=true;try{Object.keys(cur).forEach(k=>{if(!(k in r.v))localStorage.removeItem(k)});Object.entries(r.v).forEach(([k,v])=>{if(PK.test(k))localStorage.setItem(k,v)});localStorage.setItem('mt-prefs-at',String(r.at))}catch(e){}pfApplying=false;
+    if(diff&&wasFirst){let done=false;try{done=!!sessionStorage.getItem('mt-prefs-rl-'+r.at);sessionStorage.setItem('mt-prefs-rl-'+r.at,'1')}catch(e){done=true}if(!done){location.reload();return}}
+    pfReady=true},()=>{pfReady=true})}
+{const t=setInterval(()=>{pfStart();if(pfOn)clearInterval(t)},700);setTimeout(()=>clearInterval(t),120000)}
+
+/* ---- כותרת הלוח הקטן (שם החודש) פותחת את עמוד לוח השנה. לחיצה על יום ממשיכה לבחור אותו (החלטת זלמן, 8.11) ---- */
+function calHead(){const t=$1('#miniCal .hcal-title');if(!t||t._go)return;t._go=1;t.setAttribute('role','link');t.tabIndex=0;t.setAttribute('aria-label','פתיחת לוח השנה');t.title='פתיחת לוח השנה';t.classList.add('cal-go')}
+function calGo(){document.documentElement.classList.remove('sb-open');location.hash='#calendar'}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#miniCal .hcal-title')){e.preventDefault();calGo()}});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest&&e.target.closest('#miniCal .hcal-title')){e.preventDefault();calGo()}});
+{const _p27=window.renderAll;window.renderAll=function(){const r=_p27.apply(this,arguments);try{calHead();pfStart()}catch(e){}return r}}
+new MutationObserver(()=>calHead()).observe(document.body,{childList:true,subtree:true});
+
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();meterToggle();battery();
 if(typeof S!=='undefined'&&S.loaded&&window.renderAll)renderAll();

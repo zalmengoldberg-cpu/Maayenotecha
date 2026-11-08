@@ -1771,3 +1771,8 @@ html.rz-drag,html.rz-drag *{cursor:nesw-resize!important;user-select:none!import
   html.agp-open .pal{z-index:84}
 }
 .st-tip{margin:10px 0 0;font-size:var(--fs-caption);color:var(--ink-400)}
+
+/* v27 (8.11): כותרת הלוח הקטן פותחת את לוח השנה */
+#miniCal .hcal-title.cal-go{cursor:pointer;border-radius:var(--r-sm);transition:opacity var(--t-base)}
+#miniCal .hcal-title.cal-go:hover{opacity:.78}
+#miniCal .hcal-title.cal-go:hover .hcal-month::after{content:"‹";font-size:.55em;font-weight:var(--fw-regular);color:var(--royal);margin-inline-start:8px;vertical-align:middle}
