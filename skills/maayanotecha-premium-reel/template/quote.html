@@ -10,6 +10,7 @@
 </style></head>
 <body><div id="stage"></div>
 <script src="brand/brand.js"></script>
+<script src="brand/hooks.js"></script>
 <script>
 /* CONFIG (format: "quote")
  { eyebrow:'רעיון לשבת', lines:[{text:'שורה\nשנייה', hold:2.4, hl:['מילה']}],
@@ -42,6 +43,6 @@ function render(t){
     if(on){ revealWords(stW,t,tSrc+0.4,0.08,0.35,tEndS-0.3); const ka=E.out5(P(t,tSrc+0.7,tSrc+1.05))*(1-ko); op(srcBox.querySelector('.sa'),ka); } }
   renderEnd(EN,t,tEndS);
 }
-window.render = render;
+window.render = withHook(render);
 window.ready = brandReady();
 </script></body></html>

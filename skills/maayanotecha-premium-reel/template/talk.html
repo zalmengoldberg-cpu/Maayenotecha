@@ -18,6 +18,7 @@
 </style></head>
 <body><div id="stage"></div>
 <script src="brand/brand.js"></script>
+<script src="brand/hooks.js"></script>
 <script>
 /* CONFIG (format: "talk")
  { video:{dir:'media/talk1', fps:25, count:N}, voice:'media/talk1.wav' (used by finish.sh),
@@ -64,6 +65,6 @@ function render(t){
     p.el.style.transform=`translateY(${(1-k)*-200 + Math.sin(t*1.8)*8}px) rotate(${(1-k)*12+Math.sin(t)*2}deg) scale(${lerp(.4,1,k)*(1-ko*0.5)})`; op(p.el,clamp(k*1.5)*(1-ko)); });
   renderEnd(EN,t,VLEN+0.1);
 }
-window.render = render;
+window.render = withHook(render);
 window.ready = brandReady();
 </script></body></html>

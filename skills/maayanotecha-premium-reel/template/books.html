@@ -10,6 +10,7 @@
 </style></head>
 <body><div id="stage"></div>
 <script src="brand/brand.js"></script>
+<script src="brand/hooks.js"></script>
 <script>
 /* CONFIG (format: "books")
  { eyebrow, newTag, title, books:[{c,t,a,line}], perBook, lineupText, bug:'yarid'|'logo'|null,
@@ -67,6 +68,6 @@ function render(t){
   if(lOn) revealWords(ltW,t,tL+0.4,0.09,0.35,tEnd-0.25);
   renderEnd(EN,t,tEnd);
 }
-window.render = render;
+window.render = withHook(render);
 window.ready = brandReady();
 </script></body></html>
