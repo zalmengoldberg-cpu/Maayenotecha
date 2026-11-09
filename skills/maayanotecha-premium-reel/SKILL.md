@@ -42,6 +42,7 @@ description: מערכת הפקה לסרטוני רשת (רילס/סטורי 9:16
 ## הרצה
 ```bash
 cd skills/maayanotecha-premium-reel
+bash scripts/setup_assets.sh                          # פעם אחת: מחלץ את לולאת הרקע (החבילה דחוסה למגבלת 30MB)
 cp <brand-kit>/assets/fonts/fontbit/FbSayeedaBook-*.otf <brand-kit>/assets/fonts/fontbit/FbPhilosof-Black.otf template/fonts/
 python3 scripts/pick_footage.py [--theme kids]        # בוחר שוטי יריד שלא שומשו בסרטונים קודמים
 bash scripts/prepare_footage.sh                       # מוריד ומכין את השוטים שנבחרו (+ שוטי AI)

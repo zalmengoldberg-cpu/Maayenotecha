@@ -318,11 +318,11 @@ body{font-family:Dig,Say,HeeboL,sans-serif;color:var(--cream);direction:rtl}
       <div id="scrDim"></div><div id="popFab" class="pop"><div class="ring" id="rg1"></div><div class="ring" id="rg2"></div><div class="bub">מעיין הספרן ימצא לך ספר</div><div class="orb"><svg viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="12" r="5.5" fill="none" stroke="#fff" stroke-width="3"/><path d="M10 40c0-8 6-13 14-13s14 5 14 13" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 30h20v12l-10-3-10 3z" fill="#8fd0ea"/><text x="24" y="37" text-anchor="middle" font-family="Arial" font-weight="700" font-size="8" fill="#1d3570">AI</text></svg></div></div>
       <div id="popTaste" class="pop"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 5h6a3 3 0 013 3v11a2 2 0 00-2-2H3zM21 5h-6a3 3 0 00-3 3v11a2 2 0 012-2h7z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg><span>טעימה מהספר</span></div>
       <div class="screen" id="screen">
-        <div class="scr" id="sHome"><img src="assets/home_full.png"></div>
-        <div class="scr" id="sHeaderLight" style="opacity:0;height:120px;overflow:hidden"><img src="assets/shelf.png"></div>
-        <div class="scr" id="sHome2" style="display:none"><img src="assets/fab.png"></div>
-        <div class="scr" id="sLib" style="opacity:0"><img src="assets/lib_open.png"></div>
-        <div class="scr" id="sBook" style="opacity:0"><img src="assets/book.png"></div>
+        <div class="scr" id="sHome"><img src="assets/home_full.jpg"></div>
+        <div class="scr" id="sHeaderLight" style="opacity:0;height:120px;overflow:hidden"><img src="assets/shelf.jpg"></div>
+        <div class="scr" id="sHome2" style="display:none"><img src="assets/fab.jpg"></div>
+        <div class="scr" id="sLib" style="opacity:0"><img src="assets/lib_open.jpg"></div>
+        <div class="scr" id="sBook" style="opacity:0"><img src="assets/book.jpg"></div>
         <div class="statusBg" id="statusBg" style="background:linear-gradient(#1e2a3e,#1e2a3e)"></div>
         <div class="status" id="status"><span>9:41</span><span class="icons"><span class="sbar"><i style="height:5px"></i><i style="height:7px"></i><i style="height:10px"></i><i style="height:13px"></i></span>
           <svg width="20" height="14" viewBox="0 0 20 14"><path d="M10 13.5l3-3.4a4.3 4.3 0 00-6 0zM3.6 6.8l1.9 2.1a6.4 6.4 0 019 0l1.9-2.1a9.3 9.3 0 00-12.8 0zM.3 3.4l1.9 2.1a11.2 11.2 0 0115.6 0l1.9-2.1a14 14 0 00-19.4 0z" fill="#fff"/></svg>
@@ -438,7 +438,7 @@ const libEls=QA.map((x,i)=>{
   $('libCam').appendChild(bar);$('libCam').appendChild(ans);
   return {bar,ans,txt:bar.querySelector('.txt'),cur:bar.querySelector('.cur'),bks:[...ans.querySelectorAll('.bk')]};
 });
-$('pgL').style.backgroundImage='url(assets/cover_flat.png)';
+$('pgL').style.backgroundImage='url(assets/cover_flat.jpg)';
 
 // ---------- render ----------
 const SCREEN_H=1038, SH=478/1290; // scale screenshot px -> screen px
@@ -639,21 +639,21 @@ function renderMain(t){
     // page sets: step1 cover -> spread(03 right,04 left); step2 -> spread(05 right,06 left)
     if(t<18.95){
       // right page under = taste-03, left page = taste-02 (inside cover back shows taste-02)
-      $('pgL').style.backgroundImage='url(assets/taste-03.png)';
-      $('pgR').style.backgroundImage='url(assets/taste-01.png)';
+      $('pgL').style.backgroundImage='url(assets/taste-03.jpg)';
+      $('pgR').style.backgroundImage='url(assets/taste-01.jpg)';
       $('pgR').style.opacity = flip1>0.5?1:0;
       $('pgL').style.opacity = flip1>0.02?1:0;
-      $('flipF').style.backgroundImage='url(assets/cover_flat.png)';
-      $('flipB').style.backgroundImage='url(assets/taste-01.png)';
+      $('flipF').style.backgroundImage='url(assets/cover_flat.jpg)';
+      $('flipB').style.backgroundImage='url(assets/taste-01.jpg)';
       $('flip').style.transform=`rotateY(${180*flip1}deg)`;
       $('flip').style.display = flip1>=1?'none':'block';
     } else {
-      $('pgL').style.backgroundImage='url(assets/taste-05.png)';
-      $('pgR').style.backgroundImage= flip2>0.5?'url(assets/taste-04.png)':'url(assets/taste-01.png)';
+      $('pgL').style.backgroundImage='url(assets/taste-05.jpg)';
+      $('pgR').style.backgroundImage= flip2>0.5?'url(assets/taste-04.jpg)':'url(assets/taste-01.jpg)';
       $('pgL').style.opacity=1; $('pgR').style.opacity=1;
       $('flip').style.display = flip2<1?'block':'none';
-      $('flipF').style.backgroundImage='url(assets/taste-03.png)';
-      $('flipB').style.backgroundImage='url(assets/taste-04.png)';
+      $('flipF').style.backgroundImage='url(assets/taste-03.jpg)';
+      $('flipB').style.backgroundImage='url(assets/taste-04.jpg)';
       $('flip').style.transform=`rotateY(${180*flip2}deg)`;
     }
   }

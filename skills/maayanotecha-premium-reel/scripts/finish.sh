@@ -1,7 +1,7 @@
 #!/bin/bash
 # scripts/finish.sh <frames_dir> <out.mp4> [music.wav]
 # Mixes music + SFX at the template's default cue times, encodes H.264, writes a contact sheet.
-K="$(cd "$(dirname "$0")/.." && pwd)"; FR=$1; OUT=$2; MUS=${3:-$K/assets/music_25.3s.wav}; X=$K/assets/sfx
+K="$(cd "$(dirname "$0")/.." && pwd)"; FR=$1; OUT=$2; MUS=${3:-$K/assets/music_25.3s.mp3}; X=$K/assets/sfx
 ffmpeg -v error -y -i "$MUS" -i $X/sfx_whoosh.mp3 -i $X/sfx_swirl.mp3 -i $X/sfx_click.mp3 -filter_complex "
 [1:a]asplit=5[w1][w2][w3][w4][w5];[w1]adelay=4380|4380,volume=0.8[a1];[w5]adelay=5450|5450[a5];[w2]adelay=7080|7080,volume=0.6[a2];[w3]adelay=15630|15630,volume=0.7[a3];[w4]adelay=21630|21630,volume=0.9[a4];
 [2:a]asplit=4[s1][s2][s3][s4];[s1]adelay=8000|8000,volume=0.55[b1];[s2]adelay=10140|10140,volume=0.55[b2];[s3]adelay=12280|12280,volume=0.55[b3];[s4]adelay=14410|14410,volume=0.55[b4];
