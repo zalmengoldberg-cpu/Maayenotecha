@@ -1,0 +1,6 @@
+template/fonts/*.otf
+template/footage/seg/
+template/footage/grid/
+template/footage/raw/
+frames*/
+preview*/
