@@ -14,7 +14,7 @@
 ## מבנה הנתונים (העיקר)
 - **items** – כל כרטיס. `kind`: project / content / task / event / recurring. `channel`: weekly (פוסט פרשה), video, post, newsletter, site, data, brand, admin. `status`: idea → todo → doing → review → scheduled → done.
   שדות: `title, owner, waitingOn, priority, start, due, publishAt, steps[] {t, done, owner, due, est, bg}, blocked {on, why, who}, links[], notes, platforms[]` (למשל "פייסבוק"), `thumb` (כריכה), `remindAt` (תזכורת: `YYYY-MM-DDTHH:MM`).
-  `links[]` = `{label, url}` – כל קישור מוצג בחדר ככפתור עם אייקון המותג לפי הכתובת (דרייב, פייסבוק, אינסטגרם, יוטיוב, האתר...). `files[]` = `{name, url, type, size, at}` – קבצים שצורפו (מהחדר בלבד; לתוצרים מהדרייב משתמשים ב-`links`).
+  `links[]` = `{label, url}` – כל קישור מוצג בחדר ככפתור עם אייקון המותג לפי הכתובת (דרייב, פייסבוק, אינסטגרם, יוטיוב, האתר...). `format` = סוג החומר של תוצר (`video` / `graphic` / `gif` / `post` / `newsletter`) – כל תוצר שיוצרים בפרויקט התוכן מקבל אותו, כדי שיופיע בקנבן "תוצרים" בשורה הנכונה. `files[]` = `{name, url, type, size, at}` – קבצים שצורפו (מהחדר בלבד; לתוצרים מהדרייב משתמשים ב-`links`).
 - **people** – zalmen, mendy, ben, kaplan, tzama-social, claude. `avatar` = אווטאר מאויר; `photo` = תמונה אמיתית (קודמת).
 - **inbox** – בקשות שהצוות שולח לקלוד מהדשבורד (הפקודה "הרץ את התור").
 - **activity** – יומן הפעולות שמוצג ב"מה כבר נעשה".

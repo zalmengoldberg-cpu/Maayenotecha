@@ -33,7 +33,7 @@
 ## 1. קישורים ומצב נוכחי
 | מה | איפה |
 |---|---|
-| **החדר החי** | https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z – **גרסה 28 (פורסמה 8.11)** · גיבוי `dashboard/backups/v28_published_2026-11-08.html` |
+| **החדר החי** | https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z – **גרסה 29 (פורסמה 9.11)** · גיבוי `dashboard/backups/v29_published_2026-11-09.html` |
 | גיבוי גרסה 26 | `dashboard/backups/v26_published_2026-11-07.html` |
 | גיבוי גרסה 25 | `dashboard/backups/v25_published_2026-11-06.html` (ותגית מקומית `staff-ui-v25-approved`; דחיפת תגיות חסומה בשרת) |
 | עותק הדגמה למכירה ("סטודיו אופק") | https://claude.ai/artifact/NBZNK82LW6oQ4ZcKVSTEsz · מקור: `dashboard/demo/` (נמשך בצ'אט נפרד: `handoff/product-launch/`) |
@@ -65,6 +65,7 @@
 ## 3. המסד (collections) – מה יש ומה נוסף
 - **items:** `kind` (project/content/task/event/recurring), `channel`, `status` (idea→todo→doing→review→scheduled→done), `owner`, `waitingOn`, `priority`, `start`, `due`, `publishAt`, `steps[] {t, done, doneAt, owner, due, est, estSrc, bg}`, `blocked {on, since, who, why}`, `links`, `notes`, `platforms`, `thumb`, `thumbArt`, `thumbSrc`, `claudeCan`, `parent`, `rule`.
   - **נוסף:** `remindAt` (`YYYY-MM-DDTHH:MM`, תזכורת) ו-`pushPlanned` (= remindAt שכבר קיבל התראה לטלפון).
+  - **נוסף ב-9.11 (v29):** `format` – סוג חומר (video/graphic/gif/post/newsletter) לקנבן "תוצרים". ריק = נגזר מהערוץ ומהכותרת.
   - **נוסף ב-7.11 (v26):** `files: [{name, url, type, size, at}]` – קבצים שצורפו לכרטיס (עולים לנכסי הארטיפקט).
 - **people:** `name, role, color, initials, photo, uid`. **נוסף:** `avatar` ו-`avatarSrc`.
 - **agents:** `<id>.img`, `_ui` (`statusLabels`, `statusColors21`), `_all`, ו-`_links` (`list: [{label, url}]` – כרטיס "קישורים" של כל הצוות, נוסף ב-v26).
