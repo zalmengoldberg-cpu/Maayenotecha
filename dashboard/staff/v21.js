@@ -708,6 +708,54 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 {const _p27=window.renderAll;window.renderAll=function(){const r=_p27.apply(this,arguments);try{calHead();pfStart()}catch(e){}return r}}
 new MutationObserver(()=>calHead()).observe(document.body,{childList:true,subtree:true});
 
+/* ===================== v29 (9.11): תוצרים לפי חומר – בקנבן, ובכפתור בכרטיס "קישורים" =====================
+   סוג החומר: שדה format בכרטיס (video/graphic/gif/post/newsletter). אם אין – נגזר מהערוץ ומהכותרת. */
+const FMT=[['video','סרטונים','סרטון','#3F5499'],['graphic','גרפיקות','גרפיקה','#4A8BAA'],['gif','GIFים','GIF','#C9730C'],['post','פוסטים','פוסט','#2E8566'],['newsletter','ניוזלטרים','ניוזלטר','#626A88']];
+const FMT_ICON={video:'<path d="M4 6.5h11v11H4z"/><path d="m15 10 5-3v10l-5-3"/>',graphic:'<rect x="4" y="4.5" width="16" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m5 17 5-5 4 4 2-2 3 3"/>',gif:'<rect x="3.5" y="6" width="17" height="12" rx="3"/><path d="M9 10.5H7.5v3H9v-1.2M11.5 10.5v3M14 13.5v-3h2M14 12h1.5"/>',post:'<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/>',newsletter:'<rect x="4" y="5.5" width="16" height="13" rx="3"/><path d="m4.5 7.5 7.5 5.5 7.5-5.5"/>'};
+const fmtIco=(k,cls='ico-sm')=>`<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${FMT_ICON[k]||FMT_ICON.post}</svg>`;
+function fmtOf(it){if(!it||it.kind==='event'||it.kind==='recurring')return null;if(it.format&&FMT.some(f=>f[0]===it.format))return it.format;
+  const t=String(it.title||'')+' '+(it.sub||''),ti=String(it.title||'');if(/\bgif\b|גיף/i.test(ti))return'gif';if(it.channel==='weekly')return'post';if(/גרפיק|באנר|פוסטר|מודעה/.test(ti))return'graphic';
+  if(it.channel==='video'||/סרטון|רילס|ריל |וידאו|סטורי/.test(t))return'video';if(it.channel==='weekly'||it.channel==='post')return'post';if(it.channel==='newsletter')return'newsletter';return null}
+const READY=new Set(['scheduled','done']);
+function matItems(){return items().filter(i=>fmtOf(i)&&(i.kind==='content'||i.kind==='project'||i.kind==='task'))}
+function matPreview(it){const f=(it.files||[]).find(x=>/^image\//.test(x.type||'')||/\.(png|jpe?g|webp|gif|avif)$/i.test(x.name||''));
+  if(f)return `<img src="${esc(f.url)}" alt="" loading="lazy">`;return typeof art==='function'?art(it):''}
+let matMode=(()=>{try{return localStorage.getItem('mt-pref-boardmode')||'status'}catch(e){return'status'}})(),matFmt='all';
+function ensureMatUI(){const v=$1('#v-board');if(!v)return null;const tb=v.querySelector('.toolbar');
+  if(tb&&!$1('#bMode')){const s=document.createElement('div');s.className='seg';s.id='bMode';s.setAttribute('role','tablist');s.setAttribute('aria-label','תצוגת הקנבן');
+    s.innerHTML=`<button type="button" role="tab" data-bmode="status">לפי סטטוס</button><button type="button" role="tab" data-bmode="mat">${fmtIco('video')}לפי חומר</button>`;tb.querySelector('h2')?.after(s)}
+  let m=$1('#kanbanMat');if(!m){m=document.createElement('div');m.id='kanbanMat';m.className='kmat';$1('#kanban')?.after(m)}return m}
+function renderMat(){const m=ensureMatUI();if(!m||typeof S==='undefined'||!S.loaded)return;const on=matMode==='mat';
+  document.querySelectorAll('#bMode [data-bmode]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.bmode===matMode)));
+  $1('#v-board')?.classList.toggle('mat-on',on);if(!on){m.innerHTML='';return}
+  const L=matItems();const cnt=k=>L.filter(i=>fmtOf(i)===k);
+  const chips=`<div class="km-chips" role="tablist" aria-label="סוג חומר"><button type="button" class="km-chip" data-mfmt="all" aria-selected="${matFmt==='all'}">הכול <b class="num">${L.length}</b></button>${FMT.map(([k,n,,c])=>`<button type="button" class="km-chip" data-mfmt="${k}" aria-selected="${matFmt===k}" style="--fc:${c}">${fmtIco(k)}${n} <b class="num">${cnt(k).length}</b>${cnt(k).filter(i=>READY.has(i.status)).length?`<em>${cnt(k).filter(i=>READY.has(i.status)).length} מוכנים</em>`:''}</button>`).join('')}</div>`;
+  const lanes=FMT.filter(([k])=>matFmt==='all'||matFmt===k).map(([k,n,one,c])=>{const li=cnt(k);if(matFmt==='all'&&!li.length)return'';
+    return `<section class="km-lane" data-fmt="${k}" style="--fc:${c}"><header class="km-h"><span class="km-i">${fmtIco(k,'')}</span><h3>${n}</h3><span class="km-n num">${li.length}</span>${li.filter(i=>READY.has(i.status)).length?`<span class="km-ready">${li.filter(i=>READY.has(i.status)).length} מוכנים</span>`:''}<button type="button" class="btn btn-ghost btn-sm km-add" data-mnew="${k}">+ ${one}</button></header>
+    <div class="km-cols">${ORDER.map(st=>{const col=li.filter(i=>(i.status||'todo')===st);return `<div class="col" data-col="${st}" data-fmt="${k}"><div class="km-ch"><span class="stl st-${st}"><i></i>${esc(STATUS[st])}</span><b class="num">${col.length||''}</b></div>
+      ${col.map(it=>`<article class="kc km-card ${READY.has(it.status)?'ready':''}" data-open="${esc(it.id)}" tabindex="0"><div class="km-pv">${matPreview(it)}<span class="km-badge">${fmtIco(k)}${esc(one)}</span>${(it.files||[]).length?`<span class="km-files">${DS.icon('attach','ico-sm')}${it.files.length}</span>`:''}</div>
+        <div class="km-b"><b>${esc(it.title)}</b><small>${esc([it.publishAt?'עולה '+fmt(it.publishAt):it.due?'יעד '+fmt(it.due):'',it.waitingOn&&P(it.waitingOn)?'מחכה ל'+P(it.waitingOn).name.split(' ')[0]:''].filter(Boolean).join(' · '))}</small>${lkMini(it.links,4)}</div></article>`).join('')||'<div class="km-empty"></div>'}</div>`}).join('')}</div></section>`}).join('');
+  m.innerHTML=chips+(lanes||`<div class="empty"><b>אין עדיין תוצרים מהסוג הזה</b><span>כרטיס תוכן עם סוג חומר יופיע כאן לפי השלב שלו.</span></div>`)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-bmode]');if(b){matMode=b.dataset.bmode;try{localStorage.setItem('mt-pref-boardmode',matMode)}catch(x){}renderMat();return}
+  const c=e.target.closest&&e.target.closest('[data-mfmt]');if(c){matFmt=c.dataset.mfmt;renderMat();return}
+  const n=e.target.closest&&e.target.closest('[data-mnew]');if(n){const k=n.dataset.mnew;const t=prompt('שם התוצר ('+FMT.find(f=>f[0]===k)[2]+')');if(t&&t.trim()&&typeof createItem==='function')createItem({kind:'content',title:t.trim(),format:k,channel:k==='video'?'video':k==='newsletter'?'newsletter':'post',owner:ME(),status:'idea'});return}
+  const g=e.target.closest&&e.target.closest('[data-gomat]');if(g){e.preventDefault();matMode='mat';matFmt=g.dataset.gomat||'all';try{localStorage.setItem('mt-pref-boardmode','mat')}catch(x){}location.hash='#board';setTimeout(renderMat,60)}});
+pdrag({item:'#kanbanMat .kc[data-open]',target:'#kanbanMat .col[data-col]',drop(el,col){const id=el.dataset.open,it=S.items[id];if(!it)return;const to=col.dataset.col,fm=col.dataset.fmt;
+  const [p,u]=(it.status||'todo')!==to?statusPatch(it,to):[{},{}];if(fm&&fmtOf(it)!==fm){p.format=fm;u.format=it.format||null}if(!Object.keys(p).length)return;
+  saveItem(id,p);if(to==='done'&&p.status)stamp();log(`העביר את "${it.title}" ל${STATUS[to]}`,id);toastUndo(`"${it.title}" · ${STATUS[to]}${p.format?' · '+FMT.find(f=>f[0]===fm)[2]:''}`,()=>saveItem(id,u))}});
+/* בכרטיס: בחירת סוג חומר (נכנס לשדות, ליד הערוץ) */
+function drawerFmt(){const d=$1('#drawer');if(!d||!S.open||S.mode!=='item'||d.querySelector('#fFmt'))return;const it=S.items[S.open];if(!it||it.kind==='event'||it.kind==='recurring')return;const f=d.querySelector('.dr-body .fields');if(!f)return;
+  const cur=it.format||'';const auto=fmtOf({...it,format:null});f.insertAdjacentHTML('beforeend',`<label class="fld">סוג חומר<select id="fFmt"><option value="">${auto?'אוטומטי · '+FMT.find(x=>x[0]===auto)[2]:'לא תוצר'}</option>${FMT.map(([k,,one])=>`<option value="${k}" ${cur===k?'selected':''}>${one}</option>`).join('')}</select></label>`)}
+document.addEventListener('change',e=>{if(e.target.id==='fFmt'&&S.open){saveItem(S.open,{format:e.target.value||null})}});
+{const d=$1('#drawer');if(d)new MutationObserver(()=>drawerFmt()).observe(d,{childList:true})}
+/* בדף הבית: אריח "תוצרים" ראשון בכרטיס הקישורים */
+function matTile(){const g=$1('#links26');if(!g||typeof S==='undefined'||!S.loaded)return;const L=matItems();const r=L.filter(i=>READY.has(i.status)).length;
+  const html=`<div class="lk-tile km-tile"><a href="#board" data-gomat="all" title="כל התוצרים לפי חומר ושלב"><span class="brand lg km-tb">${fmtIco('graphic','')}</span><span>תוצרים</span><small>${r?r+' מוכנים · ':''}${L.length} בסך הכול</small></a></div>`;
+  let grid=g.querySelector('.lk-tiles');if(!grid){const e=g.querySelector('.lk-empty');grid=document.createElement('div');grid.className='lk-tiles';if(e)e.before(grid);else g.append(grid)}
+  const old=grid.querySelector('.km-tile');if(old)old.outerHTML=html;else grid.insertAdjacentHTML('afterbegin',html)}
+{const _r29=window.renderAll;window.renderAll=function(){const r=_r29.apply(this,arguments);try{renderMat();matTile();drawerFmt()}catch(e){console.error(e)}return r}}
+addEventListener('hashchange',()=>{if(location.hash==='#board')setTimeout(renderMat,30)});
+
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();meterToggle();battery();
 if(typeof S!=='undefined'&&S.loaded&&window.renderAll)renderAll();
