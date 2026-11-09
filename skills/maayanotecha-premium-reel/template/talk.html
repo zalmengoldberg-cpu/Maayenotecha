@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8"><title>Maayanotecha – Talking Head</title>
+<link rel="stylesheet" href="brand/brand.css">
+<style>
+#vid{position:absolute;overflow:hidden;background:#000}
+#vid img{width:100%;height:100%;object-fit:cover;display:block}
+#vid.full{inset:0}
+#vid.card{left:90px;top:230px;width:900px;height:1360px;border-radius:44px;box-shadow:0 50px 90px rgba(0,0,0,.7),0 0 0 1.5px rgba(255,255,255,.18);-webkit-box-reflect:below 14px linear-gradient(transparent 82%,rgba(255,255,255,.16))}
+#shade{position:absolute;left:0;right:0;bottom:0;height:900px;background:linear-gradient(0deg,rgba(0,0,0,.85),rgba(0,0,0,0))}
+#lower{position:absolute;right:80px;left:80px;top:1240px;text-align:right}
+#lower .nm{font-family:Say;font-weight:700;font-size:70px;line-height:1.05}
+#lower .rl{font-family:Say;font-weight:300;font-size:38px;color:#c9cdd8;margin-top:8px}
+#lower .ln{height:3px;width:0;margin-top:18px;background:linear-gradient(90deg,rgba(255,255,255,0),var(--accent1),var(--accent2))}
+#cap{position:absolute;left:70px;right:70px;top:1340px;text-align:center;font-family:Say;font-weight:700;font-size:78px;line-height:1.12}
+#hook{position:absolute;left:60px;right:60px;top:760px;text-align:center}
+.pop{position:absolute;right:70px;top:300px;width:300px;text-align:center}
+.pop .pt{font-family:Say;font-weight:700;font-size:34px;margin-top:22px}
+</style></head>
+<body><div id="stage"></div>
+<script src="brand/brand.js"></script>
+<script>
+/* CONFIG (format: "talk")
+ { video:{dir:'media/talk1', fps:25, count:N}, voice:'media/talk1.wav' (used by finish.sh),
+   speaker:{name, role, t0:0.4, t1:3.6}, hook:'משפט פתיחה' (optional, over first 1.6s),
+   captions:[{t0,t1,text,hl:['מילה']}], bookPops:[{t,c,title,d:2.6}], bug:'logo'|'yarid'|null,
+   end:{tag,cta,url}, variant:{frame:'full'|'card', background, accentHue} } */
+const VD = CFG.video || {dir:'media/demo', fps:25, count:125}, VLEN = VD.count/VD.fps, V = CFG.variant||{};
+window.DURATION = VLEN + 3.4;
+const frame = V.frame || 'full';
+if(frame==='card') makeBackground(V.background||'stage');
+const vid = el('div', frame); vid.id='vid'; const vi = el('img',null,null,vid);
+if(frame==='full') el('div',null,null).id='shade';
+const bug = makeBug(CFG.bug===undefined?'logo':CFG.bug);
+const SP = CFG.speaker||null; let lower=null, nmW=[];
+if(SP){ lower=el('div',''); lower.id='lower'; const nm=el('div','nm',null,lower); nmW=words(nm,SP.name); el('div','rl',SP.role||'',lower); el('div','ln',null,lower); }
+const hook = CFG.hook ? (()=>{const h=el('div','h-l'); h.id='hook'; return words(h,CFG.hook);})() : [];
+const cap = el('div',''); cap.id='cap';
+const CAPS = (CFG.captions||[]).map(c=>({...c}));
+const pops = (CFG.bookPops||[]).map(p=>{ const d=el('div','pop'); const img=makeBook(p.c,260,d); img.style.position='relative'; img.style.left='0'; el('div','pt gl',p.title||'',d); return {...p,el:d,img,dur:p.d||2.6}; });
+const EN = makeEnd(); el('div','grain');
+applyVariant();
+let curCap=-1, capW=[];
+
+function render(t){
+  renderBackground(t); renderGloss(t);
+  const vOn=t<VLEN+0.15; vid.style.display=vOn?'block':'none';
+  if(vOn){ const f=seqSrc(VD.dir,Math.min(t,VLEN-0.01),VD.fps,VD.count); if(!vi.src.endsWith(f)) vi.src=f;
+    const ko=E.in3(P(t,VLEN-0.2,VLEN+0.15)); op(vid,1-ko);
+    vid.style.transform = frame==='card' ? `perspective(1800px) rotateY(${Math.sin(t*0.5)*3}deg) scale(${lerp(0.94,1,E.expo(P(t,0,0.6)))*(1-ko*0.08)})` : `scale(${1.02+0.01*t/VLEN})`; }
+  const sh=$('shade'); if(sh) op(sh, vOn?1:0);
+  if(bug) op(bug, t<VLEN ? E.out3(P(t,0.3,0.6)) : 0);
+  if(lower){ const on=t>=SP.t0&&t<(SP.t1||3.6)+0.3; lower.style.display=on?'block':'none';
+    if(on){ revealWords(nmW,t,SP.t0,0.08,0.35,SP.t1||3.6); const k=E.out5(P(t,SP.t0+0.25,SP.t0+0.6))*(1-E.in3(P(t,(SP.t1||3.6),(SP.t1||3.6)+0.25)));
+      op(lower.querySelector('.rl'),k); lower.querySelector('.ln').style.width=(k*520)+'px'; } }
+  if(hook.length) revealWords(hook,t,0.05,0.09,0.3,1.5);
+  // captions (word-by-word, highlighted keywords in accent)
+  const ci=CAPS.findIndex(c=>t>=c.t0&&t<c.t1);
+  const hideCap = lower && t<(SP.t1||3.6)+0.3;
+  if(ci!==curCap){ curCap=ci; capW = ci>=0 ? words(cap,CAPS[ci].text,'gl') : []; if(ci>=0) capW.forEach(w=>{ if((CAPS[ci].hl||[]).some(h=>w.textContent.includes(h))) w.className='w acc'; }); if(ci<0) cap.innerHTML=''; }
+  cap.style.display = hideCap ? 'none' : 'block';
+  if(ci>=0){ const c=CAPS[ci]; revealWords(capW,t,c.t0,Math.min(0.06,(c.t1-c.t0)*0.5/capW.length),0.22,c.t1-0.12); }
+  pops.forEach(p=>{ const d=p.dur, on=t>=p.t&&t<p.t+d; p.el.style.display=on?'block':'none'; if(!on) return;
+    const k=E.back(P(t,p.t,p.t+0.45)), ko=E.in3(P(t,p.t+d-0.3,p.t+d));
+    p.el.style.transform=`translateY(${(1-k)*-200 + Math.sin(t*1.8)*8}px) rotate(${(1-k)*12+Math.sin(t)*2}deg) scale(${lerp(.4,1,k)*(1-ko*0.5)})`; op(p.el,clamp(k*1.5)*(1-ko)); });
+  renderEnd(EN,t,VLEN+0.1);
+}
+window.render = render;
+window.ready = brandReady();
+</script></body></html>

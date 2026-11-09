@@ -1,0 +1,15 @@
+{
+  "_note": "פורמט דובר/ראיון. הווידאו כאן הוא שוט הדגמה בלבד; לסרטון אמיתי: scripts/prepare_video.sh על צילום הדובר, וכתוביות מתמלול (fal speech-to-text) בנוסח המדויק.",
+  "format": "talk",
+  "video": {"dir":"media/demo","fps":25,"count":125},
+  "voice": "",
+  "speaker": {"name":"שם הדובר","role":"תפקיד / מחבר הספר","t0":0.3,"t1":2.4},
+  "captions": [
+    {"t0":2.5,"t1":3.7,"text":"כתובית לדוגמה","hl":["לדוגמה"]},
+    {"t0":3.7,"t1":5.0,"text":"מילה מודגשת בצבע","hl":["מודגשת"]}
+  ],
+  "bookPops": [{"t":3.0,"c":"tvbnvt-tny","title":"תובנות התניא","d":1.9}],
+  "bug": "logo",
+  "end": {"tag":"בית לספרות חסידית","cta":"עוד באתר","url":"maynotechabooks.co.il"},
+  "variant": {"frame":"card","background":"stage"}
+}

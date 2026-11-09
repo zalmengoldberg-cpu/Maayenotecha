@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8"><title>Maayanotecha – Idea / Quote</title>
+<link rel="stylesheet" href="brand/brand.css">
+<style>
+#lines{position:absolute;left:70px;right:70px;top:620px;text-align:center}
+#eb{position:absolute;left:0;right:0;top:330px;text-align:center}
+#src{position:absolute;left:70px;right:70px;top:1350px;text-align:center}
+#src .st{font-family:Say;font-weight:700;font-size:54px;line-height:1.15}
+#src .sa{font-family:Say;font-weight:300;font-size:36px;color:#a1a1a6;margin-top:8px}
+</style></head>
+<body><div id="stage"></div>
+<script src="brand/brand.js"></script>
+<script>
+/* CONFIG (format: "quote")
+ { eyebrow:'רעיון לשבת', lines:[{text:'שורה\nשנייה', hold:2.4, hl:['מילה']}],
+   source:{c:'slug', title:'שם הספר', author:'מחבר', prefix:'מתוך'}, bug:'logo'|'yarid'|null,
+   end:{tag,cta,url}, variant:{background:'ribbon'|'stage'|'glow', accentHue, size:'l'|'m'} }
+ Content must be a real quote/idea supplied by the client or taken verbatim from the book's sample. */
+const L = CFG.lines || [{text:'כל יהודי\nהוא עולם ומלואו',hold:2.6,hl:['עולם']}], V=CFG.variant||{};
+const SRC = CFG.source || null;
+let tt=0.2; const LT = L.map(l=>{ const a=tt, d=l.hold||2.6; tt+=d; return {a,z:a+d}; });
+const tSrc = tt, tEndS = SRC ? tSrc+2.8 : tSrc; window.DURATION = tEndS + 3.4;
+makeBackground(V.background||'ribbon');
+const eb = el('div','eyebrow',CFG.eyebrow||''); eb.id='eb';
+const box = el('div',''); box.id='lines';
+const LW = L.map(l=>{ const d=el('div',V.size==='m'?'h-m':'h-l',null,box); d.style.position='absolute'; d.style.left='0'; d.style.right='0';
+  const ws=words(d,l.text); ws.forEach(w=>{ if((l.hl||[]).some(h=>w.textContent.includes(h))) w.className='w acc'; }); return {d,ws}; });
+let srcBook=null, srcBox=null, stW=[];
+if(SRC){ srcBook=makeBook(SRC.c,420); srcBox=el('div',''); srcBox.id='src'; const st=el('div','st',null,srcBox); stW=words(st,(SRC.prefix||'מתוך')+' '+SRC.title); el('div','sa',SRC.author||'',srcBox); }
+const bug = makeBug(CFG.bug===undefined?'logo':CFG.bug);
+const EN = makeEnd(); el('div','grain'); applyVariant();
+
+function render(t){
+  renderBackground(t); renderGloss(t);
+  const ke=E.out5(P(t,0,0.4))*(1-E.in3(P(t,tEndS-0.3,tEndS))); op(eb,ke);
+  if(bug) op(bug, t<tEndS ? E.out3(P(t,0.2,0.5)) : 0);
+  L.forEach((l,i)=>{ const {a,z}=LT[i], on=t>=a-0.05&&t<z+0.05; LW[i].d.style.display=on?'block':'none';
+    if(on) revealWords(LW[i].ws,t,a,Math.min(0.14,(z-a)*0.35/LW[i].ws.length),0.4,z-0.3); });
+  if(SRC){ const on=t>=tSrc-0.05&&t<tEndS+0.05; srcBox.style.display=on?'block':'none';
+    const k=E.expo(P(t,tSrc,tSrc+0.6)), ko=E.inexpo(P(t,tEndS-0.3,tEndS));
+    placeBook(srcBook,540,880+(1-k)*500-ko*60,{s:lerp(.6,1,k)*(1-ko*0.3),ry:Math.sin(t*1.2)*8,o:on?Math.min(1,k*2)*(1-ko):0,bob:8,t});
+    if(on){ revealWords(stW,t,tSrc+0.4,0.08,0.35,tEndS-0.3); const ka=E.out5(P(t,tSrc+0.7,tSrc+1.05))*(1-ko); op(srcBox.querySelector('.sa'),ka); } }
+  renderEnd(EN,t,tEndS);
+}
+window.render = render;
+window.ready = brandReady();
+</script></body></html>

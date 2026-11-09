@@ -32,3 +32,6 @@ AI רק לתמונה ותנועה (שוטי הוק, מעברים, רקעים) ו
 | לולאת רקע | `alibaba/wan-3.0-prime/image-to-video` | אותה תמונה ב-start וב-end → לולאה. ‏$0.05/שנ' |
 | מוזיקה | `elevenlabs/music/v2.5` + `composition_plan` | פתיחה עם אימפקט · groove מהיר אלגנטי · פסנתר עם נגיעה מזרחית · סיום עם אקורד וזנב. לחתוך כך שהמכות (כל 4 שנ') נופלות על החיתוכים |
 | אפקטים | `elevenlabs/sound-effects/v3` | ווש+אימפקט 1.2 שנ', סחרור דפים 1.4 שנ', קליק UI 0.5 שנ' – פחות מסנט כל אחד |
+
+## תמלול לכתוביות (talk)
+fal: לחפש מודל speech-to-text עם חותמות זמן (`recommend_model` עם `operation:"speech-to-text"`, `requirements.timestamps:true`), להעלות את ה-wav מ-`prepare_video.sh`, ולחלק למשפטים של 2–5 מילים ב-`captions`. לבדוק את הטקסט מול האודיו (שמות, מונחים בחסידות) ולאשר עם הלקוח.
