@@ -1,0 +1,56 @@
+/* ===== Maayanotecha premium brand kit – shared by every format ===== */
+@font-face{font-family:Say;font-weight:300;src:url(../fonts/FbSayeedaBook-Light.otf)}
+@font-face{font-family:Say;font-weight:400;src:url(../fonts/FbSayeedaBook-Regular.otf)}
+@font-face{font-family:Say;font-weight:700;src:url(../fonts/FbSayeedaBook-Bold.otf)}
+@font-face{font-family:Dig;src:url(../fonts/FbPhilosof-Black.otf);unicode-range:U+0030-0039,U+002C,U+002E,U+002F}
+@font-face{font-family:HeeboL;font-weight:300;src:url(../fonts/heebo-latin-300-normal.woff2)}
+@font-face{font-family:HeeboL;font-weight:400;src:url(../fonts/heebo-latin-400-normal.woff2)}
+@font-face{font-family:HeeboL;font-weight:700;src:url(../fonts/heebo-latin-700-normal.woff2)}
+
+:root{--accent1:#8fe3f5;--accent2:#a99cff;--silver:#aebfdf}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+body{font-family:Dig,Say,HeeboL,sans-serif;color:#fff;direction:rtl}
+#stage{position:absolute;inset:0;overflow:hidden;background:#000}
+.L{position:absolute;inset:0}                         /* full layer */
+.hide{display:none}
+
+/* --- backgrounds --- */
+.bgi{position:absolute;left:-30px;top:-50px;width:1140px;height:2020px;object-fit:cover;will-change:transform,opacity}
+.bg-glow{position:absolute;inset:0;background:radial-gradient(70% 38% at 50% 104%, rgba(64,96,170,.55) 0%, rgba(30,50,110,.22) 45%, rgba(0,0,0,0) 75%), radial-gradient(55% 25% at 50% -4%, rgba(120,170,220,.10) 0%, rgba(0,0,0,0) 70%), #000}
+.vignette{position:absolute;inset:0;background:radial-gradient(130% 80% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%);pointer-events:none}
+.grain{position:absolute;inset:-100px;background:url(../assets/grain.png);opacity:.06;mix-blend-mode:overlay;pointer-events:none}
+.flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%, #fff, rgba(160,200,255,.6) 40%, rgba(80,120,220,0) 75%);opacity:0;mix-blend-mode:screen;pointer-events:none}
+
+/* --- typography --- */
+.gl{background-image:linear-gradient(100deg,#aebfdf 0%,#e9eef8 30%,#fff 42%,#fff 46%,#cfdaf0 54%,#aebfdf 70%,#e6ecf7 100%);background-size:320% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 0 rgba(255,255,255,.08)) drop-shadow(0 22px 26px rgba(0,0,0,.75)) drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.acc{background:linear-gradient(120deg,var(--accent1) 0%,#fff 45%,var(--accent2) 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 22px 26px rgba(0,0,0,.8)) drop-shadow(0 0 36px rgba(120,170,255,.35))}
+.h-xl{font-family:Say;font-weight:700;font-size:200px;line-height:1}
+.h-l{font-family:Say;font-weight:700;font-size:120px;line-height:1.04}
+.h-m{font-family:Say;font-weight:700;font-size:86px;line-height:1.1}
+.sub{font-family:Say;font-weight:300;font-size:44px;line-height:1.25;color:#c9cdd8}
+.eyebrow{font-family:Say;font-weight:300;font-size:36px;color:#a1a1a6}
+.center{position:absolute;left:60px;right:60px;text-align:center}
+.w{display:inline-block;will-change:transform,opacity,filter}   /* word for kinetic reveal */
+
+/* --- logos --- */
+.logo{position:absolute;left:50%;width:560px;height:320px;margin-left:-280px}
+.logo .sp{position:absolute;left:50%;top:0;width:420px;height:161px;margin-left:-210px;background:url(../assets/logo/splash_mono.png) center/contain no-repeat;filter:drop-shadow(0 26px 28px rgba(0,0,0,.8)) drop-shadow(0 0 30px rgba(120,170,255,.3))}
+.logo .wm{position:absolute;left:50%;top:186px;width:525px;height:107px;margin-left:-262px;background:url(../assets/logo/new-wordmark-white.png) center/contain no-repeat;filter:drop-shadow(0 24px 26px rgba(0,0,0,.8))}
+.bug{position:absolute;top:110px;left:50%;width:260px;margin-left:-130px;opacity:.95;filter:drop-shadow(0 10px 14px rgba(0,0,0,.85))}
+.shn{position:absolute;inset:0;pointer-events:none;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;
+  background:linear-gradient(105deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.95) 48%,rgba(255,255,255,0) 61%);background-size:300% 100%;mix-blend-mode:screen}
+
+/* --- books --- */
+.book{position:absolute;left:0;top:0;will-change:transform,opacity;filter:drop-shadow(0 40px 40px rgba(0,0,0,.65))}
+.book.refl{-webkit-box-reflect:below 4px linear-gradient(transparent 74%, rgba(255,255,255,.26))}
+.vx img{position:absolute;left:0;top:0;width:150px;margin:-100px 0 0 -75px;will-change:transform,opacity;filter:drop-shadow(0 14px 16px rgba(0,0,0,.6))}
+
+/* --- end card --- */
+.end .tag{position:absolute;left:0;right:0;top:700px;text-align:center}
+.end .cta{position:absolute;left:0;right:0;top:820px;text-align:center;font-family:Say;font-size:46px;color:#e4e8f0}
+.end .url{position:absolute;left:0;right:0;top:920px;text-align:center;font-family:HeeboL;font-weight:300;font-size:50px;direction:ltr}
+.end .url span{background:linear-gradient(90deg,#9fd3e6,#fff 45%,#b9b0ea);-webkit-background-clip:text;background-clip:text;color:transparent}
