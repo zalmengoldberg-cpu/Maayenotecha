@@ -17,6 +17,9 @@ description: מערכת הפקה לסרטוני רשת (רילס/סטורי 9:16
 | `quote` | `template/quote.html` | רעיון / ציטוט / משפט תוכן: טיפוגרפיה קינטית גדולה, ואז הספר שממנו זה לקוח | ~10–14 שנ' |
 | חופשי | עותק של אחד מהם | רעיון שלא מתאים לפורמט – בונים מרכיבי `brand.js` (ראה references/formats.md §בניית פורמט חדש) | |
 
+## חומרי הגלם מהיריד
+`template/footage/catalog.json` – קטלוג של כל 34 הקליפים מהיריד (תיקיית "יריד" בדרייב של אסרף / מנדי בלוי): מה רואים, תגיות, ורגעים טובים. `scripts/pick_footage.py` בוחר בכל סרטון רגעים שלא שומשו (נרשמים ב-`footage/used.txt`, לשמור ולעשות commit), אפשר לפי נושא (`--theme kids|mass|crowd|reading|signage|walk`). `--hook-clip` מציע קליפ להוק מסוג footage בכל פורמט. הסרטונים עצמם לא בסקיל (4.5GB) – יורדים מהדרייב לפי הצורך.
+
 ## חובה לקרוא לפני עבודה
 1. `references/lessons.md` – ההערות של הלקוח מסרטון ההשקה. מחייבות בכל פורמט.
 2. `references/design-system.md` – השפה הגרפית (לא משתנה).
@@ -40,7 +43,8 @@ description: מערכת הפקה לסרטוני רשת (רילס/סטורי 9:16
 ```bash
 cd skills/maayanotecha-premium-reel
 cp <brand-kit>/assets/fonts/fontbit/FbSayeedaBook-*.otf <brand-kit>/assets/fonts/fontbit/FbPhilosof-Black.otf template/fonts/
-bash scripts/prepare_footage.sh                       # רק ל-reel (צילומי יריד + שוטי AI)
+python3 scripts/pick_footage.py [--theme kids]        # בוחר שוטי יריד שלא שומשו בסרטונים קודמים
+bash scripts/prepare_footage.sh                       # מוריד ומכין את השוטים שנבחרו (+ שוטי AI)
 bash scripts/prepare_video.sh speaker.mp4 rav1 12 40  # רק ל-talk: חותך 9:16, פריימים + אודיו, מדפיס קטע config
 (cd template && python3 -m http.server 8765 &)        # השרת רץ מתוך template/
 node scripts/stills.js examples/config-books-new.json preview 0.6 3.6 9 13

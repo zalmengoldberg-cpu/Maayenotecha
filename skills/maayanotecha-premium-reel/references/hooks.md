@@ -23,6 +23,7 @@
 שדות משותפים: `top` (מיקום הטקסט), `hl` (מילים בצבע מבטא), `background:"stage"` (במה במקום זוהר), `bug` (לוגו קטן), `dur` (אורך בשניות).
 
 ## וידאו להוק (`footage`)
+- **מצילומי היריד:** `python3 scripts/pick_footage.py --hook-clip` מציע קליפ שלא שומש, ו-`prepare_footage.sh --clip ...` מכין אותו ל-`media/`.
 - **מצילום אמיתי:** `bash scripts/prepare_video.sh clip.mp4 <name> <start> <dur>` → `frames:{"dir":"media/<name>","fps":25,"count":N}`.
 - **מ-AI (הקפצת רמה, ~10 קרדיטים בהייגספילד ל-5 שנ', MiniMax H3):** לייצר שוט, להוריד, ולהריץ עליו `prepare_video.sh`. השוטים הקיימים ב-`assets/ai-shots/`: מגדל ספרים→אולם, רחפן בכניסה, צלילה לטלפון.
   רעיונות לשוטים חדשים, בלי טקסט בתוך הווידאו:
