@@ -25,3 +25,14 @@ endpoint: `google/nano-banana-2.1`, 1:1, 1K. הפרומפט: מתכון B בסק
 | e-kanban.webp | עמודת קנבן ריקה | open empty box with its flaps open | `x1MPfNETHJk0ka14pQjKs_2R4jcgNT.png` |
 | e-calClean.webp | יום ריק בלוח הנקי | coffee cup on a saucer | `Gl0P8ft3gmbk1Sk72MnhR_6xbY7LVr.png` |
 | e-bgList.webp | קלוד יכול להכין | paint brush | `eTdKxCCIBh2Y0SPznbU2f_yWggbXgb.png` |
+
+## v29 (9.11.2026) – תוצרים
+| קובץ | שימוש | endpoint · מתכון | מקור |
+|---|---|---|---|
+| km-icon.webp (192, רקע הוסר ב-kit/matte.py) | אריח "תוצרים" בכרטיס הקישורים | google/nano-banana-2.1 · B (ערימת כרטיסי מדיה מזכוכית) | request 01a1bfe9-9d2c-72a2-b8b2-3f0c1a7fe56c |
+| km-video.webp (960×536) | כריכת ברירת מחדל לסרטון בקנבן "תוצרים" | nano-banana-2.1 · A (קלאפר + עדשה) | 01a1bfe9-9cd9-7342-8ac7-a9dfacf60030 |
+| km-graphic.webp | כריכה לגרפיקה | A (מסגרת תמונה + עט) | 01a1bfe9-9d0e-7681-bd67-c36d46799484 |
+| km-gif.webp | כריכה ל-GIF | A (סרט בלולאת אינסוף) | 01a1bfe9-9cd7-7971-bdba-23b153a1688c |
+| km-post.webp | כריכה לפוסט | A (טלפון + כרטיס פוסט) | 01a1bfe9-9ca9-7b80-8ed2-f5e6b4078cf1 |
+| km-newsletter.webp | כריכה לניוזלטר | A (מעטפה פתוחה + מכתב) | 01a1bfe9-9d05-7002-a362-ab6db7b8852b |
+כריכת ברירת המחדל מופיעה רק לכרטיס בלי `thumb` ובלי תמונה ב"קבצים".

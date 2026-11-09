@@ -1818,10 +1818,11 @@ html.rz-drag,html.rz-drag *{cursor:nesw-resize!important;user-select:none!import
 .km-b small{font-size:var(--fs-micro);color:var(--ink-400)}
 .km-b .lk-mini{margin-top:4px}
 .km-empty{min-height:30px}
-.km-tile a{background:linear-gradient(160deg,#fff,var(--royal-50))!important}
-.km-tb{--b:linear-gradient(145deg,#5266AC,#3F5499)}
+#bKindMat{display:inline-flex;align-items:center;gap:6px}
+.km-tb{--b:#fff}.km-tb img{width:84%;height:84%;object-fit:contain}
 .km-tb .ico{width:52%;height:52%;color:#fff}
-.km-tile small{font-size:10.5px;color:var(--ink-400);margin-top:-4px}
 @media (max-width:760px){.km-cols{grid-template-columns:repeat(6,minmax(150px,72vw))}.km-lane{padding:12px}.km-add{display:none}}
-.km-tb svg,.km-tb .ico{fill:none!important;stroke:#fff!important;stroke-width:1.8}
+.km-tb svg,.km-tb .ico{fill:none!important;stroke:var(--royal)!important;stroke-width:1.8}
 .kmat,.km-lane,.km-cols{min-width:0;max-width:100%}.km-lane{overflow:hidden}.km-cols{overscroll-behavior-x:contain}
+
+.km-pv>img.km-cov{object-fit:cover;object-position:center}
