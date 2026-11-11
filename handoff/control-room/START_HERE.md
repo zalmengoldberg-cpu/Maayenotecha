@@ -33,7 +33,7 @@
 ## 1. קישורים ומצב נוכחי
 | מה | איפה |
 |---|---|
-| **החדר החי** | https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z – **גרסה 29 (פורסמה 9.11)** · גיבוי `dashboard/backups/v29_published_2026-11-09.html` |
+| **החדר החי** | https://claude.ai/artifact/CjnUchP5knm4L8EZAzWh4Z – **גרסה 30 (פורסמה 11.11)** · גיבוי `dashboard/backups/v30_published_2026-11-11.html` |
 | גיבוי גרסה 26 | `dashboard/backups/v26_published_2026-11-07.html` |
 | גיבוי גרסה 25 | `dashboard/backups/v25_published_2026-11-06.html` (ותגית מקומית `staff-ui-v25-approved`; דחיפת תגיות חסומה בשרת) |
 | עותק הדגמה למכירה ("סטודיו אופק") | https://claude.ai/artifact/NBZNK82LW6oQ4ZcKVSTEsz · מקור: `dashboard/demo/` (נמשך בצ'אט נפרד: `handoff/product-launch/`) |
