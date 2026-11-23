@@ -145,7 +145,7 @@ sub1('p.photo?`<img src="${esc(p.photo)}" alt="">`:ini', '(p.photo||p.avatar)?`<
 # רקעים חדים (fal) לכל הפלטפורמה, לצד הרקעים הקיימים. הקבצים בנכסי הארטיפקט (staff/walls/walls.json)
 import json as _json
 WALLS = _json.loads((B / 'walls' / 'walls.json').read_text(encoding='utf8'))
-WNAMES = [('lake','אגם בערפל'),('galilee','גבעות הגליל'),('desert','מדבר בזריחה'),('sea','ים בבוקר'),('bloom','פרח כחול'),('ribbon','סרט כחול-זהב'),('silk','משי פסטל'),('stones','אבנים באיזון')]
+WNAMES = [('lake','אגם בערפל'),('galilee','גבעות הגליל'),('desert','מדבר בזריחה'),('sea','ים בבוקר'),('bloom','פרח כחול'),('ribbon','סרט כחול-זהב'),('silk','משי פסטל'),('stones','אבנים באיזון'),('sunlake','אגם בשמש'),('dunes','דיונות ומים'),('bloomwin','פריחה')]
 sub1("const NAMES=[['mt-aurora','זוהר המעיין'],", "const NAMES=[" + ''.join(f"['ph-{k}','{n}']," for k,n in WNAMES) + "['mt-aurora','זוהר המעיין'],")
 s = s.replace("const NAMES=[['ph-lake'", "Object.assign(WALLS," + _json.dumps({f'ph-{k}|{m}': WALLS[k] for k,_ in WNAMES for m in ('light','dark')}) + ");\nconst NAMES=[['ph-lake'", 1)
 
