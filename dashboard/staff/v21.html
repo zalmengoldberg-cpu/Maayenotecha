@@ -16,13 +16,15 @@
     </div>
     <div class="sb-rule"></div>
     <button class="sb-profile" id="sbProf" data-tour="profile" type="button"><span id="sbAv"></span><span class="who"><b id="sbName" dir="ltr">Zalmen Goldberg</b><span data-icon="swap" data-icon-class="ico-sm">החלפת משתמש</span></span><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chevL"/></svg></button>
+    <div id="spSwitch" data-tour="spaces"></div>
     <label class="ai-search" data-tour="ask"><span class="field" data-icon="searchAi" data-icon-class="ico-sm"><span class="sr-only">חיפוש, או שאלה לקלוד</span><input id="sbQ" type="search" placeholder="חיפוש, או שאלה לקלוד…" data-pal="1" autocomplete="off"></span></label>
     <nav class="sb-nav" data-tour="nav">
       <div class="sb-label">עבודה</div>
-      <a class="sb-item" href="#today"><span class="i" data-icon="home" data-icon-class="ico-sm"></span><span class="lbl">תמונת מצב</span></a><a class="sb-item" href="#tasks"><span class="i" data-icon="check" data-icon-class="ico-sm"></span><span class="lbl">משימות</span><span class="badge " data-n="nTasks" hidden></span></a><a class="sb-item" href="#calendar"><span class="i" data-icon="calendar" data-icon-class="ico-sm"></span><span class="lbl">לוח שנה</span><span class="badge soft" data-n="nCal" hidden></span></a><a class="sb-item" href="#board"><span class="i" data-icon="panel" data-icon-class="ico-sm"></span><span class="lbl">קנבן</span><span class="badge soft" data-n="nBoard" hidden></span></a><a class="sb-item" href="#gantt"><span class="i" data-icon="chart" data-icon-class="ico-sm"></span><span class="lbl">גאנט</span><span class="badge " data-n="nGantt" hidden></span></a>
+      <a class="sb-item" href="#today"><span class="i" data-icon="home" data-icon-class="ico-sm"></span><span class="lbl">תמונת מצב</span></a><a class="sb-item" href="#tasks"><span class="i" data-icon="check" data-icon-class="ico-sm"></span><span class="lbl">משימות</span><span class="badge " data-n="nTasks" hidden></span></a><a class="sb-item" href="#calendar"><span class="i" data-icon="calendar" data-icon-class="ico-sm"></span><span class="lbl">לוח שנה</span><span class="badge soft" data-n="nCal" hidden></span></a><a class="sb-item" href="#board"><span class="i" data-icon="panel" data-icon-class="ico-sm"></span><span class="lbl">קנבן</span><span class="badge soft" data-n="nBoard" hidden></span></a><a class="sb-item" href="#gantt"><span class="i" data-icon="chart" data-icon-class="ico-sm"></span><span class="lbl">גאנט</span><span class="badge " data-n="nGantt" hidden></span></a><a class="sb-item" href="#drive"><span class="i" data-icon="box" data-icon-class="ico-sm"></span><span class="lbl">דרייב · תוצרים</span></a>
       <div class="sb-label">צוות</div>
       <a class="sb-item" href="#people"><span class="i" data-icon="users" data-icon-class="ico-sm"></span><span class="lbl">אנשים</span></a>
       <div class="sb-label">קלוד</div>
+      <a class="sb-item" href="#sessions"><span class="i" data-icon="send" data-icon-class="ico-sm"></span><span class="lbl">סשנים</span><span class="badge" data-n="nSess" hidden></span></a>
       <a class="sb-item" href="#agents"><span class="i" data-icon="sparkle" data-icon-class="ico-sm"></span><span class="lbl">קלוד וסוכנים</span><span class="badge soft" data-n="nInbox" hidden></span></a>
       <div class="sb-label">כללי</div>
       <button type="button" class="sb-item sg" data-proxy="bgT"><span class="i" data-icon="image" data-icon-class="ico-sm"></span><span class="lbl">רקע</span></button><button type="button" class="sb-item sg" data-proxy="openModeT"><span class="i" data-icon="swap" data-icon-class="ico-sm"></span><span class="lbl">פתיחת כרטיסים</span><em class="sg-v" id="sgOpenV"></em></button><button type="button" class="sb-item sg" data-proxy="arrangeBtn"><span class="i" data-icon="sliders" data-icon-class="ico-sm"></span><span class="lbl">סידור הלוח</span></button>
@@ -44,7 +46,7 @@
       <button class="chip-float chip-a pulse-chip" type="button" aria-expanded="false" aria-controls="pulsePop" data-tour="pulse"><span class="ps-dot" aria-hidden="true"></span><span class="lab"><span>מדד העבודה</span><b><span class="ps-score num">0</span><span class="ps-level">רגוע</span></b></span><svg class="ico ico-sm ps-chev" aria-hidden="true"><use href="#i-chevD"/></svg></button>
       <div class="pulse-pop" id="pulsePop" role="dialog" aria-label="מה משפיע על מדד העבודה" hidden><div class="pp-head"><b>מה משפיע על המדד עכשיו</b><button class="kebab" type="button" id="ppClose" aria-label="סגירה" data-icon="plus" data-icon-class="ico-sm"></button></div><ul class="pp-list" id="ppList"></ul></div>
       <div class="hero-copy">
-        <span class="eyebrow">תמונת מצב · <span id="hdate"></span></span>
+        <span class="eyebrow"><span id="spEyebrow"></span>תמונת מצב · <span id="hdate"></span></span>
         <h1 class="t-h1" id="greet" dir="ltr">Zalmen</h1>
         <p class="t-muted" id="dateLine">טוען...</p>
         <div class="hero-cta" data-tour="cta"><button class="btn btn-primary hh-go" id="startBtn" type="button" data-icon="arrowUpLeft" data-icon-class="ico-sm"><span id="startTxt">מה מחכה לנו</span></button><button class="btn btn-ghost" id="arrangeBtn" type="button" data-icon="sliders" data-icon-class="ico-sm">סידור הלוח</button><button class="btn btn-ghost" id="hiddenBtn" type="button" hidden></button></div>
@@ -132,7 +134,7 @@
 
   <!-- AGENTS -->
   <section class="view" id="v-agents">
-    <div class="pagehead"><div><h1>קלוד וסוכנים</h1><p>מה קלוד עושה לבד, מה הוא מכין לאישור, ומה מחכה בתור</p></div><div><a class="btn" href="#agQueue">תור הבקשות</a><button class="btn pri" id="pauseAll">השהה את כל הסוכנים</button></div></div>
+    <div class="pagehead"><div><h1>קלוד וסוכנים</h1><p>מה קלוד עושה לבד, מה הוא מכין לאישור, ומה מחכה בתור</p></div><div><a class="btn" href="#agQueue">תור הבקשות</a><button class="btn" id="agRunNow" type="button">הרץ את התור עכשיו</button><button class="btn pri" id="pauseAll">השהה את כל הסוכנים</button></div></div>
     <div class="agban" id="agBanner"></div>
     <div class="aggrid" id="agGrid"></div>
     <div class="bento">
@@ -140,6 +142,26 @@
       <div class="s5">
         <div class="card pane"><div class="ch"><h2>גבולות קבועים</h2></div><div class="muted">דברים שאף סוכן לא עושה, בלי קשר לרמת העצמאות</div><div id="gList"></div></div>
         <div class="card pane howto"><h3>איך הבקשות מגיעות לביצוע</h3><ol><li>בכל כרטיס או סוכן לוחצים "שלח". הבקשה נשמרת בתור.</li><li>פותחים צ'אט בפרויקט ומדביקים את הפקודה. קלוד קורא את התור ואת רמות העצמאות, מבצע ומעדכן.</li><li>מה שחוזר מסומן "ממתין לאישור" עד שמענדי מאשר.</li></ol><div class="code" id="runCmd"></div><div><button class="btn sm gold" id="copyRun">העתק פקודה</button><a class="btn sm" id="openProject" target="_blank" rel="noopener">פתח את הפרויקט בקלוד</a></div></div>
+      </div>
+    </div>
+  </section>
+  <!-- DRIVE (v31) -->
+  <section class="view" id="v-drive">
+    <div class="pagehead"><div><h1>דרייב · תוצרים</h1><p>כל התוצרים של מעיינותיך מסודרים לפי שלב: רעיונות, בעבודה, טיוטות לאישור, מוכן לפרסום</p></div><div><button class="btn" id="dvSync" type="button">סדר עכשיו</button><a class="btn pri" id="dvRoot" href="#" target="_blank" rel="noopener">פתח בדרייב ↗</a></div></div>
+    <div id="dvBody"><div class="skel" style="height:220px"></div></div>
+  </section>
+  <!-- SESSIONS (v30) -->
+  <section class="view" id="v-sessions">
+    <div class="pagehead"><div><h1>סשנים</h1><p>כל סשן של קלוד במרחב הזה מדווח כאן: מה הוא עושה, מה הוא צריך ממך ומה יצא</p></div><div><button class="btn" id="ssKick" type="button">הפעל עכשיו</button><button class="btn pri" id="ssNew" type="button">סשן חדש</button></div></div>
+    <div class="ss-kpis" id="ssK"></div>
+    <div class="ss-grid">
+      <div class="card pane ss-main">
+        <div class="seg" id="ssSeg" style="margin-bottom:12px"><button data-v="active" aria-pressed="true">פעילים</button><button data-v="done" aria-pressed="false">הסתיימו</button><button data-v="all" aria-pressed="false">הכול</button></div>
+        <div class="ss-list" id="ssList"><div class="skel" style="height:120px"></div></div>
+      </div>
+      <div class="ss-side">
+        <div class="card pane" id="ssInbox" hidden></div>
+        <div class="card pane ss-how"><h3>איך זה עובד</h3><ol><li>"סשן חדש" או "הפעל כסשן" שומרים את המשימה ומעירים מיד את "מפעיל הסשנים", שרץ בענן. אם ההפעלה המיידית לא זמינה, המשימה תרוץ בבדיקה השעתית.</li><li>הסשן מעדכן כאן סטטוס: עובד, מחכה לך (עם השאלה), הסתיים (עם התוצאה והקישורים).</li><li>כדי שגם שיחה רגילה עם קלוד תופיע כאן, אומרים לה "דווח ללוח הסשנים".</li></ol><p class="muted" id="ssLaunchNote" hidden>המפעיל עוד לא מחובר, אז משימות חדשות מחכות בתור.</p></div>
       </div>
     </div>
   </section>
@@ -157,6 +179,36 @@
 document.addEventListener('click',function(e){return;var n=document.documentElement.dataset.skin==='dark'?'light':'dark';document.documentElement.dataset.skin=n;try{localStorage.setItem(k,n)}catch(e){}});
 document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.mob-nav a').forEach(function(a){var s=document.querySelector('.snav a[href="'+a.getAttribute('href')+'"] svg');if(s&&!a.querySelector('.mi')){var c=s.cloneNode(true);c.classList.add('mi');a.prepend(c)}})});})();
 </script>
+<script>/* ===== v30: מרחבים (מעיינותיך / פרטי / ...) – סינון נתונים וכתיבה עם שדה space ===== */
+(function(){
+  var KEY='mt-space', SPACED=['items','inbox','activity','sessions'];
+  var DEF=[{id:'maayanotecha',name:'מעיינותיך',color:'#3F5499',order:1},{id:'private',name:'פרטי',color:'#2E8B57',order:2}];
+  var cur='maayanotecha';try{cur=localStorage.getItem(KEY)||'maayanotecha'}catch(e){}
+  function spaceOf(d){return (d&&d.space)||'maayanotecha'}
+  function filter(key,o){if(SPACED.indexOf(key)<0)return o;var r={};for(var k in o){if(spaceOf(o[k])===cur)r[k]=o[k]}return r}
+  function inject(name,d){if(SPACED.indexOf(name)<0||!d||typeof d!=='object'||d.space)return d;var c={};for(var k in d)c[k]=d[k];c.space=cur;return c}
+  function topCol(path){return String(path).split('/')[0]}
+  function wrapDoc(ref,name){return{id:ref.id,path:ref.path,
+    get:function(){return ref.get()},set:function(d){return ref.set(inject(name,d))},update:function(d){return ref.update(d)},
+    delete:function(){return ref.delete()},acquire:function(o){return ref.acquire(o)},
+    onSnapshot:function(a,b){return ref.onSnapshot(a,b)},collection:function(p){return ref.collection(p)}}}
+  function wrapCol(col,name){return{path:col.path,
+    doc:function(id){return wrapDoc(id===undefined?col.doc():col.doc(id),name)},
+    add:function(d){return col.add(inject(name,d))},
+    where:function(a,b,c){return col.where(a,b,c)},orderBy:function(a,b){return col.orderBy(a,b)},limit:function(n){return col.limit(n)},
+    get:function(){return col.get()},onSnapshot:function(a,b){return col.onSnapshot(a,b)}}}
+  function wrap(db){if(!db)return db;return{
+    doc:function(p){return wrapDoc(db.doc(p),topCol(p))},
+    collection:function(p){return wrapCol(db.collection(p),p.indexOf('/')<0?p:'')}}}
+  window.SPX={wrap:wrap,filter:filter,spaceOf:spaceOf,DEF:DEF,
+    get cur(){return cur},
+    set:function(id){if(!id||id===cur)return;cur=id;try{localStorage.setItem(KEY,id)}catch(e){}
+      var S=(typeof window.__mtS==='function')?window.__mtS():null;if(S&&S.all){SPACED.forEach(function(k){if(S.all[k])S[k]=filter(k,S.all[k])})}
+      if(S){S.open=null;var dr=document.getElementById('drawer'),sc=document.getElementById('scrim');if(dr)dr.classList.remove('on');if(sc)sc.classList.remove('on')}
+      document.dispatchEvent(new CustomEvent('mt-space'));
+      if(typeof renderAll==='function'&&S&&S.loaded)renderAll()}};
+})();
+</script>
 <script>
 document.documentElement.dir='rtl';document.documentElement.lang='he';
 const PROJECT_URL='https://claude.ai/project/01a19d71-c633-703a-9d82-6ff3ad792b25';
@@ -170,6 +222,7 @@ const DOW=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
 const MON=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 const S={items:{},people:{},inbox:{},activity:{},agents:{},mode:'item',att:[],rs:null,selDay:null,loaded:false,db:null,sample:null,assets:null,user:null,calMonth:null,bKind:'all',tSort:'urg',iFilter:'open',open:null};
 
+window.__mtS=()=>S;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
@@ -894,7 +947,7 @@ $('#openProject').href=PROJECT_URL;
 $('#addPerson').onclick=()=>{openModal(`<h3>איש קשר חדש</h3><form id="pForm" class="fields"><label class="fld">שם<input id="pName" required></label><label class="fld">תפקיד<input id="pRole"></label><div class="fld full" style="flex-direction:row;gap:6px"><button class="btn pri">הוסף</button><button type="button" class="btn" data-close>ביטול</button></div></form>`);$('#pForm').onsubmit=async e=>{e.preventDefault();const id=uid();const p={name:$('#pName').value.trim(),role:$('#pRole').value.trim(),color:['#3F5499','#5E1542','#A88A63','#1F7FA8','#2E8B57'][Object.keys(S.people).length%5]};S.people[id]=p;closeModal();renderAll();await S.db.collection('people').doc(id).set(p)}};
 
 /* routing */
-const VIEWS=['today','tasks','board','calendar','gantt','people','agents'];
+const VIEWS=['today','tasks','board','calendar','gantt','people','agents','sessions','drive'];
 function route(){if(location.hash==='#inbox'){location.hash='#agents';return}const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';VIEWS.forEach(x=>$('#v-'+x).classList.toggle('on',x===v));document.querySelectorAll('.sb-nav a').forEach(a=>{if(a.getAttribute('href')==='#'+v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});if(v==='gantt')renderGantt()}
 addEventListener('hashchange',route);route();
 
@@ -903,11 +956,11 @@ $('#projGrid').innerHTML='<div class="skel" style="height:220px"></div><div clas
 (async()=>{
   const w=window.claude;if(!w||!w.use){emptyState('הדשבורד נפתח מחוץ לקלוד, ולכן אין גישה לנתונים.');return}
   const [db,sample,assets,user]=await Promise.all([w.use('db'),w.use('sample'),w.use('assets'),w.use('user')]);
-  S.db=db;S.sample=sample;S.assets=assets;S.user=user;if(window.teamInit)setTimeout(()=>teamInit(),0);
+  S.db=window.SPX?SPX.wrap(db):db;S.rawDb=db;S.sample=sample;S.assets=assets;S.user=user;if(window.teamInit)setTimeout(()=>teamInit(),0);
   if(!db){emptyState('צריך להתחבר לחשבון קלוד כדי לראות ולעדכן את הנתונים.');return}
   let got=0;const timer=setTimeout(()=>{if(!S.loaded)emptyState('הנתונים לא נטענו. רענן את הדף.')},10000);
   const done=()=>{if(++got>=5){clearTimeout(timer);S.loaded=true;if(!Object.keys(S.items).length)emptyState('עוד אין כרטיסים. הוסף פרויקט ראשון, או בקש מקלוד בצ׳אט למלא את הדשבורד.',true);else renderAll()}};
-  const sub=(col,key)=>{let first=true;db.collection(col).onSnapshot(s=>{const o={};s.docs.forEach(d=>o[d.id]={...d.data(),id:d.id});S[key]=o;S.lastSync=Date.now();if(first){first=false;done()}else renderAll()},err=>{if(first){first=false;done()}toast('שגיאת סנכרון: '+err.message)})};
+  const sub=(col,key)=>{let first=true;db.collection(col).onSnapshot(s=>{const o={};s.docs.forEach(d=>o[d.id]={...d.data(),id:d.id});S.all=S.all||{};S.all[key]=o;S[key]=window.SPX?SPX.filter(key,o):o;S.lastSync=Date.now();if(first){first=false;done()}else renderAll()},err=>{if(first){first=false;done()}toast('שגיאת סנכרון: '+err.message)})};
   sub('items','items');sub('people','people');sub('inbox','inbox');sub('activity','activity');sub('agents','agents');
 })();
 function emptyState(msg,canAdd){S.loaded=true;$('#dateLine').textContent=msg;$('#dateLine').style.display='block';['#attList','#bgList','#feed','#funnel','#donut','#reps','#projChart','#plist','#remind'].forEach(s=>{const el=$(s);if(el)el.innerHTML='<div class="empty">ריק בינתיים</div>'});$('#projGrid').innerHTML=`<div class="empty">${canAdd?'<button class="btn pri" data-new="project">+ פרויקט ראשון</button>':'כאן יופיעו כרטיסי הפרויקטים.'}</div>`;if(canAdd)renderAll()}
@@ -2618,5 +2671,303 @@ function heroKpis(){const hero=$1('#heroMt'),copy=hero&&hero.querySelector('.her
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();meterToggle();battery();
 if(typeof S!=='undefined'&&S.loaded&&window.renderAll)renderAll();
+})();
+</script>
+</body></html>
+<style id="v30-sessions">
+#spSwitch{padding:0 4px 6px}
+#spSwitch .sb-label{margin-top:4px}
+.sp-pills{display:flex;flex-wrap:wrap;gap:6px}
+.sp-pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:inherit;font:500 13px var(--f-body,Rubik),sans-serif;cursor:pointer;transition:background .15s,border-color .15s}
+.sp-pill i{width:8px;height:8px;border-radius:50%;background:var(--spc,#3F5499);box-shadow:0 0 0 2px rgba(255,255,255,.18)}
+.sp-pill[aria-selected="true"]{background:rgba(255,255,255,.92);color:var(--ink-900,#141A33);border-color:transparent}
+.sp-pill:hover{background:rgba(255,255,255,.14)}
+.sp-pill[aria-selected="true"]:hover{background:#fff}
+.sp-add{width:30px;padding:0;justify-content:center;font-size:16px}
+.sidebar.is-collapsed #spSwitch .sb-label,.sidebar.is-collapsed .sp-pill span,.sidebar.is-collapsed .sp-add{display:none}
+.sidebar.is-collapsed .sp-pills{flex-direction:column;align-items:center}
+.sidebar.is-collapsed .sp-pill{width:30px;padding:0;justify-content:center}
+#v-sessions .ss-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:4px 0 14px}
+.ss-kpi{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:right;cursor:pointer;border:0;font:inherit;color:inherit;padding:14px 16px}
+.ss-kpi b{font-size:30px;font-weight:400;line-height:1.1}
+.ss-kpi span{font-size:13px;color:var(--ink-500)}
+.ss-kpi.warn b{color:var(--warn)}.ss-kpi.info b{color:var(--info)}.ss-kpi.ok b{color:var(--ok)}
+.ss-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+.ss-list{display:flex;flex-direction:column;gap:10px}.ss-main{padding:14px}#ssList .empty b,#ssList .empty span{display:block}.ss-main .ss-card{box-shadow:none}
+.ss-card{padding:14px 16px;border-inline-start:4px solid transparent}
+.ss-card.ss-running{border-inline-start-color:var(--info)}.ss-card.ss-waiting{border-inline-start-color:var(--warn)}.ss-card.ss-failed{border-inline-start-color:var(--bad)}.ss-card.ss-done{border-inline-start-color:var(--ok)}.ss-card.ss-queued{border-inline-start-color:var(--ink-300)}
+.ss-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.ss-t{font-weight:500;font-size:16px;word-break:break-word}
+.ss-st{flex:none;white-space:nowrap}
+.ss-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-inline-end:6px;animation:ssP 1.4s infinite}
+@keyframes ssP{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.ss-dot{animation:none}}
+.ss-prog{margin-top:6px;font-size:14.5px}
+.ss-needs{margin-top:8px;padding:8px 10px;border-radius:var(--r-tile,10px);background:var(--warn-bg);font-size:14px}
+.ss-needs b{color:var(--warn)}
+.ss-res{margin-top:8px;padding:8px 10px;border-radius:var(--r-tile,10px);background:var(--ok-bg);font-size:14px}
+.ss-links,.ss-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ss-meta{margin-top:8px;font-size:12.5px}
+.ss-det{margin-top:8px}.ss-det summary{cursor:pointer;font-size:13px;color:var(--ink-500)}
+.ss-det pre{white-space:pre-wrap;font:inherit;font-size:13.5px;background:var(--surface-2,rgba(0,0,0,.04));border-radius:var(--r-tile,10px);padding:8px 10px;margin:6px 0 0}
+.ss-log{list-style:none;margin:6px 0 0;padding:0;font-size:13px}.ss-log li{padding:3px 0;border-bottom:1px dashed var(--line,rgba(0,0,0,.08))}.ss-log time{color:var(--ink-400)}
+.ss-reply{margin-top:10px}.ss-reply textarea{width:100%;font:inherit;font-size:14px;border-radius:var(--r-tile,10px);border:1px solid var(--line,rgba(0,0,0,.12));padding:8px 10px;background:var(--surface,#fff);color:inherit;resize:vertical}
+.ss-side{display:flex;flex-direction:column;gap:14px}
+.ss-req{gap:8px}.ss-req .t{display:flex;flex-direction:column;gap:2px}
+.ss-how ol{margin:6px 0 0;padding-inline-start:18px;font-size:13.5px;color:var(--ink-500)}.ss-how li{margin-bottom:4px}
+#ssLaunchNote{font-size:13px}
+@media (max-width:900px){.ss-grid{grid-template-columns:1fr}#v-sessions .ss-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script>/* ===== v30: סשנים – כל סשן של קלוד מדווח כאן; הפעלה מיידית דרך "מפעיל הסשנים" ===== */
+(function(){
+  const SST={queued:['בתור',''],running:['עובד','info'],waiting:['מחכה לך','warn'],done:['הסתיים','ok'],failed:['נכשל','bad']};
+  const ACT=['queued','running','waiting','failed'];
+  const SERVER='Claude Code Remote';
+  let rawSess={},spacesDoc={},launcherId=null,sFilter='active',subbed=false,mcpP=null;
+  const sp=()=>window.SPX?SPX.cur:'maayanotecha';
+  const spaces=()=>{const m={};SPX.DEF.forEach(d=>m[d.id]={...d});Object.entries(spacesDoc).forEach(([id,d])=>{if(d&&d.name)m[id]={...(m[id]||{}),...d,id}});return Object.values(m).filter(x=>!x.hidden).sort((a,b)=>(a.order||99)-(b.order||99))};
+  const spName=id=>(spaces().find(x=>x.id===id)||{}).name||id;
+  const mine=()=>Object.entries(rawSess).filter(([,x])=>x&&x.title&&SPX.spaceOf(x)===sp()).map(([id,x])=>({id,...x}));
+  const ago=t=>{if(!t)return'';const d=(Date.now()-new Date(t).getTime())/1000;if(isNaN(d))return'';if(d<60)return'עכשיו';if(d<3600)return'לפני '+Math.round(d/60)+' דק׳';if(d<86400)return'לפני '+Math.round(d/3600)+' שע׳';const n=Math.round(d/86400);return n===1?'אתמול':'לפני '+n+' ימים'};
+  const safeUrl=u=>{try{const x=new URL(String(u));return /^https?:$/.test(x.protocol)?x.href:null}catch(e){return null}};
+  const addLog=(x,t)=>{const l=Array.isArray(x.log)?x.log.slice(-29):[];l.push({at:now(),text:t});return l};
+
+  /* ---- מרחבים: בורר בסרגל ---- */
+  function paintSpaces(){
+    const host=$('#spSwitch');if(!host)return;const c=sp();
+    host.innerHTML=`<div class="sb-label">מרחב</div><div class="sp-pills" role="tablist">${spaces().map(s=>`<button type="button" role="tab" class="sp-pill" data-space="${esc(s.id)}" aria-selected="${s.id===c}" style="--spc:${esc(s.color||'#3F5499')}" title="${esc(s.name)}"><i></i><span>${esc(s.name)}</span></button>`).join('')}<button type="button" class="sp-pill sp-add" id="spAdd" title="מרחב חדש" aria-label="מרחב חדש">+</button></div>`;
+    const eb=$('#spEyebrow');if(eb)eb.textContent=spName(c)+' · ';
+  }
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-space]');if(b&&b.closest('#spSwitch')){SPX.set(b.dataset.space);toast('עברת למרחב '+spName(b.dataset.space));return}
+    if(e.target.closest('#spAdd')){openModal(`<h3>מרחב חדש</h3><p class="muted" style="margin:0 0 10px">לכל מרחב יש כרטיסים, תור וסשנים משלו. האנשים והסוכנים משותפים.</p><form id="spForm" class="fields"><label class="fld full">שם המרחב<input id="spNm" required maxlength="30" placeholder="למשל: JEM, אוטומציה, הספר"></label><div class="fld full" style="flex-direction:row;gap:6px"><button class="btn pri">צור מרחב</button><button type="button" class="btn" data-close>ביטול</button></div></form>`);
+      $('#spForm').onsubmit=async ev=>{ev.preventDefault();const name=$('#spNm').value.trim();if(!name)return;const id='sp-'+uid();const cols=['#A8572B','#6A55A8','#1F7FA8','#B08A2E','#5E1542'];const d={name,color:cols[Object.keys(spacesDoc).length%cols.length],order:10+Object.keys(spacesDoc).length,createdAt:now()};
+        try{await S.db.collection('spaces').doc(id).set(d);spacesDoc[id]=d;$('#modalHost').innerHTML='';SPX.set(id);paintSpaces();toast('נוצר המרחב '+name)}catch(err){toast('לא הצלחתי ליצור מרחב')}};return}
+  });
+  document.addEventListener('mt-space',()=>{paintSpaces();renderSessions()});
+
+  /* ---- הפעלת המפעיל ---- */
+  async function launch(note){
+    if(!launcherId){toast('נשמר בתור. המפעיל עוד לא מוגדר, ולכן ירוץ בבדיקה הקרובה.');return false}
+    if(!mcpP)mcpP=(window.claude&&window.claude.use)?window.claude.use('mcp').catch(()=>null):Promise.resolve(null);
+    const mcp=await mcpP;if(!mcp){toast('נשמר בתור. ירוץ בבדיקה השעתית הקרובה.');return false}
+    try{await mcp.callTool(SERVER,'fire_trigger',{trigger_id:launcherId,text:note||'הופעל מחדר הבקרה'},{cache:false});toast('הסשן הופעל. הסטטוס יתעדכן כאן תוך דקה–שתיים.');return true}
+    catch(e){const c=e&&e.code;
+      if(c==='server_not_connected')toast('נשמר בתור. להפעלה מיידית צריך את המחבר Claude Code Remote בהגדרות > מחברים.');
+      else if(c==='approval_required'||c==='not_in_manifest')toast('נשמר בתור. צריך לאשר לחדר הבקרה להפעיל סשנים (Claude Code Remote), ואז ללחוץ שוב.');
+      else if(c==='needs_reauth')toast('נשמר בתור. צריך לחבר מחדש את Claude Code Remote בהגדרות > מחברים.');
+      else if(c==='server_unavailable'||c==='upstream_error')toast('לא ברור אם ההפעלה עברה. אם הסטטוס לא זז תוך כמה דקות, לחץ "הפעל עכשיו".');
+      else toast('נשמר בתור. ירוץ בבדיקה השעתית הקרובה.');return false}
+  }
+
+  async function newSession(title,prompt,extra){
+    const id='s-'+uid(),t=now();
+    const d={title,prompt,status:'queued',source:'board',progress:'',needs:'',result:'',links:[],archived:false,createdAt:t,updatedAt:t,log:[{at:t,text:'נוצר בחדר הבקרה'}],...(extra||{})};
+    rawSess[id]={...d,space:sp()};renderSessions();
+    try{await S.db.collection('sessions').doc(id).set(d);return id}catch(e){delete rawSess[id];renderSessions();toast('השמירה נכשלה');return null}
+  }
+  async function inboxToSession(rid){
+    const r=S.inbox[rid];if(!r)return null;const it=r.itemId?S.items[r.itemId]:null;
+    const sid=await newSession(r.title||'בקשה מהתור',r.text||r.title||'',{inboxId:rid,itemId:r.itemId||null,source:'inbox'});
+    if(!sid)return null;S.inbox[rid]={...r,status:'working',sessionId:sid};
+    try{await S.db.collection('inbox').doc(rid).update({status:'working',sessionId:sid})}catch(e){}
+    return sid;
+  }
+
+  /* ---- מסך הסשנים ---- */
+  function row(x){
+    const st=SST[x.status]?x.status:'queued',[lbl,cls]=SST[st];
+    const links=(Array.isArray(x.links)?x.links:[]).map(l=>{const u=safeUrl(l&&l.url);return u?`<a class="btn sm" href="${esc(u)}" target="_blank" rel="noopener">${esc(l.label||'קישור')}</a>`:''}).join('');
+    const sess=safeUrl(x.sessionUrl);
+    const log=(Array.isArray(x.log)?x.log:[]).slice(-12).reverse().map(l=>`<li><time>${esc(ago(l.at))}</time> ${esc(l.text)}</li>`).join('');
+    const src={board:'מחדר הבקרה',chat:'משיחה עם קלוד',routine:'משימה מתוזמנת',inbox:'מהתור'}[x.source]||'';
+    let act='';
+    if(st==='waiting')act+=`<button class="btn sm pri" data-ss="reply">ענה והמשך</button>`;
+    if(st==='failed')act+=`<button class="btn sm pri" data-ss="retry">נסה שוב</button>`;
+    if(st==='queued')act+=`<button class="btn sm" data-ss="kick">הפעל עכשיו</button>`;
+    if(x.itemId&&S.items[x.itemId])act+=`<button class="btn sm" data-open="${esc(x.itemId)}">פתח כרטיס</button>`;
+    if(['done','failed','waiting'].includes(st)&&!x.archived)act+=`<button class="btn sm" data-ss="archive">ארכב</button>`;
+    if(x.archived)act+=`<button class="btn sm" data-ss="unarchive">החזר</button>`;
+    return `<div class="card ss-card ss-${st}" data-sid="${esc(x.id)}">
+      <div class="ss-top"><b class="ss-t">${esc(x.title)}</b><span class="status ${cls} ss-st">${lbl}</span></div>
+      ${x.progress?`<div class="ss-prog">${esc(x.progress)}</div>`:''}
+      ${(st==='waiting'||st==='failed')&&x.needs?`<div class="ss-needs"><b>${st==='waiting'?'מה צריך ממך':'מה השתבש'}:</b> ${esc(x.needs)}</div>`:''}
+      ${x.result?`<div class="ss-res">${esc(x.result)}</div>`:''}
+      ${links||sess?`<div class="ss-links">${links}${sess?`<a class="btn sm" href="${esc(sess)}" target="_blank" rel="noopener">פתח את הסשן ↗</a>`:''}</div>`:''}
+      <div class="ss-meta muted">עודכן ${esc(ago(x.updatedAt||x.createdAt))}${src?' · '+src:''}${x.archived?' · בארכיון':''}</div>
+      ${x.prompt||log?`<details class="ss-det"><summary>פרטים ויומן</summary>${x.prompt?`<pre>${esc(x.prompt)}</pre>`:''}${x.reply?`<pre><b>התשובה שלך:</b> ${esc(x.reply)}</pre>`:''}${log?`<ul class="ss-log">${log}</ul>`:''}</details>`:''}
+      ${act?`<div class="ss-act">${act}</div>`:''}
+      <div class="ss-reply" hidden><textarea class="fld-in" rows="3" placeholder="התשובה שלך לסשן…"></textarea><div class="ss-act"><button class="btn sm pri" data-ss="send">שלח והמשך</button><button class="btn sm" data-ss="cancel">ביטול</button></div></div>
+    </div>`;
+  }
+  window.renderSessions=function(){
+    const v=$('#v-sessions');if(!v)return;
+    const all=mine();const c={queued:0,running:0,waiting:0,done:0,failed:0};all.forEach(x=>{if(!x.archived&&c[x.status]!=null)c[x.status]++});
+    document.querySelectorAll('[data-n="nSess"]').forEach(el=>{const n=c.waiting+c.failed;el.hidden=!n;el.textContent=n});
+    $('#ssK').innerHTML=[['waiting','מחכים לך','warn'],['running','עובדים עכשיו','info'],['queued','בתור',''],['done','הסתיימו','ok']].map(([k,l,cl])=>`<button type="button" class="card pane ss-kpi ${cl}" data-ssf="${k}"><b class="num">${c[k]}</b><span>${l}</span></button>`).join('');
+    let L=all;
+    if(sFilter==='active')L=L.filter(x=>ACT.includes(x.status)&&!x.archived);
+    else if(sFilter==='done')L=L.filter(x=>x.status==='done'||x.archived);
+    else if(SST[sFilter])L=L.filter(x=>x.status===sFilter&&!x.archived);
+    const rank={waiting:0,failed:1,running:2,queued:3,done:4};
+    L.sort((a,b)=>(rank[a.status]??9)-(rank[b.status]??9)||String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+    document.querySelectorAll('#ssSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===sFilter)));
+    $('#ssList').innerHTML=L.length?L.map(row).join(''):`<div class="empty"><b>${sFilter==='active'?'אין סשנים פעילים במרחב '+esc(spName(sp())):'אין כאן כלום כרגע'}</b><span>לחץ "סשן חדש" או הפעל בקשה מהתור. גם שיחה רגילה עם קלוד יכולה לדווח לכאן.</span></div>`;
+    const reqs=Object.entries(S.inbox||{}).filter(([,r])=>r.status==='new'&&!r.sessionId).sort((a,b)=>(b[1].at||'').localeCompare(a[1].at||''));
+    $('#ssInbox').innerHTML=reqs.length?`<div class="ch"><h2>בקשות בתור שמחכות</h2><button class="btn sm pri" data-ss="runall">הפעל את כולן (${reqs.length})</button></div><div class="list">${reqs.slice(0,8).map(([id,r])=>`<div class="row-tile ss-req"><div class="t" style="flex:1;min-width:0"><b>${esc(r.title)}</b><small class="muted">${esc(r.parent||'')}</small></div><button class="btn sm" data-ssreq="${esc(id)}">הפעל כסשן</button></div>`).join('')}</div>`:'';
+    $('#ssInbox').hidden=!reqs.length;
+    const nl=$('#ssLaunchNote');if(nl)nl.hidden=!!launcherId;
+  };
+
+  document.addEventListener('click',async e=>{
+    const f=e.target.closest('[data-ssf]');if(f){sFilter=sFilter===f.dataset.ssf?'active':f.dataset.ssf;renderSessions();return}
+    const sg=e.target.closest('#ssSeg button');if(sg){sFilter=sg.dataset.v;renderSessions();return}
+    if(e.target.closest('#ssNew')){openModal(`<h3>סשן חדש · ${esc(spName(sp()))}</h3><p class="muted" style="margin:0 0 10px">הסשן רץ בענן ומדווח לכאן מה הוא עושה, מה הוא צריך ממך ומה יצא.</p><form id="ssForm" class="fields"><label class="fld full">כותרת<input id="ssT" required maxlength="120" placeholder="למשל: מחקר מתחרים לספר הזוגות"></label><label class="fld full">מה בדיוק לעשות<textarea id="ssP" required rows="5" placeholder="מטרה, מקורות, ומה לקבל בסוף"></textarea></label><div class="fld full" style="flex-direction:row;gap:6px"><button class="btn pri">הפעל סשן</button><button type="button" class="btn" data-close>ביטול</button></div></form>`);
+      $('#ssForm').onsubmit=async ev=>{ev.preventDefault();const t=$('#ssT').value.trim(),p=$('#ssP').value.trim();if(!t||!p)return;$('#modalHost').innerHTML='';sFilter='active';const id=await newSession(t,p);if(id){log('פתח סשן: '+t,null);launch('משימה חדשה מחדר הבקרה: '+id)}};return}
+    if(e.target.closest('#ssKick')){const q=mine().filter(x=>x.status==='queued');if(!q.length){toast('אין סשנים בתור');return}launch('הפעלה ידנית מחדר הבקרה');return}
+    if(e.target.closest('#agRunNow')){const reqs=Object.entries(S.inbox||{}).filter(([,r])=>r.status==='new'&&!r.sessionId);if(!reqs.length){toast('אין בקשות חדשות בתור');return}for(const[id]of reqs)await inboxToSession(id);launch('הרצת התור מחדר הבקרה');location.hash='#sessions';return}
+    const rq=e.target.closest('[data-ssreq]');if(rq){rq.disabled=true;const sid=await inboxToSession(rq.dataset.ssreq);if(sid)launch('בקשה מהתור: '+sid);return}
+    const b=e.target.closest('[data-ss]');if(!b)return;
+    if(b.dataset.ss==='runall'){b.disabled=true;const reqs=Object.entries(S.inbox||{}).filter(([,r])=>r.status==='new'&&!r.sessionId);for(const[id]of reqs)await inboxToSession(id);launch('הרצת התור מחדר הבקרה');return}
+    const el=b.closest('[data-sid]');if(!el)return;const id=el.dataset.sid,x=rawSess[id];if(!x)return;const ref=S.db.collection('sessions').doc(id);const a=b.dataset.ss;
+    if(a==='reply'){el.querySelector('.ss-reply').hidden=false;el.querySelector('.ss-reply textarea').focus();return}
+    if(a==='cancel'){el.querySelector('.ss-reply').hidden=true;return}
+    b.disabled=true;
+    try{
+      if(a==='send'){const txt=el.querySelector('.ss-reply textarea').value.trim();if(!txt){b.disabled=false;toast('כתוב תשובה קודם');return}
+        const p={status:'queued',reply:txt,needs:'',updatedAt:now(),log:addLog(x,'התשובה שלך: '+txt.slice(0,140))};rawSess[id]={...x,...p};renderSessions();await ref.update(p);launch('תשובה לסשן '+id)}
+      else if(a==='retry'){const p={status:'queued',updatedAt:now(),log:addLog(x,'נשלח לניסיון נוסף')};rawSess[id]={...x,...p};renderSessions();await ref.update(p);launch('ניסיון נוסף לסשן '+id)}
+      else if(a==='kick'){await launch('הפעלה של '+id);b.disabled=false}
+      else if(a==='archive'||a==='unarchive'){const p={archived:a==='archive',updatedAt:now()};rawSess[id]={...x,...p};renderSessions();await ref.update(p)}
+    }catch(err){toast('השמירה נכשלה');b.disabled=false}
+  });
+
+  /* ---- חיבור לנתונים ---- */
+  function subscribe(){
+    if(subbed||!S.db)return;subbed=true;
+    S.db.collection('sessions').onSnapshot(s=>{const o={};s.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});rawSess=o;S.all=S.all||{};S.all.sessions=o;renderSessions()},()=>{});
+    S.db.collection('spaces').onSnapshot(s=>{const o={};s.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});spacesDoc=o;paintSpaces();renderSessions()},()=>{});
+    S.db.doc('config/launcher').onSnapshot(s=>{launcherId=s.exists?(s.data().triggerId||null):null;renderSessions()},()=>{});
+  }
+  const t0=Date.now();const iv=setInterval(()=>{if(S.db){clearInterval(iv);subscribe()}else if(Date.now()-t0>20000)clearInterval(iv)},250);
+  const _r30=renderAll;renderAll=function(){const r=_r30.apply(this,arguments);try{paintSpaces();renderSessions()}catch(e){}return r};
+  paintSpaces();
+  if(location.hash==='#sessions')route();
+})();
+</script>
+<style id="v31-drive">
+.dv-quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.dv-q{display:flex;flex-direction:column;gap:2px;padding:14px 16px;text-decoration:none;color:inherit;transition:transform .15s}
+.dv-q:hover{transform:translateY(-2px)}
+.dv-qi{font-size:24px;line-height:1;margin-bottom:6px}
+.dv-q b{font-weight:500;font-size:15px}.dv-q small{color:var(--ink-500);font-size:12.5px}
+.dv-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;align-items:start}
+.dv-col{padding:12px}
+.dv-ch{display:flex;align-items:center;gap:8px;margin-bottom:8px}.dv-ch .num{font-size:20px;font-weight:400;margin-inline-start:auto}
+.dv-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.dv-chips a{font-size:12px;text-decoration:none;color:var(--ink-500);border:1px solid var(--line,rgba(0,0,0,.1));border-radius:999px;padding:2px 9px}
+.dv-chips a:hover{color:var(--royal,#3F5499);border-color:currentColor}
+.dv-list{display:flex;flex-direction:column;gap:6px}
+.dv-it{gap:8px;padding:8px 10px}.dv-it .dv-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;cursor:pointer}.dv-it .dv-t b{font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dv-it .dv-t small{font-size:12px}
+.dv-none,.dv-more{font-size:12.5px;padding:4px 2px}
+.dv-fcard{padding:14px}
+.dv-h{font-weight:500;font-size:14px;margin:4px 0 8px}
+.dv-files{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
+.dv-file{gap:10px;text-decoration:none;color:inherit;padding:8px 10px}.dv-file .t{flex:1;min-width:0;display:flex;flex-direction:column}.dv-file .t b{font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dv-file .t small{font-size:12px}
+.dv-ic{font-size:20px}.dv-go{color:var(--ink-400)}
+@media (max-width:1100px){.dv-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.dv-cols{grid-template-columns:1fr}}
+</style>
+<script>/* ===== v31: דרייב · תוצרים – תיקיית מעיינותיך לפי שלב, גישה מהירה לסופיים ===== */
+(function(){
+  const STAGES=[['idea','רעיונות','1 · רעיונות',''],['work','בעבודה','2 · בעבודה','info'],['review','טיוטות לאישור','3 · טיוטות לאישור','warn'],['approved','מוכן לפרסום','4 · מוכן לפרסום','ok']];
+  const TYPES=[['video','סרטונים'],['graphic','גרפיקות'],['gif','GIF'],['post','פוסטים'],['newsletter','ניוזלטר']];
+  const TYPE1={video:'סרטון',graphic:'גרפיקה',gif:'GIF',post:'פוסט',newsletter:'ניוזלטר'};
+  const SERVER='Google Drive';
+  let files=null,filesErr='',fType='all',loading=false,mcpP=null,cfgSeen='';
+  const D=()=>(S.agents&&S.agents._drive)||{};
+  const fold=id=>id?'https://drive.google.com/drive/folders/'+id:null;
+  const sp=()=>window.SPX?SPX.cur:'maayanotecha';
+  function fmt(it){
+    if(it.format&&TYPE1[it.format])return it.format;const t=String(it.title||'');
+    if(/gif|גיף/i.test(t))return'gif';if(it.channel==='weekly')return'post';
+    if(/גרפיק|באנר|פוסטר|מודעה|קאוור/.test(t))return'graphic';
+    if(it.channel==='video'||/סרטון|רילס|וידאו|סטורי/.test(t))return'video';
+    if(it.channel==='post')return'post';if(it.channel==='newsletter')return'newsletter';return null}
+  function stageOf(it){return({idea:'idea',todo:'work',doing:'work',review:'review',scheduled:'approved',done:'approved'})[it.status]||'work'}
+  function products(){return Object.values(S.items||{}).filter(it=>it&&!['event','recurring'].includes(it.kind)&&['content','project','task'].includes(it.kind)&&fmt(it)&&!it.remindAt)}
+  const icoFor=m=>/video/.test(m)?'🎬':/image\/gif/.test(m)?'🎞️':/image/.test(m)?'🖼️':/pdf/.test(m)?'📄':/document/.test(m)?'📝':/presentation/.test(m)?'📊':/spreadsheet/.test(m)?'📈':'📁';
+  const dShort=t=>{try{return new Date(t).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'})}catch(e){return''}};
+  const safe=u=>{try{const x=new URL(String(u));return /^https:$/.test(x.protocol)?x.href:null}catch(e){return null}};
+
+  async function loadFiles(force){
+    const d=D();if(!d.approved||!d.approved.id||loading)return;
+    if(files&&!force)return;loading=true;filesErr='';paint();
+    if(!mcpP)mcpP=(window.claude&&window.claude.use)?window.claude.use('mcp').catch(()=>null):Promise.resolve(null);
+    const mcp=await mcpP;
+    if(!mcp){loading=false;filesErr='nomcp';paint();return}
+    const out=[];
+    try{
+      for(const st of ['approved','review']){const id=d[st]&&d[st].id;if(!id)continue;
+        const r=await mcp.callTool(SERVER,'search_files',{query:`'${id}' in ancestors and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,orderBy:'modifiedTime desc',pageSize:40,excludeContentSnippets:true},{cache:{staleTime:120000,gcTime:600000,refresh:!!force}});
+        const p=r&&r.payload;const arr=(p&&p.files)||[];
+        arr.forEach(f=>{let type='other';for(const[t]of TYPES){const tid=d[st][t];if(tid&&f.parentId===tid)type=t}out.push({...f,stage:st,type})});
+      }
+      // files nested in card folders: map parent folder -> type via a second pass of folders
+      const fx=out.filter(f=>f.type==='other');
+      if(fx.length){for(const st of ['approved','review']){const id=d[st]&&d[st].id;if(!id)continue;
+        const r=await mcp.callTool(SERVER,'search_files',{query:`'${id}' in ancestors and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,pageSize:100,excludeContentSnippets:true},{cache:{staleTime:120000,gcTime:600000,refresh:!!force}});
+        const fl=((r&&r.payload&&r.payload.files)||[]);const tOf={};fl.forEach(x=>{for(const[t]of TYPES){if(d[st][t]&&x.parentId===d[st][t])tOf[x.id]=t}});
+        fx.forEach(f=>{if(f.stage===st&&tOf[f.parentId])f.type=tOf[f.parentId]})}}
+      files=out;
+    }catch(e){const c=e&&e.code;filesErr=c==='server_not_connected'?'notconn':(c==='approval_required'||c==='not_in_manifest')?'approve':c==='needs_reauth'?'reauth':'err';files=files||null}
+    loading=false;paint();
+  }
+
+  function filesHtml(){
+    if(loading)return'<div class="skel" style="height:120px"></div>';
+    if(filesErr){const m={nomcp:'הדף לא יכול לקרוא מהדרייב בתצוגה הזו. התיקיות למעלה פתוחות בלחיצה.',notconn:'כדי לראות כאן את הקבצים צריך את המחבר Google Drive (הגדרות > מחברים).',approve:'צריך לאשר לחדר הבקרה לקרוא מהדרייב.',reauth:'צריך לחבר מחדש את Google Drive (הגדרות > מחברים).',err:'לא הצלחתי לקרוא מהדרייב כרגע.'}[filesErr];
+      return `<div class="empty"><b>${m}</b><span><button class="btn sm" data-dv="load">נסה שוב</button></span></div>`}
+    if(!files)return `<div class="empty"><b>הקבצים עצמם, ישר מהדרייב</b><span><button class="btn sm pri" data-dv="load">הצג קבצים</button></span></div>`;
+    const L=files.filter(f=>f.stage==='approved'&&(fType==='all'||f.type===fType));
+    const R=files.filter(f=>f.stage==='review'&&(fType==='all'||f.type===fType));
+    const row=f=>{const u=safe(f.viewUrl);return `<a class="row-tile dv-file" ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:''}><span class="dv-ic">${icoFor(f.mimeType||'')}</span><span class="t"><b>${esc(f.title)}</b><small class="muted">${esc(TYPE1[f.type]||'קובץ')} · ${esc(dShort(f.modifiedTime))}</small></span><span class="dv-go">↗</span></a>`};
+    return `<div class="seg dv-tabs" style="margin-bottom:10px">${[['all','הכול'],...TYPES].map(([k,l])=>`<button data-dvt="${k}" aria-pressed="${fType===k}">${l}</button>`).join('')}</div>
+      <div class="dv-h">מוכן לפרסום <span class="muted">(${L.length})</span></div>
+      <div class="dv-files">${L.slice(0,24).map(row).join('')||'<div class="muted dv-none">אין כאן קבצים עדיין</div>'}</div>
+      <div class="dv-h" style="margin-top:12px">טיוטות לאישור <span class="muted">(${R.length})</span></div>
+      <div class="dv-files">${R.slice(0,12).map(row).join('')||'<div class="muted dv-none">אין טיוטות שמחכות</div>'}</div>`;
+  }
+
+  function paint(){
+    const v=$('#v-drive');if(!v)return;const d=D();
+    if(sp()!=='maayanotecha'){$('#dvBody').innerHTML=`<div class="card pane"><div class="empty"><b>תיקיית הדרייב מוגדרת כרגע רק למרחב מעיינותיך</b><span>אפשר להוסיף תיקייה גם למרחב הזה – בקש מקלוד.</span></div></div>`;return}
+    if(!d.root){$('#dvBody').innerHTML=`<div class="card pane"><div class="empty"><b>עוד אין תיקיית דרייב מוגדרת</b></div></div>`;return}
+    $('#dvRoot').href=d.root.url||fold(d.root.id);
+    const P=products();const by={idea:[],work:[],review:[],approved:[]};P.forEach(it=>by[stageOf(it)].push(it));
+    Object.values(by).forEach(a=>a.sort((x,y)=>String(y.updatedAt||y.createdAt||'').localeCompare(String(x.updatedAt||x.createdAt||''))));
+    const quick=TYPES.map(([t,l])=>{const id=d.approved&&d.approved[t];return id?`<a class="card pane dv-q" href="${fold(id)}" target="_blank" rel="noopener"><span class="dv-qi">${{video:'🎬',graphic:'🖼️',gif:'🎞️',post:'📝',newsletter:'✉️'}[t]}</span><b>${l}</b><small>סופיים</small></a>`:''}).join('')+
+      (d.extra||[]).map(x=>`<a class="card pane dv-q" href="${fold(x.id)}" target="_blank" rel="noopener"><span class="dv-qi">📅</span><b>${esc(x.label)}</b><small>תיקייה</small></a>`).join('');
+    const cols=STAGES.map(([k,l,full,cls])=>{const sd=d[k]||{};const list=by[k];
+      return `<div class="card pane dv-col"><div class="dv-ch"><span class="status ${cls}">${l}</span><b class="num">${list.length}</b>${sd.id?`<a class="btn sm" href="${fold(sd.id)}" target="_blank" rel="noopener">לתיקייה ↗</a>`:''}</div>
+        <div class="dv-chips">${TYPES.map(([t,tl])=>sd[t]?`<a href="${fold(sd[t])}" target="_blank" rel="noopener">${tl}</a>`:'').join('')}</div>
+        <div class="dv-list">${list.slice(0,7).map(it=>{const u=it.drive&&safe(it.drive.url);return `<div class="row-tile dv-it"><span class="dv-t" data-open="${esc(it.id)}"><b>${esc(it.title)}</b><small class="muted">${esc(TYPE1[fmt(it)]||'')}${it.drive&&it.drive.stage&&it.drive.stage!==k?' · עוד לא הועבר':''}</small></span>${u?`<a class="btn sm" href="${esc(u)}" target="_blank" rel="noopener" title="פתח בדרייב">📁</a>`:''}</div>`}).join('')||'<div class="muted dv-none">ריק</div>'}${list.length>7?`<div class="muted dv-more">ועוד ${list.length-7}</div>`:''}</div></div>`}).join('');
+    $('#dvBody').innerHTML=`<div class="sec-h"><h2>גישה מהירה לתוצרים הסופיים</h2></div><div class="dv-quick">${quick}</div>
+      <div class="sec-h"><h2>לפי שלב</h2><span class="muted">הכרטיסים בחדר הבקרה והתיקיות שלהם. כשכרטיס משנה סטטוס, התיקייה שלו עוברת שלב בסידור הקרוב.</span></div>
+      <div class="dv-cols">${cols}</div>
+      <div class="card pane dv-fcard"><div class="ch"><h2>הקבצים בדרייב</h2>${files?'<button class="btn sm" data-dv="refresh">רענון</button>':''}</div>${filesHtml()}</div>`;
+  }
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('[data-dvt]');if(t){fType=t.dataset.dvt;paint();return}
+    const b=e.target.closest('[data-dv]');if(b){loadFiles(b.dataset.dv==='refresh'||!!filesErr);return}
+    if(e.target.closest('#dvSync')){(async()=>{const id=D().syncTrigger;if(!id){toast('הסידור האוטומטי לא מוגדר');return}
+      if(!mcpP)mcpP=(window.claude&&window.claude.use)?window.claude.use('mcp').catch(()=>null):Promise.resolve(null);const mcp=await mcpP;if(!mcp){toast('הסידור ירוץ בסבב הקרוב (כל שעתיים)');return}
+      try{await mcp.callTool('Claude Code Remote','fire_trigger',{trigger_id:id,text:'סידור ידני מחדר הבקרה'},{cache:false});toast('הסידור התחיל. התיקיות יתעדכנו תוך כמה דקות.')}
+      catch(err){toast((err&&(err.code==='approval_required'||err.code==='not_in_manifest'))?'צריך לאשר לחדר הבקרה להפעיל משימות (Claude Code Remote), ואז ללחוץ שוב.':'הסידור ירוץ בסבב הקרוב (כל שעתיים)')}})();return}
+  });
+  document.addEventListener('mt-space',paint);
+  addEventListener('hashchange',()=>{if(location.hash==='#drive'){paint();if(!files&&!filesErr)loadFiles(false)}});
+  const _r31=renderAll;renderAll=function(){const r=_r31.apply(this,arguments);try{const k=JSON.stringify(D());if(location.hash==='#drive'||k!==cfgSeen){cfgSeen=k;paint()}}catch(e){}return r};
+  if(location.hash==='#drive'){route();setTimeout(()=>{paint();loadFiles(false)},600)}
 })();
 </script>
