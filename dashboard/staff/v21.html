@@ -2250,7 +2250,6 @@ function renderSet(){const el=ensureSet();if(el.hidden)return;const W=window.MT_
   el.innerHTML=`<div class="setp-in"><header class="setp-top"><h2 id="setH">${DS.icon('settings')}הגדרות</h2><button type="button" class="setp-x" data-setclose="1" aria-label="סגירה">${DS.icon('plus')}</button></header>
     <section class="st-sec"><h3>רקע</h3><p>לכל הפלטפורמה וגם ל"על סדר היום". הבחירה נשמרת בדפדפן הזה.</p><div class="st-walls">${walls}</div></section>
     <section class="st-sec"><h3>תצוגה</h3>
-      <div class="st-row"><span><b>מדד העבודה</b><small>אפשר גם בלחיצה על השעון עצמו</small></span>${seg('meter',hero?.dataset.meter||'glass',[['glass','שעון חול'],['gauge','מד'],['none','בלי']])}</div>
       <div class="st-row"><span><b>המדדים</b><small>ימים ליריד, צעדים, שלבים, תקועים</small></span>${seg('kpis',PREF('kpis','brief'),[['brief','בתוך הבריף'],['card','חלון נפרד']])}</div>
       <div class="st-row"><span><b>איך הבריף נפתח</b><small>כרטיס אחרי כרטיס מעל הכול, או בשורה מתחת לכפתור</small></span>${seg('briefmode',briefMode(),[['modal','חלון מעל הכול'],['inline','בשורה']])}</div>
       <div class="st-row"><span><b>הבריף בשורה בפתיחה</b><small>במצב "בשורה": פתוח או סגור כשנכנסים</small></span>${seg('brief',briefOpen?'open':'closed',[['open','פתוח'],['closed','סגור']])}</div>
