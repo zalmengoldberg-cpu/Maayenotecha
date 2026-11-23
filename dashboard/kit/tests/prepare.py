@@ -6,6 +6,10 @@ import json, shutil, subprocess, pathlib
 D = pathlib.Path(__file__).resolve().parents[2]          # dashboard/
 T = D / 'kit' / 'tests'
 subprocess.run(['python3', 'staff/build.py', 'backups/v20_out.html', 'staff/v21.html'], cwd=D, check=True)
+# 23.11: הגרסה החיה כוללת תוספות של סשן אחר (מרחבים, סשנים, דרייב) שלא נמצאות ב-build. ממזגים אותן פנימה בכל בנייה.
+_m = subprocess.run(['git', 'merge-file', '-p', 'staff/v21.html', 'backups/v30_published_2026-11-11.html', 'backups/live_2026-11-18_other_session.html'], cwd=D, capture_output=True)
+if _m.returncode != 0: raise SystemExit('merge conflict with other-session live version: %d' % _m.returncode)
+(D / 'staff' / 'v21.html').write_bytes(_m.stdout)
 (T / 'srv' / '_blob').mkdir(parents=True, exist_ok=True)
 subprocess.run(['python3', 'kit/mock.py', 'staff/v21.html', str(T / 'srv' / 'index.html')], cwd=D, check=True)
 shutil.copy(T / 'srv' / 'index.html', T / 'v21_mock.html')

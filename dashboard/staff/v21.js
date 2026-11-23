@@ -816,6 +816,15 @@ function heroKpis(){const hero=$1('#heroMt'),copy=hero&&hero.querySelector('.her
   if(row._h!==html){row.innerHTML=html;row._h=html}}
 {const _r33=window.renderAll;window.renderAll=function(){const r=_r33.apply(this,arguments);try{heroKpis()}catch(e){console.error(e)}return r}}
 
+/* ===================== v34 (23.11): הסרגל בסגנון הריל – זכוכית בהירה, גלולה כהה לפריט הפעיל, ערך חי בצד כל פריט =====================
+   בקשת זלמן: "אני רוצה שהסרגל יהיה דומה למה ששלחתי בסרטון להכל". */
+function sbLightLogo(){const img=$1('#app .sidebar .sb-logo-full'),dark=$1('.topbar-logo img');if(img&&dark&&!img.dataset.lt){img.dataset.lt=1;img.src=dark.src}}
+function sbMeta(){if(typeof S==='undefined'||!S.loaded)return;document.querySelectorAll('#app .sb-nav a.sb-item[href], #app .sb-nav #sbAgenda').forEach(a=>{
+  const key=a.id==='sbAgenda'?'agenda':a.getAttribute('href');let st=null;try{st=sbStats(key)}catch(e){}
+  let m=a.querySelector('.sbm34');const txt=st?(key==='#gantt'?st.n+'%':st.n+' '+st.u):'';
+  if(!txt){m&&m.remove();return}if(!m){m=document.createElement('span');m.className='sbm34';a.querySelector('.lbl')?.after(m)}if(m.textContent!==txt)m.textContent=txt})}
+{const _r34=window.renderAll;window.renderAll=function(){const r=_r34.apply(this,arguments);try{sbLightLogo();sbMeta()}catch(e){console.error(e)}return r}}
+
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();meterToggle();battery();
 if(typeof S!=='undefined'&&S.loaded&&window.renderAll)renderAll();
