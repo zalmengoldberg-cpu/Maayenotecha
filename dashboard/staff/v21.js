@@ -760,6 +760,63 @@ function matTile(){const g=$1('#links26');if(!g||typeof S==='undefined'||!S.load
 {const _r29=window.renderAll;window.renderAll=function(){const r=_r29.apply(this,arguments);try{renderMat();matTile();drawerFmt()}catch(e){console.error(e)}return r}}
 addEventListener('hashchange',()=>{if(location.hash==='#board')setTimeout(renderMat,30)});
 
+/* ===================== v32 (23.11): תצוגה מקדימה חיה בסרגל, ותנועת פתיחה/כיווץ (השראה: ריל של זלמן) =====================
+   ריחוף על פריט בסרגל פותח כרטיס כהה: מספר גדול שעולה, שורת הסבר, וגרף עמודות קטן עם תווית שזזה עם הסמן. */
+const DOWH7=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+function next7(){const out=[];for(let i=0;i<7;i++){const d=new Date(TODAY);d.setDate(d.getDate()+i);out.push(d)}return out}
+function sbStats(key){if(typeof S==='undefined'||!S.loaded)return null;const its=items();const D=next7();const lbl=d=>(iso(d)===iso(TODAY)?'היום':'יום '+DOWH7[d.getDay()])+' '+d.getDate()+'.'+(d.getMonth()+1);
+  const evCount=(d,f)=>{try{return dayEvents(iso(d)).filter(f||(e=>e.type!=='par')).length}catch(e){return 0}};
+  if(key==='#tasks'){const U=typeof units==='function'?units(false).filter(u=>!u.done):[];const mine=U.filter(u=>u.owner===ME()||!u.owner);
+    return{t:'המשימות שלי',n:mine.length,u:'פתוחות',s:`${U.filter(u=>u.bg).length} אצל קלוד ברקע · ${U.filter(u=>u.item&&isBlocked(u.item)).length} תקועות`,bars:D.map(d=>({v:mine.filter(u=>(u.due||u.item?.due)===iso(d)).length,l:lbl(d)})),cap:'יעדים ב-7 הימים הקרובים'}}
+  if(key==='#calendar'){const tot=D.reduce((a,d)=>a+evCount(d),0);return{t:'לוח השנה',n:tot,u:'השבוע',s:'אירועים, יעדים ופרסומים',bars:D.map(d=>({v:evCount(d),l:lbl(d)})),cap:'7 הימים הקרובים'}}
+  if(key==='agenda'){const n=evCount(TODAY);return{t:'על סדר היום',n,u:'היום',s:n?'מה שמתוכנן להיום':'יום פנוי',bars:D.map(d=>({v:evCount(d),l:lbl(d)})),cap:'היום ו-6 הימים הבאים'}}
+  if(key==='#board'){const L=its.filter(i=>i.kind!=='event'&&i.kind!=='recurring');const open=L.filter(i=>i.status!=='done');
+    return{t:'קנבן',n:open.length,u:'בעבודה',s:`${L.filter(i=>i.status==='review').length} ממתינים לאישור`,bars:ORDER.map(st=>({v:L.filter(i=>(i.status||'todo')===st).length,l:STATUS[st],c:st==='review'?'#8A74C4':null})),cap:'לפי שלב'}}
+  if(key==='#gantt'){const P_=its.filter(i=>i.kind==='project'&&i.status!=='done').slice(0,8);const avg=P_.length?Math.round(P_.reduce((a,i)=>a+progress(i),0)/P_.length):0;
+    return{t:'גאנט',n:avg,u:'%',s:`ממוצע התקדמות · ${P_.length} פרויקטים`,bars:P_.map(i=>({v:progress(i),l:i.title+' · '+progress(i)+'%'})),cap:'התקדמות לכל פרויקט',max:100}}
+  if(key==='#people'){const ppl=Object.keys(S.people||{}).filter(id=>id!=='claude');const U=typeof units==='function'?units(false).filter(u=>!u.done):[];
+    const per=ppl.map(id=>({id,v:U.filter(u=>u.owner===id).length})).sort((a,b)=>b.v-a.v);return{t:'אנשים',n:U.filter(u=>u.owner&&u.owner!=='claude').length,u:'פתוחות',s:per[0]?`הכי עמוס: ${(P(per[0].id)?.name||'').split(' ')[0]}`:'',bars:per.map(x=>({v:x.v,l:(P(x.id)?.name||x.id)+' · '+x.v})),cap:'משימות פתוחות לכל אחד'}}
+  if(key==='#agents'){const U=typeof units==='function'?units(false).filter(u=>!u.done&&(u.bg||u.owner==='claude')):[];const q=Object.values(S.inbox||{}).filter(r=>r.status==='new').length;
+    return{t:'קלוד וסוכנים',n:U.length,u:'יכול להכין',s:`${q} בקשות בתור`,bars:D.map(d=>({v:U.filter(u=>(u.due||u.item?.due)===iso(d)).length,l:lbl(d)})),cap:'מה קלוד יכול לקדם השבוע'}}
+  if(key==='#today'){const a=(S.att||[]).length;return{t:'תמונת מצב',n:a,u:'צריך אותך',s:'דברים שמחכים לך עכשיו',bars:D.map(d=>({v:evCount(d),l:lbl(d)})),cap:'עומס ב-7 הימים הקרובים'}}
+  return null}
+let sbpT=0,sbpFor=null;
+function sbpEl(){let p=$1('#sbPeek');if(!p){p=document.createElement('div');p.id='sbPeek';p.className='sbpeek';p.setAttribute('role','tooltip');p.hidden=true;document.body.append(p)}return p}
+function sbpShow(item){const key=item.id==='sbAgenda'?'agenda':item.getAttribute('href');const st=sbStats(key);if(!st)return;const p=sbpEl();sbpFor=item;
+  const mx=Math.max(st.max||0,1,...st.bars.map(b=>b.v));
+  p.innerHTML=`<div class="sbp-h"><span class="sbp-i">${item.querySelector('.i')?.innerHTML||''}</span><b>${esc(st.t)}</b></div>
+    <div class="sbp-n"><span class="num" data-to="${st.n}">0</span><em>${esc(st.u)}</em></div><div class="sbp-s">${esc(st.s||'')}</div>
+    <div class="sbp-bars">${st.bars.map((b,i)=>`<i data-l="${esc(b.l)}" data-v="${b.v}" style="--h:${Math.max(6,Math.round(b.v/mx*100))}%;${b.c?`--c:${b.c}`:''}"></i>`).join('')}</div>
+    <div class="sbp-cap">${esc(st.cap||'')}</div><span class="sbp-tip" hidden></span>`;
+  p.hidden=false;const r=item.getBoundingClientRect(),sb=$1('#app .sidebar').getBoundingClientRect();const W=264,H=p.offsetHeight;
+  const rtl=getComputedStyle(document.body).direction!=='ltr';let left=rtl?sb.left-W-14:sb.right+14;left=Math.max(10,Math.min(left,innerWidth-W-10));let top=r.top+r.height/2-H/2;top=Math.max(10,Math.min(top,innerHeight-H-10));
+  Object.assign(p.style,{left:left+'px',top:top+'px',width:W+'px'});p.classList.remove('on');void p.offsetWidth;p.classList.add('on');
+  const n=p.querySelector('[data-to]');const to=+n.dataset.to,t0=performance.now(),dur=matchMedia('(prefers-reduced-motion:reduce)').matches?0:620;
+  const step=t=>{const k=dur?Math.min(1,(t-t0)/dur):1;const e=1-Math.pow(1-k,3);n.textContent=Math.round(to*e);if(k<1&&sbpFor===item)requestAnimationFrame(step)};requestAnimationFrame(step)}
+function sbpHide(){clearTimeout(sbpT);sbpFor=null;const p=$1('#sbPeek');if(p){p.classList.remove('on');p.hidden=true}}
+document.addEventListener('pointerover',e=>{if(e.pointerType==='touch'||innerWidth<=760)return;const it=e.target.closest&&e.target.closest('#app .sb-nav a.sb-item[href], #app .sb-nav #sbAgenda');
+  if(it){if(it===sbpFor)return;clearTimeout(sbpT);sbpT=setTimeout(()=>sbpShow(it),sbpFor?60:260);return}
+  if(e.target.closest&&e.target.closest('#sbPeek'))return;if(sbpFor||sbpT){clearTimeout(sbpT);sbpT=setTimeout(sbpHide,180)}});
+document.addEventListener('pointermove',e=>{const bar=e.target.closest&&e.target.closest('#sbPeek .sbp-bars i');const p=$1('#sbPeek');if(!p||p.hidden)return;const tip=p.querySelector('.sbp-tip');
+  p.querySelectorAll('.sbp-bars i.on').forEach(x=>x!==bar&&x.classList.remove('on'));if(!bar){tip.hidden=true;return}bar.classList.add('on');
+  tip.textContent=bar.dataset.l+(bar.dataset.l.includes('·')?'':' · '+bar.dataset.v);tip.hidden=false;const br=bar.getBoundingClientRect(),pr=p.getBoundingClientRect();
+  tip.style.left=Math.max(6,Math.min(br.left-pr.left+br.width/2-tip.offsetWidth/2,pr.width-tip.offsetWidth-6))+'px';tip.style.top=(br.top-pr.top-30)+'px'});
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#app .sb-nav .sb-item'))sbpHide()},true);
+addEventListener('scroll',()=>sbpHide(),true);addEventListener('keydown',e=>{if(e.key==='Escape')sbpHide()});
+/* פתיחה/כיווץ של הסרגל: הטיה קלה בתלת-ממד, כמו בריל */
+new MutationObserver(m=>{if(!m.some(x=>x.oldValue!==null&&(x.oldValue.includes('sb-mini')!==document.documentElement.classList.contains('sb-mini'))))return;const sb=$1('#app .sidebar');if(!sb||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  sb.classList.remove('sb-tilt');void sb.offsetWidth;sb.classList.add('sb-tilt');setTimeout(()=>sb.classList.remove('sb-tilt'),700);sbpHide()}).observe(document.documentElement,{attributes:true,attributeFilter:['class'],attributeOldValue:true});
+
+/* ===================== v33 (23.11): בלי מדד הלחץ, ומראה מקצועי ושקט יותר =====================
+   בקשת זלמן: "תוריד את מדד הלחץ, ושהדשבורד ייראה מקצועי ופחות מצועצע, אבל מאיר עיניים ומזמין".
+   שעון החול, המד והסוללה מוסתרים (הקוד נשאר, אפשר להחזיר). במקומם: ארבעת המספרים של היום בשורה נקייה בפתיחה. */
+function heroKpis(){const hero=$1('#heroMt'),copy=hero&&hero.querySelector('.hero-copy');if(!copy)return;const ks=[...document.querySelectorAll('#kpis .kpi')];if(!ks.length)return;
+  let row=copy.querySelector('.hk33');if(!row){row=document.createElement('div');row.className='hk33';row.setAttribute('role','list');copy.append(row);
+    row.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=document.querySelectorAll('#kpis .kpi')[+b.dataset.k];if(k){if(k.dataset.go){location.hash=k.dataset.go}else k.click()}})}
+  const html=ks.map((k,i)=>`<button type="button" class="hk" role="listitem" data-k="${i}"><b class="num">${esc(k.querySelector('.v')?.textContent||'')}</b><span>${esc(k.querySelector('.k2')?.textContent||'')}</span></button>`).join('');
+  if(row._h!==html){row.innerHTML=html;row._h=html}}
+{const _r33=window.renderAll;window.renderAll=function(){const r=_r33.apply(this,arguments);try{heroKpis()}catch(e){console.error(e)}return r}}
+
 /* תאריך גם לפני שהנתונים נטענים */
 paintV21();meterToggle();battery();
 if(typeof S!=='undefined'&&S.loaded&&window.renderAll)renderAll();

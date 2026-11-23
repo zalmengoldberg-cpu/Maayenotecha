@@ -1836,3 +1836,59 @@ html.rz-drag,html.rz-drag *{cursor:nesw-resize!important;user-select:none!import
 .km-drive{justify-self:start;display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 3px;margin-bottom:2px;border-radius:var(--r-pill);font-size:10.5px;font-weight:var(--fw-medium);color:var(--ink-700);background:var(--surface-2);cursor:pointer}
 .km-drive .brand{--sz:18px;box-shadow:none}.km-drive.ok{color:var(--ok);background:var(--ok-bg)}
 .km-drive:hover{background:var(--royal-50)}
+
+/* v32 (23.11): תצוגה מקדימה חיה בסרגל + הטיה בפתיחה/כיווץ */
+.sbpeek{position:fixed;z-index:60;padding:16px 16px 12px;border-radius:var(--r-xl);color:#E9EBF5;font-family:var(--font);direction:rtl;pointer-events:auto;
+  background:rgba(17,21,42,.92);-webkit-backdrop-filter:blur(22px) saturate(140%);backdrop-filter:blur(22px) saturate(140%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),inset 0 1px 0 rgba(255,255,255,.08),0 30px 60px -20px rgba(10,12,30,.65);
+  opacity:0;transform:translateX(10px) scale(.97);transform-origin:right center;transition:opacity .22s var(--ease),transform .32s var(--ease)}
+.sbpeek.on{opacity:1;transform:none}
+.sbpeek[hidden]{display:none}
+.sbp-h{display:flex;align-items:center;gap:8px;font-size:var(--fs-small)}.sbp-h b{font-weight:var(--fw-medium);color:#fff}
+.sbp-i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(242,145,28,.18);color:var(--gold)}.sbp-i .ico,.sbp-i svg{width:14px;height:14px}
+.sbp-n{display:flex;align-items:baseline;gap:6px;margin-top:10px}
+.sbp-n .num{font-size:44px;font-weight:var(--fw-light);line-height:1;color:#fff;letter-spacing:-.02em}
+.sbp-n em{font-style:normal;font-size:var(--fs-small);color:#AEB3CC}
+.sbp-s{font-size:var(--fs-micro);color:#8D93B0;margin-top:4px;min-height:14px}
+.sbp-bars{display:flex;align-items:flex-end;gap:5px;height:64px;margin-top:14px;padding-top:4px}
+.sbp-bars i{flex:1;height:var(--h);min-height:5px;border-radius:5px 5px 2px 2px;background:var(--c,rgba(255,255,255,.16));transition:background .15s,height .5s var(--ease);cursor:default}
+.sbp-bars i:not([style*="--c"]){background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.1))}
+.sbp-bars i.on{background:repeating-linear-gradient(135deg,var(--gold) 0 3px,#F6B25B 3px 6px)!important}
+.sbp-cap{font-size:10.5px;color:#7D83A2;margin-top:8px}
+.sbp-tip{position:absolute;padding:3px 9px;border-radius:var(--r-pill);background:#fff;color:var(--ink-900);font-size:10.5px;font-weight:var(--fw-medium);white-space:nowrap;pointer-events:none;box-shadow:0 6px 14px -6px rgba(0,0,0,.5)}
+#app .sidebar.sb-tilt{animation:sbTilt .65s var(--ease)}
+@keyframes sbTilt{0%{transform:perspective(900px) rotateY(0)}35%{transform:perspective(900px) rotateY(-7deg) scale(.985)}100%{transform:perspective(900px) rotateY(0)}}
+@media (prefers-reduced-motion:reduce){.sbpeek{transition:none}#app .sidebar.sb-tilt{animation:none}}
+
+/* v33 (23.11): בלי מדד הלחץ + מראה מקצועי ושקט יותר (פחות מצועצע, עדיין בהיר ומזמין) */
+/* 1. מדד הלחץ: שעון החול, המד, הניצוצות, ההילה והסוללה */
+#heroMt .hero-art,#heroMt .hero-sparks,#heroMt .hero-glow,#heroMt .art-hit,#heroMt #meterGauge,#heroMt .mgauge,#heroMt .pulse-chip{display:none!important}
+#v-today .hero.hero-free{min-height:0!important;padding-block:18px 8px!important}
+#v-today .hero.hero-free .hero-copy{max-width:none!important;width:100%;grid-column:1/-1!important;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+#v-today .hero.hero-free #greet{font-size:38px;font-weight:var(--fw-light);letter-spacing:-.015em;color:var(--ink-900);margin:0}
+#v-today .hero.hero-free #greet b{font-weight:var(--fw-medium)}
+/* שורת המספרים של היום */
+.hk33{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%;margin-top:4px}
+.hk33 .hk{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px 16px;border-radius:var(--r-lg);background:#fff;text-align:start;cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(20,26,51,.07),0 1px 2px rgba(20,26,51,.04);transition:box-shadow .2s var(--ease),transform .2s var(--ease)}
+.hk33 .hk:hover{box-shadow:inset 0 0 0 1px rgba(242,145,28,.45),0 8px 20px -14px rgba(20,26,51,.35);transform:translateY(-1px)}
+.hk33 .hk b{font-size:28px;font-weight:var(--fw-light);line-height:1;color:var(--ink-900)}
+.hk33 .hk span{font-size:var(--fs-small);color:var(--ink-500)}
+.hk33 .hk:first-child b{color:var(--gold-700,#B86A0C)}
+@media (max-width:760px){.hk33{grid-template-columns:repeat(2,minmax(0,1fr))}#v-today .hero.hero-free #greet{font-size:30px}}
+/* 2. כרטיסים: משטח נקי, קו דק, צל רך אחד (במקום זכוכית מבריקה) */
+#v-today .card,#app main .card{background:#fff!important;box-shadow:inset 0 0 0 1px rgba(20,26,51,.07),0 1px 2px rgba(20,26,51,.04),0 10px 28px -22px rgba(20,26,51,.28)!important}
+/* 3. כותרת החודש בלוח: פחות צועקת */
+#miniCal .hcal-month{font-size:26px!important;font-weight:var(--fw-medium)!important;letter-spacing:-.01em}
+/* 4. כפתורי "לקלוד": שקטים, מתחממים בריחוף */
+.b2-send{background:transparent!important;color:var(--ink-800)!important;box-shadow:inset 0 0 0 1px rgba(20,26,51,.14)!important}
+.b2-send:hover{background:rgba(242,145,28,.12)!important;box-shadow:inset 0 0 0 1px rgba(242,145,28,.55)!important}
+/* 5. חיפוש בסרגל: בלי טבעת זוהרת, מסגרת דקה */
+#app .sidebar .ai-search::before{background:none!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);padding:0!important;animation:none!important}
+#app .sidebar .ai-search::after{display:none!important}
+#app .sidebar .ai-search:focus-within::before{box-shadow:inset 0 0 0 1px rgba(242,145,28,.6)}
+/* 6. איורי תלת-ממד בתוך כרטיסים: קטנים ושקטים */
+#v-today .empty .icon-3d{width:44px!important;height:44px!important;opacity:.85}
+/* 7. מונים בסרגל: אדום רך במקום אדום מלא */
+#app .sidebar .sb-item .badge{background:rgba(226,87,76,.22)!important;color:#FFB4AC!important;box-shadow:none!important}
+#v-today .hero.hero-free .hero-copy{padding:20px 0 4px!important}
